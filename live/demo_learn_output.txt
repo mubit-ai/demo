@@ -1,0 +1,129 @@
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.3.0) or chardet (7.0.1)/charset_normalizer (3.4.4) doesn't match a supported version!
+  warnings.warn(
+
+╔══════════════════════════════════════════════════════╗
+║  STEP 1: mubit.learn.init() — ONE LINE OF SETUP    ║
+╚══════════════════════════════════════════════════════╝
+
+  Session:  learn-demo-1773848305
+  Endpoint: https://api.mubit.ai
+  LLM:      gemini-3.1-flash-lite-preview
+
+  mubit.learn initialized.
+  All Gemini calls are now auto-instrumented — zero code changes needed.
+  On each LLM call, mubit.learn will:
+    1. PRE-CALL:  Fetch relevant lessons and inject into prompt
+    2. POST-CALL: Capture the interaction + auto-extract rules/lessons/facts
+
+──────────────────────────────────────────────────
+  Step 2: First LLM call — teach the agent something
+──────────────────────────────────────────────────
+
+
+╔══════════════════════════════════════════════════════╗
+║  STEP 2: LLM call #1 — Agent handles an incident   ║
+╚══════════════════════════════════════════════════════╝
+
+  Prompt: (SRE post-mortem investigation)
+
+  Response:
+### Incident Post-Mortem: Auth Service JWT Key Rotation
+
+**Root Cause:**
+During a planned JWT signing key rotation, the team updated the authorization service configuration but failed to clear the distributed Redis cache. Consequently, the service continued serving valid, non-expired JWTs signed by the decommissioned key, causing authentication failures when the system rejected tokens that did not match the new key.
+
+**Resolution:**
+We executed an immediate `FLUSHALL` on the affected Redis cluster to force cache invalidation. All sessions were successfully regenerated using the new signing key, restoring full service availability within 5 minutes of the fix.
+
+**Preventative Rules:**
+* **Always** include a cache-clearing step in the automated runbook for cryptographic key rotations.
+* **Always** perform key rotations in a "grace period" mode that supports both old and new keys before fully decommissioning the former.
+* **Never** deploy configuration changes involving security tokens without verifying the TTL and cache-eviction strategy for all secondary storage layers.
+* **Never** perform high-impact manual rotations without a rollback plan that includes immediate cache purging capabilities.
+
+  ──────────────────────────────────────────────
+  mubit.learn just automatically:
+    ✓ Captured the full interaction (prompt + response)
+    ✓ Auto-extracted rules ('always', 'never', 'must')
+    ✓ Auto-extracted lessons ('the fix was', 'caused by')
+    ✓ Ingested everything into Mubit — ZERO manual calls
+
+  Waiting for auto-ingestion + embedding (8s)...
+  Memory after call #1: {}
+
+──────────────────────────────────────────────────
+  Step 3: Ask a DIFFERENT question — lessons from call #1 auto-injected
+──────────────────────────────────────────────────
+
+
+╔══════════════════════════════════════════════════════╗
+║  STEP 3: LLM call #2 — lessons auto-injected       ║
+╚══════════════════════════════════════════════════════╝
+
+  Prompt: I need to rotate our JWT signing keys this weekend. What steps should I follow to avoid any downtime?
+
+  (mubit.learn is auto-fetching lessons from call #1 and injecting...)
+
+  Response (informed by auto-extracted lessons):
+Rotating JWT signing keys without downtime requires a **graceful transition period** where your authentication service can verify tokens signed by *both* the old and new keys simultaneously.
+
+Here is the industry-standard approach to performing a rolling key rotation.
+
+---
+
+### Phase 1: Preparation (The "Dual-Key" Strategy)
+
+Do not delete your old key yet. You need to expand your system to support multiple keys.
+
+1.  **Introduce a Key Identifier (`kid`):** Ensure your JWT header includes a `kid` (Key ID) field. This allows your resource servers/APIs to look up which public key was used to sign the token.
+2.  **Update the Public Key Endpoint:** If you use a JWKS (JSON Web Key Set) endpoint (e.g., `/.well-known/jwks.json`), update it to return an array of keys instead of a single object.
+3.  **Deploy "Verification" Logic:** Update all services that **verify** tokens so they can handle multiple keys. When a token arrives:
+    *   Read the `kid` from the JWT header.
+    *   Look up the corresponding public key in your local cache or via the JWKS endpoint.
+    *   Verify the signature using that specific key.
+    *   *Result:* Your services are now ready to accept tokens signed by either the old key or the new key.
+
+### Phase 2: The Rotation (The "Rolling" Deploy)
+
+1.  **Generate the New Key:** Create your new asymmetric key pair.
+2.  **Update JWKS (Public Keys):** Add the new public key to your JWKS endpoint alongside the old one. Keep the old one there.
+3.  **Update the Auth Service (Signing Key):** Deploy your identity provider (the service that issues tokens) to begin using the **new private key** for all *newly* issued tokens.
+    *   *Crucial:* Existing tokens already in the wild are still signed with the old key. Because your resource servers (from Phase 1) now support multiple keys, they will successfully verify both old and new tokens.
+4.  **Wait for Token Expiration:** Monitor your traffic. You must wait for the duration of your longest-lived JWT (e.g., if your tokens expire in 1 hour, wait at least 1 hour, preferably longer). This ensures that no users are holding tokens signed by the old key.
+
+### Phase 3: Cleanup
+
+1.  **Remove the Old Key:** Once you are certain no tokens signed by the old key are still active (check your logs to ensure zero 401/403 errors related to the old `kid`), remove the old public key from your JWKS endpoint.
+2.  **Delete the Old Key:** Securely delete the old private key from your key management system (KMS).
+
+---
+
+### Critical Considerations for Success
+
+*   **Caching:** If your resource servers cache the JWKS, ensure that the cache TTL is shorter than the time you intend to take for the transition. If your services cache keys for 24 hours, you cannot rotate the key in 1 hour.
+*   **The `kid` is Mandatory:** If you do not use a `kid`, you will be forced to attempt verification against every key you have until one works. This is inefficient and prone to errors. If you aren't using `kid` yet, implement it *before* the rotation weekend.
+*   **Clock Skew:** Remember that some tokens might be verified after the "official" expiration time due to slight clock drifts on servers. Add a small buffer (e.g., 5–10 minutes) to your cleanup phase.
+*   **Automate if possible:** If you are using a cloud provider (AWS KMS, Google Secret Manager, Azure Key Vault), use their native support for key versions, which often handles the rotation logic for you.
+
+### What if things go wrong?
+Because you kept the old key active in the JWKS throughout the process, **rolling back is trivial.** If the new signing key fails, simply point the identity provider back to the old private key, and all existing and new tokens will once again be valid.
+
+  ──────────────────────────────────────────────
+  The LLM's response is now informed by the post-mortem from call #1.
+  mubit.learn injected the extracted rules/lessons into the prompt
+  AUTOMATICALLY — no code changes, no manual recall().
+
+──────────────────────────────────────────────────
+  Step 4: End run + see everything mubit.learn captured
+──────────────────────────────────────────────────
+
+
+╔══════════════════════════════════════════════════════╗
+║  STEP 4: What mubit.learn did automatically         ║
+╚══════════════════════════════════════════════════════╝
+
+  Ending run (triggers automatic reflection)...
+
+  Final memory state: {}
+
+  Finished.

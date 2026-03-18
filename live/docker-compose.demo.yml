@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - demo-redis:/data
+    restart: unless-stopped
+
+  mubit:
+    build: ../..
+    container_name: mubit-demo
+    ports:
+      - "50051:50051"
+      - "3000:3000"
+    environment:
+      - RUST_LOG=info
+      - MUBIT_INSTANCE_ID=demo
+      - MUBIT_CONTROL_ATTENTION_REDIS_URL=redis://redis:6379
+      - MUBIT_CONTROL_EVENTS_REDIS_URL=redis://redis:6379
+      - MUBIT_CONTROL_INGESTION_REDIS_URL=redis://redis:6379
+    volumes:
+      - demo-data:/data
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  demo-data:
+    driver: local
+  demo-redis:
+    driver: local
