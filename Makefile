@@ -1,6 +1,4 @@
-.PHONY: install preseed learn learn-notebook agents agents-notebook langgraph crewai langchain adk help
-
-INTEGRATIONS := ../integrations/python
+.PHONY: install install-all preseed learn learn-notebook agents agents-notebook langgraph crewai langchain adk help
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*##"}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -31,13 +29,13 @@ agents-notebook: ## Launch multi-agent Jupyter notebook
 # --- Framework integration examples ---
 
 langgraph: ## Run LangGraph code review pipeline example
-	cd $(INTEGRATIONS)/mubit_langgraph/examples/code_review && uv run python main.py
+	cd integrations/langgraph && uv run python main.py
 
 crewai: ## Run CrewAI support ticket triage example
-	cd $(INTEGRATIONS)/mubit_crewai/examples/support_triage && uv run python main.py
+	cd integrations/crewai && uv run python main.py
 
 langchain: ## Run LangChain research assistant example
-	cd $(INTEGRATIONS)/mubit_langchain/examples/research_assistant && uv run python main.py
+	cd integrations/langchain && uv run python main.py
 
 adk: ## Run Google ADK travel planner example
-	cd $(INTEGRATIONS)/mubit_adk/examples/travel_planner && uv run python main.py
+	cd integrations/adk && uv run python main.py
