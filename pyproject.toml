@@ -10,3 +10,10 @@ dependencies = [
     "jupyter>=1.0",
     "ipykernel>=6.0",
 ]
+
+[project.optional-dependencies]
+langgraph = ["langgraph>=0.2", "langchain-openai>=0.1"]
+crewai = ["crewai>=0.80"]
+langchain = ["langchain>=0.3", "langchain-openai>=0.1"]
+adk = ["google-adk>=0.3"]
+all = ["langgraph>=0.2", "langchain-openai>=0.1", "crewai>=0.80", "langchain>=0.3", "google-adk>=0.3"]

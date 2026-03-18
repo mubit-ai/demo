@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 """mubit.learn demo — the easiest setup path.
 
-Shows that adding persistent memory to any LLM app takes ONE LINE:
-  mubit.learn.init(api_key=..., agent_id=...)
+How mubit.learn works:
 
-Everything else — lesson extraction, trace capture, context injection,
-reflection — is fully automatic. ZERO manual remember/recall/reflect calls.
+  On each LLM call, mubit.learn automatically:
+  1. PRE-CALL:  Fetches relevant lessons from Mubit and injects them into the prompt
+  2. LLM CALL:  Normal Gemini/OpenAI/Anthropic call — unchanged
+  3. POST-CALL: Captures the full interaction (prompt + response), extracts rules/lessons/facts
+                from the response, and ingests everything into Mubit via a background thread
+
+  On run.end(): Mubit's reflection agent analyzes all traces and distills higher-order lessons
+
+  Result: your LLM gets smarter over time with ZERO code changes beyond init().
 """
 
 import json
@@ -29,7 +35,11 @@ def pause(msg=""):
     print(f"\n{'─' * 50}\n  {msg}\n{'─' * 50}\n")
 
 
-# ── STEP 1: Init mubit.learn (ONE LINE) ──────────────────────────────────
+# ── STEP 1: Init mubit.learn ─────────────────────────────────────────────
+# This single call wraps all supported LLM clients (OpenAI, Anthropic,
+# Google GenAI, LiteLLM). After this, every LLM call automatically gets
+# memory capabilities — lesson injection before the call, trace capture
+# and knowledge extraction after the call.
 print("\n╔══════════════════════════════════════════════════════╗")
 print("║  STEP 1: mubit.learn.init() — ONE LINE OF SETUP    ║")
 print("╚══════════════════════════════════════════════════════╝\n")
@@ -43,7 +53,7 @@ run = mubit.learn.init(
     auto_reflect=True,
     auto_extract=True,
     max_token_budget=800,
-    cache_ttl_seconds=5,  # short TTL so call 2 fetches fresh context
+    cache_ttl_seconds=5,
     fail_open=True,
 )
 print(f"  Session:  {SESSION}")
@@ -51,16 +61,23 @@ print(f"  Endpoint: {MUBIT_ENDPOINT}")
 print(f"  LLM:      {GEMINI_MODEL}")
 print("\n  mubit.learn initialized.")
 print("  All Gemini calls are now auto-instrumented — zero code changes needed.")
-print("  On each LLM call, mubit.learn will:")
-print("    1. PRE-CALL:  Fetch relevant lessons and inject into prompt")
-print("    2. POST-CALL: Capture the interaction + auto-extract rules/lessons/facts")
 
-# Create Gemini client — AUTOMATICALLY wrapped by mubit.learn
+# This client is automatically wrapped by mubit.learn.
+# Under the hood, generate_content() is now:
+#   1. pre-call:  fetch lessons from Mubit → inject into prompt
+#   2. call:      normal Gemini API call
+#   3. post-call: capture interaction + extract rules/lessons → ingest to Mubit
 llm = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 pause("Step 2: First LLM call — teach the agent something")
 
-# ── STEP 2: First call — agent learns about a production incident ─────────
+# ── STEP 2: First call — no lessons exist yet ─────────────────────────────
+# Pre-call: mubit.learn calls Mubit's get_context() but finds nothing — no
+#           lessons to inject yet.
+# Post-call: mubit.learn captures the full interaction and scans the response
+#            for extractable knowledge (rules with "always"/"never", lessons
+#            with "the fix was"/"caused by", facts). All extracted items are
+#            sent to Mubit via a background thread — non-blocking.
 print("\n╔══════════════════════════════════════════════════════╗")
 print("║  STEP 2: LLM call #1 — Agent handles an incident   ║")
 print("╚══════════════════════════════════════════════════════╝\n")
@@ -91,11 +108,12 @@ print("    ✓ Auto-extracted rules ('always', 'never', 'must')")
 print("    ✓ Auto-extracted lessons ('the fix was', 'caused by')")
 print("    ✓ Ingested everything into Mubit — ZERO manual calls")
 
-# Wait for ingestion + embedding
+# Wait for the background IngestWorker to send items to Mubit
+# and for Mubit to embed + index them.
 print("\n  Waiting for auto-ingestion + embedding (8s)...")
 time.sleep(8)
 
-# Show what was auto-extracted
+# Query Mubit to see what was auto-captured
 client_for_query = mubit.Client(
     endpoint=MUBIT_ENDPOINT,
     api_key=MUBIT_API_KEY,
@@ -108,7 +126,11 @@ print(f"  Memory after call #1: {health_1.get('entry_counts', {})}")
 
 pause("Step 3: Ask a DIFFERENT question — lessons from call #1 auto-injected")
 
-# ── STEP 3: Second call — different question, lessons auto-injected ───────
+# ── STEP 3: Second call — lessons auto-injected ──────────────────────────
+# Pre-call: mubit.learn calls Mubit's get_context() and finds the rules/lessons
+#           extracted from call #1. It prepends them to the prompt inside
+#           <memory_context> tags. The LLM now has context it never had before.
+# Post-call: same auto-capture + extraction as call #1.
 print("\n╔══════════════════════════════════════════════════════╗")
 print("║  STEP 3: LLM call #2 — lessons auto-injected       ║")
 print("╚══════════════════════════════════════════════════════╝\n")
@@ -121,7 +143,7 @@ CALL_2_PROMPT = (
 print(f"  Prompt: {CALL_2_PROMPT}\n")
 print("  (mubit.learn is auto-fetching lessons from call #1 and injecting...)\n")
 
-# Clear cache so it fetches fresh from Mubit
+# Clear the lesson cache so mubit.learn fetches fresh context from Mubit
 mubit.learn._lesson_cache.clear()
 
 response_2 = llm.models.generate_content(
@@ -138,11 +160,13 @@ print("  AUTOMATICALLY — no code changes, no manual recall().")
 pause("Step 4: End run + see everything mubit.learn captured")
 
 # ── STEP 4: Wrap up ──────────────────────────────────────────────────────
+# run.end() triggers Mubit's reflection agent, which analyzes all traces
+# in the session and distills higher-order lessons. These lessons persist
+# and will be injected into future sessions automatically.
 print("\n╔══════════════════════════════════════════════════════╗")
 print("║  STEP 4: What mubit.learn did automatically         ║")
 print("╚══════════════════════════════════════════════════════╝\n")
 
-# End the run — triggers auto-reflection
 print("  Ending run (triggers automatic reflection)...")
 run.end()
 time.sleep(5)
