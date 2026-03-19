@@ -12,4 +12,3 @@ MUBIT_ENDPOINT = os.environ.get("MUBIT_ENDPOINT", "http://127.0.0.1:3000")
 MUBIT_API_KEY = os.environ.get("MUBIT_API_KEY", "")
 
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite-preview")
-CRASH_AFTER_PHASE = int(os.environ.get("CRASH_AFTER_PHASE", "3"))
