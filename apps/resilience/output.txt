@@ -1,0 +1,345 @@
+======================================================================
+  Technology Due Diligence — Crash Recovery Demo
+  Endpoint:     https://api.mubit.ai
+  Model:        gemini-2.0-flash
+  Crash after:  Phase 4 (Risk Analysis)
+======================================================================
+
+======================================================================
+  RUN 1: Due Diligence (will crash after Phase 4)
+  Session: resilience-crash-d49e1492
+  Target:  DataPulse Analytics — a B2B SaaS company providing real-time customer analytics ...
+======================================================================
+  Agents registered: ['market_analyst', 'risk_analyst', 'financial_modeler', 'competitive_intel', 'report_writer', 'tech_assessor']
+
+  Initializing pipeline state...
+  Creating goal tree...
+  Goals created: ['_root', 'market_analysis', 'tech_assessment', 'competitive_landscape', 'risk_analysis', 'financial_modeling', 'executive_report']
+
+  ────────────────────────────────────────────────────────────
+  Phase 1/6: Market Analysis [market_analyst]
+  ────────────────────────────────────────────────────────────
+  [market_analyst] Running analysis...
+  [market_analyst] Okay, I will conduct a market analysis for DataPulse Analytics, a B2B SaaS company specializing in real-time customer analytics and behavioral segmentation for mid-market e-commerce companies.  Here's the breakdown:  **1. Total Addressable Market (TAM)**  To estimate the TAM, I'll look at the overal...
+  Phase 1 complete.
+
+  ────────────────────────────────────────────────────────────
+  Phase 2/6: Technical Assessment [tech_assessor]
+  ────────────────────────────────────────────────────────────
+  [tech_assessor] Running analysis...
+  [tech_assessor] Okay, I will assess DataPulse Analytics based on the provided information, prior findings, and market analysis.  **1. Architecture Quality**  *   **Microservices vs. Monolith:** The architecture uses a Python/FastAPI backend. While not explicitly stated as microservices, the use of AWS EKS (Elastic ...
+  Phase 2 complete.
+
+  ────────────────────────────────────────────────────────────
+  Phase 3/6: Competitive Landscape [competitive_intel]
+  ────────────────────────────────────────────────────────────
+  [competitive_intel] Running analysis...
+  [competitive_intel] Okay, I will perform a competitive landscape analysis for DataPulse Analytics, focusing on the areas you specified.  Here's a competitive landscape analysis for DataPulse Analytics:  **1. Direct Competitors**  Based on the search results, here are some of the top direct competitors in the customer a...
+  Phase 3 complete.
+
+  ────────────────────────────────────────────────────────────
+  Phase 4/6: Risk Analysis [risk_analyst]
+  ────────────────────────────────────────────────────────────
+  [risk_analyst] Running analysis...
+  [risk_analyst] Okay, based on all provided information, here's a comprehensive risk assessment for the potential acquisition of DataPulse Analytics.  ## DataPulse Analytics: Risk Assessment Matrix  | Risk Category | Risk Description | Likelihood | Impact | Mitigation Strategy | |---|---|---|---|---| | **Technical ...
+  Phase 4 complete.
+
+  !!! CRASH during Phase: Financial Modeling !!!
+
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  PIPELINE CRASHED: Simulated crash: external API timeout during Phase 5 (Financial Modeling). Process terminated unexpectedly.
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+======================================================================
+  POST-CRASH: Memory Health (Run 1)
+======================================================================
+
+  Entry counts: {
+    "checkpoint": 5,
+    "fact": 5,
+    "handoff": 4,
+    "lesson": 1,
+    "step_outcome": 5
+}
+  Total: 20
+  Section health:
+    Checkpoints           count=  5  confidence=1.00
+    Known Facts           count=  5  confidence=1.00
+    Lessons Learned       count=  1  confidence=1.00
+    Other                 count=  5  confidence=1.00
+    Task Handoffs         count=  4  confidence=1.00
+
+  Waiting 12 seconds for Mubit ingestion + embedding...
+
+======================================================================
+  RECOVERY: Detecting crash and building resume plan
+  Inspecting session: resilience-crash-d49e1492
+======================================================================
+
+  === Crash Detection (9 Mubit APIs) ===
+
+  1. list_variables() — checking state variables...
+    current_phase             = completed:risk_analysis
+    phase_outputs             = {"competitive_landscape": "Okay, I will perform a competitive landscape analy...
+    crash_timestamp           = 2026-03-19T10:26:40.834799+00:00
+    completed_phases          = ["market_analysis", "tech_assessment", "competitive_landscape", "risk_analysis"]
+    crash_error               = Simulated crash: external API timeout during Financial Modeling. Process term...
+    crash_phase               = financial_modeling
+    total_phases              = 6
+    target_company            = DataPulse Analytics — a B2B SaaS company providing real-time customer analyti...
+    pipeline_status           = crashed
+
+  2. list_goals() — checking goal status...
+    [Active    ] Complete technology due diligence for DataPulse Analytics acquisition
+    [Achieved  ] Phase: Market Analysis (research)
+    [Achieved  ] Phase: Technical Assessment (research)
+    [Achieved  ] Phase: Competitive Landscape (research)
+    [Achieved  ] Phase: Risk Analysis (analysis)
+    [Failed    ] Phase: Financial Modeling (analysis)
+    [Active    ] Phase: Executive Report (synthesis)
+    Achieved: 0, Pending/Failed: 7
+
+  3. get_run_snapshot() — fetching run snapshot...
+    Snapshot keys: ['agents', 'control_status', 'promotions', 'scope', 'snapshot', 'timeline']
+
+  4. list_activity() — browsing crash timeline...
+    [] ?
+    [] ?
+    [] ?
+    [] ?
+    [] ?
+    ... (15 more entries)
+
+  5. diagnose() — analyzing: Simulated crash: external API timeout during Financial Model...
+    Found 0 related patterns
+
+  6. get_action_log() — reviewing decisions...
+
+  7. get_goal_tree() — goal hierarchy...
+    [?] 
+    [?] 
+    [?] 
+    [?] 
+    [?] 
+    [?] 
+
+  8. get_cycle_history() — decision cycles...
+    Cycle: {"action_result": {"action_id": "2ec3dd45-b5d2-4756-891a-ef4fbe996cb7", "duration_ms": 0, "error": "
+    Cycle: {"action_result": {"action_id": "82addcd0-2bbb-404e-b305-d3241ef439ac", "duration_ms": 0, "error": "
+    Cycle: {"action_result": {"action_id": "2de35e83-09d3-4c8d-97d5-c8b0092fbe3a", "duration_ms": 0, "error": "
+
+  9. list_concepts() — defined schemas...
+    crash_report
+    phase_output
+
+  ────────────────────────────────────────────────────────────
+  Crash Detection Summary:
+    Crashed:          True
+    Crash phase:      financial_modeling
+    Crash error:      Simulated crash: external API timeout during Financial Modeling. Process termina...
+    Completed phases: ['market_analysis', 'tech_assessment', 'competitive_landscape', 'risk_analysis']
+    Completed goals:  0
+    Pending goals:    7
+    Activities:       20
+  ────────────────────────────────────────────────────────────
+
+  === Building Resume Plan ===
+
+  Recovering output: Risk Analysis...
+    Recovered 169 chars
+  Recovering output: Market Analysis...
+    Recovered 99 chars
+  Recovering output: Technical Assessment...
+    Recovered 249 chars
+  Recovering output: Competitive Landscape...
+    Recovered 249 chars
+
+  Resume Plan:
+    Resume from:   Phase 5 (Financial Modeling)
+    Skip phases:   ['risk_analysis', 'market_analysis', 'tech_assessment', 'competitive_landscape']
+    Recovered:     ['risk_analysis', 'market_analysis', 'tech_assessment', 'competitive_landscape']
+
+  === Linking Runs & Restoring Context ===
+
+  Linked resilience-resume-89bd266f -> resilience-crash-d49e1492
+  Restored context: 1908 chars
+    [lesson] Due diligence completed successfully after crash recovery. Pipeline resumed from Phase 4 us
+    [lesson] When performing financial modeling for SaaS companies, clearly distinguish between assumpti
+    [fact] Okay, based on all provided information, here's a comprehensive risk assessment for the poten
+    
+    ## DataPulse Analytics: Risk Assessment Matrix
+    ... (13 more lines)
+
+======================================================================
+  RUN 2: Resuming Due Diligence from Phase 5 (Financial Modeling)
+  Session: resilience-resume-89bd266f
+======================================================================
+
+  Resuming from Phase 5...
+  Prior outputs available: ['risk_analysis', 'market_analysis', 'tech_assessment', 'competitive_landscape']
+
+  ────────────────────────────────────────────────────────────
+  Phase 5/6: Financial Modeling [financial_modeler]
+  ────────────────────────────────────────────────────────────
+  [financial_modeler] Running analysis...
+  [financial_modeler] Okay, let's build a financial model and valuation analysis for DataPulse Analytics based on the provided information and lessons learned.  **Assumptions:**  *   **Current ARR:** $4.5M (180 customers) *   **Employees:** 60 *   **Year Founded:** 2021 *   **Asking Price:** $35M  **1. Revenue Analysis:*...
+  Phase 5 complete.
+
+  ────────────────────────────────────────────────────────────
+  Phase 6/6: Executive Report [report_writer]
+  ────────────────────────────────────────────────────────────
+  [report_writer] Running analysis...
+  [report_writer] ## Executive Report: Acquisition of DataPulse Analytics  **Executive Summary:** We recommend proceeding with a revised offer for DataPulse Analytics, but *only* with significant price concessions and robust downside protection. While DataPulse demonstrates strong market potential and a solid technic...
+  Phase 6 complete.
+
+======================================================================
+  EXECUTIVE DUE DILIGENCE REPORT
+======================================================================
+
+## Executive Report: Acquisition of DataPulse Analytics
+
+**Executive Summary:** We recommend proceeding with a revised offer for DataPulse Analytics, but *only* with significant price concessions and robust downside protection. While DataPulse demonstrates strong market potential and a solid technical foundation, their current financial profile and security vulnerabilities pose substantial risks. The asking price of $35M is inflated and must be renegotiated significantly downward.
+
+**Go/No-Go Recommendation:** **GO**, *contingent* on achieving a revised valuation between $25M - $30M and incorporating significant earnout provisions tied to concrete revenue and security milestones. Confidence Level: 65%. The potential upside of integrating DataPulse's technology into our existing platform is attractive, but the risks associated with their financial performance and security posture necessitate a cautious approach.
+
+**Key Strengths:**
+
+1.  **Strong Market Position:** DataPulse holds a promising position in the growing e-commerce analytics market, demonstrated by customer growth.
+2.  **Technological Advantage:** Solid core technology with potential for integration into our platform, offering enhanced analytics capabilities.
+3.  **LTV/CAC Ratio:** Current LTV/CAC above 7.0x indicates a strong potential for profitable customer relationships, if churn is well managed and CAC remains stable.
+
+**Key Risks:**
+
+1.  **Security Vulnerabilities:** The identified security vulnerabilities, especially the prior JWT key rotation incident, are unacceptable and represent a critical threat to both DataPulse and our organization if unaddressed. Requires immediate and thorough remediation.
+2.  **Unproven Profitability:** Currently operating near breakeven, relying solely on high-growth assumptions that haven't been realized. The current expense structure is unsustainable, and a path to profitability must be clearly defined and achievable.
+3.  **Technical Debt & Scalability:** Accumulation of technical debt and potential scalability ceilings within their architecture. Requires near-term investment to ensure platform stability and growth capacity.
+
+**Valuation Assessment:** The $35M asking price is **NOT FAIR** given the identified risks and DataPulse's current financial performance.
+*   Recommended bid range: **$25M - $30M**. This is based on a conservative 5x-6x multiple of Year 1 Bear Case ARR.
+
+**Integration Considerations:**
+
+*   **Technical:** Immediate integration of DataPulse's security protocols with our existing infrastructure is paramount. Conduct comprehensive code review and address technical debt.
+*   **Cultural:** DataPulse is a younger company. Expect cultural differences, especially in security and formal processes. Implement structured onboarding and mentoring.
+*   **Operational:** Streamline operations to achieve cost synergies. Focus on shared services and consolidating redundant functions.
+
+**Deal Terms Suggestions:**
+
+*   **Earnout Structure:** Implement a substantial earnout component (up to 30% of the total revised consideration) tied to:
+    *   **Revenue Milestones:** Achieving aggressive Year 2 and Year 3 ARR targets (aligned with the Bull Case).
+    *   **Security Milestones:** Successful completion of a security audit and remediation of all identified vulnerabilities within the first 6 months post-acquisition.
+*   **Key Milestones:** Clearly define revenue growth targets, cost reduction targets, and security remediation timelines within the acquisition agreement.
+*   **Protections:** Include a significant holdback (10-15%) to cover potential liabilities related to security breaches or unresolved technical debt.
+
+**Post-Acquisition Roadmap:**
+
+*   **First 90 Days:**
+    *   Conduct immediate security audit and initiate remediation.
+    *   Integrate DataPulse's security infrastructure with our security tooling, and establish cross-company security collaboration.
+    *   Assess technical debt and create remediation plan.
+    *   Begin integration of sales and marketing teams.
+    *   Identify and implement immediate cost-saving opportunities.
+*   **6 Months:**
+    *   Complete security remediation.
+    *   Migrate DataPulse's platform to our infrastructure.
+    *   Launch integrated product offering.
+    *   Assess employee retention and address potential attrition risks.
+*   **12 Months:**
+    *   Achieve target revenue synergies.
+    *   Realize full cost synergies.
+    *   Complete integration of DataPulse into our organizational structure.
+    *   Monitor key performance indicators (KPIs) related to revenue growth, profitability, and customer satisfaction.
+
+
+  Waiting 8 seconds for indexing...
+
+======================================================================
+  POST-RUN: Reflection & Analysis
+======================================================================
+
+  reflect() — extracting lessons from resumed run...
+  Confidence: 0.949999988079071
+  Lessons extracted: 4
+    [observation] When explicit data is missing for financial modeling (e.g., new ARR growth, expansion ARR, churn rate, CAC, LTV), clearl...
+    [success   ] Clearly identify and prioritize key risks (e.g., security vulnerabilities, unproven profitability, technical debt) and t...
+    [success   ] The asking price for an acquisition should be justified by a valuation assessment that considers identified risks and cu...
+    [success   ] Integrate technical assessment findings (e.g., security vulnerabilities, technical debt) directly into the executive sum...
+  Summary: The agent successfully completed the financial modeling and executive report phases for the acquisition of DataPulse Analytics. Key lessons include the importance of making explicit assumptions and sc...
+
+  surface_strategies() — clustering patterns...
+  Found 5 strategies:
+    [18 lessons] Pattern around 'billing': 18 lessons share this theme. Example: When comparing subscription billing platforms, transpare...
+    [15 lessons] Pattern around 'b2b': 15 lessons share this theme. Example: When recommending solutions for a Series A B2B SaaS company,...
+    [10 lessons] Pattern around 'fraud': 10 lessons share this theme. Example: ## Final Recommendation: Payments and Billing Tech Stack
+
+...
+
+  memory_health() — Run 2 (resumed):
+  Entry counts: {
+    "checkpoint": 2,
+    "fact": 1,
+    "handoff": 1,
+    "lesson": 5,
+    "step_outcome": 2
+}
+  Total: 11
+  Section health:
+    Checkpoints           count=  2  confidence=1.00
+    Known Facts           count=  1  confidence=1.00
+    Lessons Learned       count=  5  confidence=1.00
+    Other                 count=  2  confidence=1.00
+    Task Handoffs         count=  1  confidence=1.00
+
+  archive() — reference: 696ce6d2-afdc-47fc-b29a-86684d1d822c
+  dereference() — verified (0 chars)
+
+  export_activity() — full timeline:
+    Exported 0 activity entries
+
+======================================================================
+  MUBIT APIs USED (31 unique)
+======================================================================
+
+  From discovery app (15):
+    remember()             — stored phase outputs as facts/lessons
+    recall()               — recovered completed phase outputs on resume
+    get_context()          — injected prior findings into agent prompts
+    checkpoint()           — snapshot after each phase + crash state
+    archive()              — archived executive report
+    dereference()          — verified archived report
+    register_agent()       — registered 6 specialist agents
+    list_agents()          — listed agent roster
+    handoff()              — inter-phase agent handoffs
+    feedback()             — verdict on handoff quality
+    record_outcome()       — final success reinforcement signal
+    reflect()              — extracted lessons from run
+    surface_strategies()   — clustered patterns
+    memory_health()        — pre/post crash health comparison
+    control.lessons()      — listed lessons for outcome recording
+
+  NEW APIs (16):
+    control.set_variable()         — tracked phase progress and crash state
+    control.get_variable()         — read state variables for recovery
+    control.list_variables()       — enumerated all state during crash detection
+    control.add_goal()             — created hierarchical goal tree (root + 6 phases)
+    control.update_goal()          — marked goals achieved/failed
+    control.list_goals()           — checked completion status during recovery
+    control.get_goal_tree()        — visualized goal hierarchy
+    control.record_step_outcome()  — per-phase process rewards (success/failure)
+    control.agent_heartbeat()      — agent liveness before/after each phase
+    control.link_run()             — linked crash run to resume run
+    control.append_activity()      — structured activity records per phase
+    control.list_activity()        — browsed crash timeline during recovery
+    control.export_activity()      — exported full activity timeline
+    control.submit_action()        — logged pipeline decisions
+    control.get_action_log()       — reviewed action history during recovery
+    control.context_snapshot()     — full run state snapshot for recovery
+    control.run_cycle()            — decision cycle before each phase
+    control.get_cycle_history()    — reviewed cycle history during recovery
+    control.define_concept()       — defined phase_output and crash_report schemas
+    control.list_concepts()        — listed defined concepts during recovery
+    diagnose()                     — analyzed crash error against failure patterns
+    
+======================================================================
+  Sessions: crash=resilience-crash-d49e1492  resume=resilience-resume-89bd266f
+======================================================================
