@@ -7,12 +7,14 @@ A StateGraph with 3 nodes reviews a code diff:
   - Summarizer: assembles findings into a final review
 
 MuBit store persists findings across steps and sessions.
+Run 1 reviews a SQL-injection sample; Run 2 reviews a secrets-in-code
+sample and benefits from findings stored during Run 1.
 
 Requirements:
     pip install -r requirements.txt
 
 Environment variables:
-    OPENAI_API_KEY   - OpenAI API key (required)
+    GOOGLE_API_KEY   - Google AI API key (falls back to GEMINI_API_KEY)
     MUBIT_ENDPOINT   - MuBit server URL (default: http://127.0.0.1:3000)
     MUBIT_API_KEY    - MuBit API key (default: empty for local dev)
 """
@@ -20,26 +22,20 @@ Environment variables:
 import json
 import logging
 import os
-import sys
+import time
 import uuid
 from typing import Annotated, TypedDict
 
 logger = logging.getLogger(__name__)
 
-# Add the SDK and integrations to the path for local development
-_REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-for p in [os.path.join(_REPO, "sdk", "python", "mubit-sdk", "src"), os.path.join(_REPO, "integrations", "python")]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import StateGraph, START, END
 from langgraph.store.base import PutOp, SearchOp
 
 from mubit_langgraph import MubitStore
 
 
-# -- Sample code diff to review --
+# -- Sample code diffs to review --
 
 SAMPLE_DIFF = '''
 def get_user_profile(user_id, db_connection):
@@ -68,6 +64,26 @@ def delete_user(user_id, db):
     db.commit()
 '''
 
+SAMPLE_DIFF_2 = '''
+import os
+
+DB_PASSWORD = "super_secret_123"
+API_SECRET = "sk-prod-abc123xyz"
+
+def authenticate(request):
+    token = request.headers.get("Authorization")
+    if token == API_SECRET:
+        return True
+    return False
+
+def get_config():
+    return {
+        "db_host": "prod-db.internal",
+        "db_password": DB_PASSWORD,
+        "debug": True,
+    }
+'''
+
 
 # -- State schema --
 
@@ -79,9 +95,8 @@ class ReviewState(TypedDict):
     final_review: str
 
 
-# -- Namespace for MuBit store --
-NAMESPACE = ("memories", "code-reviewer", "review-session")
-
+# -- Globals set per-run --
+NAMESPACE = None
 llm = None
 mubit_store = None
 
@@ -130,6 +145,19 @@ def planner_node(state: ReviewState) -> dict:
     for i, item in enumerate(checklist):
         print(f"  {i+1}. {item}")
 
+    # Record planner -> reviewer handoff
+    try:
+        store.handoff(
+            NAMESPACE,
+            from_agent_id="planner",
+            to_agent_id="reviewer",
+            content=f"Created {len(checklist)} review items.",
+            requested_action="review",
+        )
+        print("[Planner] Handoff to reviewer recorded.")
+    except Exception as e:
+        logger.debug("handoff note: %s", e)
+
     return {"checklist": checklist, "current_idx": 0, "findings": []}
 
 
@@ -175,6 +203,19 @@ def reviewer_node(state: ReviewState) -> dict:
 def summarizer_node(state: ReviewState) -> dict:
     """Assemble all findings into a final review."""
     store = mubit_store
+
+    # Record reviewer -> summarizer handoff
+    try:
+        store.handoff(
+            NAMESPACE,
+            from_agent_id="reviewer",
+            to_agent_id="summarizer",
+            content=f"Completed {len(state['findings'])} findings.",
+            requested_action="execute",
+        )
+        print("[Summarizer] Handoff from reviewer recorded.")
+    except Exception as e:
+        logger.debug("handoff note: %s", e)
 
     # Get assembled context from MuBit
     context = store.get_context(
@@ -225,26 +266,16 @@ def should_continue(state: ReviewState) -> str:
     return "summarizer"
 
 
-def main():
-    global llm
+def run_review(store: MubitStore, code_diff: str, label: str) -> None:
+    """Run the full review pipeline for a given code diff."""
+    global NAMESPACE
 
-    endpoint = os.environ.get("MUBIT_ENDPOINT", "http://127.0.0.1:3000")
-    api_key = os.environ.get("MUBIT_API_KEY") or os.environ.get("MUBIT_BOOTSTRAP_ADMIN_API_KEY", "")
-    openai_key = os.environ.get("OPENAI_API_KEY")
+    # Session-specific namespace so each run has its own memory lane,
+    # but SearchOp with namespace_prefix still finds cross-run data.
+    session_id = uuid.uuid4().hex[:8]
+    NAMESPACE = ("memories", "code-reviewer", f"review-{session_id}")
 
-    if not openai_key:
-        print("Error: OPENAI_API_KEY environment variable is required.")
-        sys.exit(1)
-
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.2)
-
-    global mubit_store
-
-    # --- Set up MuBit store ---
-    store = MubitStore(endpoint=endpoint, api_key=api_key)
-    mubit_store = store
-
-    # Register agents
+    # Register agents for this session
     for agent_id, role in [
         ("planner", "review-planner"),
         ("reviewer", "item-reviewer"),
@@ -252,7 +283,7 @@ def main():
     ]:
         store.register_agent(NAMESPACE, agent_id=agent_id, role=role)
 
-    # --- Build the graph ---
+    # Build the graph
     graph = StateGraph(ReviewState)
     graph.add_node("planner", planner_node)
     graph.add_node("reviewer", reviewer_node)
@@ -268,41 +299,51 @@ def main():
 
     compiled = graph.compile()
 
-    # --- Run the review ---
-    print(f"{'='*60}")
-    print("  Running Code Review Pipeline")
+    # Run the review
+    print(f"\n{'='*60}")
+    print(f"  {label}")
     print(f"{'='*60}")
 
     result = compiled.invoke(
-        {"code_diff": SAMPLE_DIFF.strip(), "checklist": [], "current_idx": 0, "findings": [], "final_review": ""},
+        {"code_diff": code_diff.strip(), "checklist": [], "current_idx": 0, "findings": [], "final_review": ""},
     )
 
-    # Record handoffs
-    try:
-        store.handoff(
-            NAMESPACE,
-            from_agent_id="planner",
-            to_agent_id="reviewer",
-            content=f"Created {len(result['checklist'])} review items.",
-            requested_action="review",
-        )
-        store.handoff(
-            NAMESPACE,
-            from_agent_id="reviewer",
-            to_agent_id="summarizer",
-            content=f"Completed {len(result['findings'])} findings.",
-            requested_action="execute",
-        )
-        print("Handoffs recorded.")
-    except Exception as e:
-        print(f"Handoff note: {e}")
-
-    # --- Print final review ---
+    # Print final review
     print(f"\n{'='*60}")
-    print("  Final Code Review")
+    print(f"  Final Code Review  ({label})")
     print(f"{'='*60}\n")
     print(result["final_review"])
     print()
+
+
+def main():
+    global llm, mubit_store
+
+    endpoint = os.environ.get("MUBIT_ENDPOINT", "http://127.0.0.1:3000")
+    api_key = os.environ.get("MUBIT_API_KEY") or os.environ.get("MUBIT_BOOTSTRAP_ADMIN_API_KEY", "")
+    google_key = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
+
+    if not google_key:
+        print("Error: GOOGLE_API_KEY (or GEMINI_API_KEY) environment variable is required.")
+        sys.exit(1)
+
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.2, google_api_key=google_key)
+
+    # Set up shared MuBit store
+    store = MubitStore(endpoint=endpoint, api_key=api_key)
+    mubit_store = store
+
+    # --- Run 1: SQL injection sample ---
+    run_review(store, SAMPLE_DIFF, "Run 1 — SQL Injection Review")
+
+    # Wait for MuBit ingestion so Run 2's SearchOp can find Run 1 findings
+    print(f"\n{'~'*60}")
+    print("  Waiting 8 seconds for MuBit ingestion before Run 2...")
+    print(f"{'~'*60}")
+    time.sleep(8)
+
+    # --- Run 2: Secrets-in-code sample ---
+    run_review(store, SAMPLE_DIFF_2, "Run 2 — Secrets in Code Review")
 
 
 if __name__ == "__main__":

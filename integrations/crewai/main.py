@@ -6,32 +6,28 @@ A three-agent crew that processes customer support tickets:
   - Researcher: queries MuBit memory for similar past tickets
   - Responder: drafts a customer-facing reply
 
-On re-runs, agents learn from previous triage outcomes via MuBit memory.
+Run 1 processes an initial ticket; Run 2 processes a second ticket and
+demonstrates how the Researcher agent discovers resolution patterns from
+Run 1 via MuBit memory.
 
 Requirements:
     pip install -r requirements.txt
 
 Environment variables:
-    OPENAI_API_KEY   - OpenAI API key (required)
+    GEMINI_API_KEY   - Google Gemini API key (required)
     MUBIT_ENDPOINT   - MuBit server URL (default: http://127.0.0.1:3000)
     MUBIT_API_KEY    - MuBit API key (default: empty for local dev)
 """
 
 import os
-import sys
+import time
 import uuid
 
-# Add the SDK and integrations to the path for local development
-_REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-for p in [os.path.join(_REPO, "sdk", "python", "mubit-sdk", "src"), os.path.join(_REPO, "integrations", "python")]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
-from crewai import Agent, Task, Crew, Process
+from crewai import Agent, Task, Crew, Process, LLM
 from mubit_crewai import MubitCrewMemory
 
 
-SAMPLE_TICKET = """
+SAMPLE_TICKET_1 = """
 Subject: Duplicate charge on Pro subscription - URGENT
 
 I've been charged twice for my Pro subscription this month. Order #38291.
@@ -47,36 +43,27 @@ I'm considering canceling my subscription if this keeps happening.
 - Sarah M., Pro Plan, Account #A-8842
 """
 
+SAMPLE_TICKET_2 = """
+Subject: Charged twice for Team Plan upgrade
 
-def main():
-    endpoint = os.environ.get("MUBIT_ENDPOINT", "http://127.0.0.1:3000")
-    api_key = os.environ.get("MUBIT_API_KEY") or os.environ.get("MUBIT_BOOTSTRAP_ADMIN_API_KEY", "")
-    openai_key = os.environ.get("OPENAI_API_KEY")
+I upgraded from Basic to Team Plan yesterday. My account shows the Team
+Plan is active but I was charged $99.99 twice (order #41058 and #41059).
+I only authorized one payment.
 
-    if not openai_key:
-        print("Error: OPENAI_API_KEY environment variable is required.")
-        sys.exit(1)
+Can you confirm which charge is the duplicate and process a refund?
 
-    session_id = f"triage-{uuid.uuid4().hex[:8]}"
-    print(f"Session ID: {session_id}")
+- James K., Team Plan, Account #A-11204
+"""
 
-    # --- Set up MuBit memory ---
-    memory = MubitCrewMemory(
-        endpoint=endpoint,
-        api_key=api_key,
-        session_id=session_id,
-        agent_id="crewai-triage",
-    )
 
-    # Register agents with MuBit for MAS coordination
-    for agent_def in [
-        {"agent_id": "classifier", "role": "ticket-classifier"},
-        {"agent_id": "researcher", "role": "solution-researcher"},
-        {"agent_id": "responder", "role": "response-drafter"},
-    ]:
-        memory.register_agent(**agent_def)
+LLM_MODEL = LLM(
+    model="gemini/gemini-2.0-flash",
+    api_key=os.environ.get("GEMINI_API_KEY"),
+)
 
-    # --- Define CrewAI Agents ---
+
+def _make_agents():
+    """Create the three triage agents."""
     classifier = Agent(
         role="Support Ticket Classifier",
         goal="Accurately classify support tickets by severity and category",
@@ -88,7 +75,7 @@ def main():
             "issues or cancellation threats."
         ),
         verbose=True,
-        llm="openai/gpt-4o-mini",
+        llm=LLM_MODEL,
     )
 
     researcher = Agent(
@@ -102,7 +89,7 @@ def main():
             "worked before."
         ),
         verbose=True,
-        llm="openai/gpt-4o-mini",
+        llm=LLM_MODEL,
     )
 
     responder = Agent(
@@ -116,10 +103,14 @@ def main():
             "and research findings to craft the best possible response."
         ),
         verbose=True,
-        llm="openai/gpt-4o-mini",
+        llm=LLM_MODEL,
     )
 
-    # --- Define Tasks ---
+    return classifier, researcher, responder
+
+
+def _make_tasks(classifier, researcher, responder):
+    """Create the sequential triage tasks."""
     classify_task = Task(
         description=(
             "Classify the following support ticket:\n\n"
@@ -175,7 +166,17 @@ def main():
         agent=responder,
     )
 
-    # --- Build and Run the Crew ---
+    return classify_task, research_task, respond_task
+
+
+def run_triage(ticket: str, ticket_label: str, memory: MubitCrewMemory):
+    """Run the triage crew on a single ticket and record post-run memory ops."""
+
+    classifier, researcher, responder = _make_agents()
+    classify_task, research_task, respond_task = _make_tasks(
+        classifier, researcher, responder,
+    )
+
     crew = Crew(
         agents=[classifier, researcher, responder],
         tasks=[classify_task, research_task, respond_task],
@@ -185,14 +186,14 @@ def main():
     )
 
     print(f"\n{'='*60}")
-    print("  Running Support Ticket Triage Crew")
+    print(f"  {ticket_label}: Running Support Ticket Triage Crew")
     print(f"{'='*60}\n")
 
-    result = crew.kickoff(inputs={"ticket": SAMPLE_TICKET.strip()})
+    result = crew.kickoff(inputs={"ticket": ticket.strip()})
 
     # --- Post-run MuBit operations ---
     print(f"\n{'='*60}")
-    print("  Post-Run: MuBit Memory Operations")
+    print(f"  {ticket_label}: Post-Run MuBit Memory Operations")
     print(f"{'='*60}\n")
 
     # Record handoffs
@@ -212,17 +213,17 @@ def main():
 
     # Checkpoint
     memory.checkpoint(
-        snapshot=f"Triage complete for ticket. Final response drafted.",
-        label="triage-complete",
+        snapshot=f"Triage complete for {ticket_label}. Final response drafted.",
+        label=f"triage-complete-{ticket_label.lower().replace(' ', '-')}",
     )
     print("Checkpoint created.")
 
     # Record outcome
     try:
         memory.record_outcome(
-            reference_id=session_id,
+            reference_id=f"{memory._session_id}-{ticket_label.lower().replace(' ', '-')}",
             outcome="success",
-            rationale="Ticket classified, researched, and response drafted successfully.",
+            rationale=f"{ticket_label}: Ticket classified, researched, and response drafted successfully.",
         )
         print("Outcome recorded.")
     except Exception as e:
@@ -237,10 +238,53 @@ def main():
 
     # --- Print final result ---
     print(f"\n{'='*60}")
-    print("  Final Customer Response")
+    print(f"  {ticket_label}: Final Customer Response")
     print(f"{'='*60}\n")
     print(result.raw if hasattr(result, "raw") else str(result))
     print()
+
+    return result
+
+
+def main():
+    endpoint = os.environ.get("MUBIT_ENDPOINT", "http://127.0.0.1:3000")
+    api_key = os.environ.get("MUBIT_API_KEY") or os.environ.get("MUBIT_BOOTSTRAP_ADMIN_API_KEY", "")
+    gemini_key = os.environ.get("GEMINI_API_KEY")
+
+    if not gemini_key:
+        print("Error: GEMINI_API_KEY environment variable is required.")
+        sys.exit(1)
+
+    session_id = f"triage-{uuid.uuid4().hex[:8]}"
+    print(f"Session ID: {session_id}")
+
+    # --- Set up MuBit memory (shared across both runs) ---
+    memory = MubitCrewMemory(
+        endpoint=endpoint,
+        api_key=api_key,
+        session_id=session_id,
+        agent_id="crewai-triage",
+    )
+
+    # Register agents with MuBit for MAS coordination
+    for agent_def in [
+        {"agent_id": "classifier", "role": "ticket-classifier"},
+        {"agent_id": "researcher", "role": "solution-researcher"},
+        {"agent_id": "responder", "role": "response-drafter"},
+    ]:
+        memory.register_agent(**agent_def)
+
+    # ── Run 1 ────────────────────────────────────────────────
+    run_triage(SAMPLE_TICKET_1, "Run 1", memory)
+
+    # Wait for MuBit ingestion so Run 2 can discover Run 1 patterns
+    print(f"\n{'='*60}")
+    print("  Waiting 8 seconds for MuBit ingestion before Run 2 ...")
+    print(f"{'='*60}\n")
+    time.sleep(8)
+
+    # ── Run 2 ────────────────────────────────────────────────
+    run_triage(SAMPLE_TICKET_2, "Run 2", memory)
 
 
 if __name__ == "__main__":

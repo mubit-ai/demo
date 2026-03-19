@@ -1,30 +1,26 @@
 """
-MuBit + LangChain Example: Conversational Research Assistant
+MuBit + LangChain Example: Incident Response Assistant
 
-A multi-turn conversational assistant that uses MuBit memory to persist
-context across sessions. Session 2 recalls facts learned in Session 1,
-demonstrating cross-session semantic memory.
+An on-call engineer's assistant that uses MuBit memory to persist
+context across sessions. Session 2 recalls resolutions from Session 1,
+demonstrating cross-session semantic memory for incident response.
 
 Requirements:
     pip install -r requirements.txt
 
 Environment variables:
-    OPENAI_API_KEY   - OpenAI API key (required)
+    GOOGLE_API_KEY   - Google / Gemini API key (required, falls back to GEMINI_API_KEY)
     MUBIT_ENDPOINT   - MuBit server URL (default: http://127.0.0.1:3000)
     MUBIT_API_KEY    - MuBit API key (default: empty for local dev)
 """
 
 import os
-import sys
+import time
 
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
-# Add the SDK and integrations to the path for local development
-_REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-for p in [os.path.join(_REPO, "sdk", "python", "mubit-sdk", "src"), os.path.join(_REPO, "integrations", "python")]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
+
 
 from mubit_langchain import MubitChatMemory
 
@@ -43,9 +39,10 @@ def run_session(llm, memory, questions, session_label):
         # Build message list
         messages = [
             SystemMessage(content=(
-                "You are a knowledgeable research assistant. Answer questions "
-                "thoroughly but concisely. When you have relevant context from "
-                "previous conversations, reference it naturally."
+                "You are an experienced SRE / incident response assistant. "
+                "Help on-call engineers diagnose and resolve production incidents. "
+                "When you have relevant context from previous incidents, "
+                "reference those resolutions to speed up diagnosis."
             )),
         ]
         if history:
@@ -67,49 +64,68 @@ def run_session(llm, memory, questions, session_label):
 def main():
     endpoint = os.environ.get("MUBIT_ENDPOINT", "http://127.0.0.1:3000")
     api_key = os.environ.get("MUBIT_API_KEY") or os.environ.get("MUBIT_BOOTSTRAP_ADMIN_API_KEY", "")
-    openai_key = os.environ.get("OPENAI_API_KEY")
+    google_key = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
 
-    if not openai_key:
-        print("Error: OPENAI_API_KEY environment variable is required.")
+    if not google_key:
+        print("Error: GOOGLE_API_KEY environment variable is required (falls back to GEMINI_API_KEY).")
         sys.exit(1)
 
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
+    os.environ["GOOGLE_API_KEY"] = google_key
 
-    # --- Session 1: Learn about the 2008 financial crisis ---
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
+
+    # --- Session 1: Redis connection timeout incident ---
     memory_s1 = MubitChatMemory(
         endpoint=endpoint,
         api_key=api_key,
-        session_id="research-financial-crisis-s1",
-        agent_id="research-assistant",
+        session_id="incident-redis-timeout-s1",
+        agent_id="incident-response-assistant",
         memory_key="history",
     )
 
     session1_questions = [
-        "What were the main causes of the 2008 financial crisis?",
-        "How did subprime mortgages contribute specifically?",
-        "What regulatory changes were made afterward, such as Dodd-Frank?",
+        (
+            "We're seeing Redis connection timeouts spiking. P95 latency is at "
+            "12 seconds and error rate is 15%. What should we check first?"
+        ),
+        (
+            "We checked and the connection pool was at max capacity — only 128 "
+            "connections configured but we have 200 worker threads. We increased "
+            "maxclients to 512 and the issue resolved."
+        ),
     ]
 
-    run_session(llm, memory_s1, session1_questions, "Session 1: Learning about the 2008 Financial Crisis")
+    run_session(llm, memory_s1, session1_questions, "Session 1: Redis Connection Timeout Incident")
 
-    # --- Session 2: New session, tests cross-session memory ---
+    # Wait for MuBit to ingest the session before starting the next one
+    print("\nWaiting 8 seconds for MuBit ingestion...")
+    time.sleep(8)
+
+    # --- Session 2: Similar incident, new session, tests cross-session memory ---
     memory_s2 = MubitChatMemory(
         endpoint=endpoint,
         api_key=api_key,
-        session_id="research-financial-crisis-s2",
-        agent_id="research-assistant",
+        session_id="incident-redis-pool-s2",
+        agent_id="incident-response-assistant",
         memory_key="history",
     )
 
     session2_questions = [
-        "What do we know about financial crisis prevention measures?",
-        "How effective has Dodd-Frank been at preventing another crisis?",
+        (
+            "Redis clients are failing to acquire connections from the pool. "
+            "Connection pool exhaustion errors in the logs. What's the likely cause?"
+        ),
+        (
+            "Based on your suggestion we checked and pool size was indeed the issue. "
+            "Increasing it from 64 to 256 fixed it."
+        ),
     ]
 
     run_session(llm, memory_s2, session2_questions, "Session 2: Cross-Session Memory (new session, same MuBit instance)")
 
     print(f"\n{'='*60}")
-    print("  Done! Session 2 responses should reference facts from Session 1.")
+    print("  Done! Session 2's first response should reference the")
+    print("  connection pool resolution from Session 1.")
     print(f"{'='*60}\n")
 
 

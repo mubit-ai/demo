@@ -12,8 +12,15 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-langgraph = ["langgraph>=0.2", "langchain-openai>=0.1"]
-crewai = ["crewai>=0.80"]
-langchain = ["langchain>=0.3", "langchain-openai>=0.1"]
-adk = ["google-adk>=0.3"]
-all = ["langgraph>=0.2", "langchain-openai>=0.1", "crewai>=0.80", "langchain>=0.3", "google-adk>=0.3"]
+langgraph = ["mubit-langgraph>=0.1", "langchain-google-genai>=2.0"]
+crewai = ["mubit-crewai>=0.1"]
+langchain = ["mubit-langchain>=0.1", "langchain-google-genai>=2.0"]
+adk = ["mubit-adk>=0.1", "google-adk>=0.3"]
+all = [
+    "mubit-langgraph>=0.1",
+    "mubit-crewai>=0.1",
+    "mubit-langchain>=0.1",
+    "mubit-adk>=0.1",
+    "langchain-google-genai>=2.0",
+    "google-adk>=0.3",
+]

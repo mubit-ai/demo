@@ -1,4 +1,4 @@
-.PHONY: install install-all preseed learn learn-notebook agents agents-notebook langgraph crewai langchain adk help
+.PHONY: install install-all preseed learn learn-notebook agents agents-notebook langgraph crewai langchain adk discovery help
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*##"}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -39,3 +39,6 @@ langchain: ## Run LangChain research assistant example
 
 adk: ## Run Google ADK travel planner example
 	cd integrations/adk && uv run python main.py
+
+discovery: ## Run software discovery app (multi-agent + web search + Mubit)
+	PYTHONPATH=apps uv run python -m discovery
