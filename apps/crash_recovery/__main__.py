@@ -1,4 +1,4 @@
-"""Entry point: python -m resilience
+"""Entry point: python -m crash_recovery
 
 Demonstrates crash recovery and mid-run resumption via Mubit memory.
 Run 1 crashes after Phase 3 → Run 2 detects, restores, and resumes from Phase 4.
@@ -39,15 +39,21 @@ def _safe(fn, label=""):
         return fn()
     except Exception as e:
         if label:
-            print(f"  {label}: {e}")
+            msg = str(e)
+            # Truncate verbose connection errors for clean output
+            if "Max retries exceeded" in msg or "Connection refused" in msg:
+                msg = "Mubit API temporarily unavailable"
+            elif len(msg) > 120:
+                msg = msg[:117] + "..."
+            print(f"  {label}: {msg}")
         return None
 
 
 def main():
     _check_env()
 
-    crash_session = f"resilience-crash-{uuid.uuid4().hex[:8]}"
-    resume_session = f"resilience-resume-{uuid.uuid4().hex[:8]}"
+    crash_session = f"recovery-crash-{uuid.uuid4().hex[:8]}"
+    resume_session = f"recovery-resume-{uuid.uuid4().hex[:8]}"
     crash_after = config.CRASH_AFTER_PHASE
 
     print(f"{'='*70}")

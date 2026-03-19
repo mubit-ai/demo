@@ -33,7 +33,12 @@ def _safe(fn, label=""):
         return fn()
     except Exception as e:
         if label:
-            print(f"    {label}: {e}")
+            msg = str(e)
+            if "Max retries exceeded" in msg or "Connection refused" in msg:
+                msg = "Mubit API temporarily unavailable"
+            elif len(msg) > 120:
+                msg = msg[:117] + "..."
+            print(f"    {label}: {msg}")
         return None
 
 
@@ -75,7 +80,7 @@ class RecoveryManager:
             all_goals = _safe(lambda: self.memory.list_goals(), "list_goals") or []
             if all_goals:
                 for g in all_goals:
-                    status = g.get("status", "")
+                    status = g.get("status", "").lower()
                     if status in ("achieved", "completed"):
                         report.completed_goals.append(g)
                     else:
@@ -98,9 +103,15 @@ class RecoveryManager:
                                "list_activity") or []
             report.activity_count = len(activities)
             for a in activities[:5]:
-                agent = a.get("agent_id", "?")
-                atype = a.get("type", a.get("activity_type", "?"))
-                print(f"    [{agent}] {atype}")
+                # Handle various API response field names
+                agent = (a.get("agent_id") or a.get("agent")
+                         or a.get("source") or "?")
+                atype = (a.get("entry_type") or a.get("type")
+                         or a.get("activity_type") or a.get("intent") or "?")
+                content = (a.get("content") or a.get("payload")
+                           or a.get("context_snapshot") or "")
+                preview = content[:60].replace("\n", " ") if content else ""
+                print(f"    [{agent}] {atype}: {preview}")
             if len(activities) > 5:
                 print(f"    ... ({len(activities) - 5} more entries)")
 
@@ -185,7 +196,7 @@ class RecoveryManager:
                 resume_from = i
                 break
 
-        # Recover prior outputs via recall()
+        # Recover prior outputs via get_context() per phase (higher fidelity than recall)
         prior_outputs = {}
         original_session = self.memory.session_id
         self.memory.set_session(crash_session_id)
@@ -195,13 +206,22 @@ class RecoveryManager:
                 if not phase:
                     continue
                 print(f"  Recovering output: {phase.display_name}...")
+                # Use get_context with high token budget for fuller recovery
                 result = _safe(
-                    lambda p=phase: self.memory.recall_prior(
-                        f"{p.display_name} findings analysis output",
-                        entry_types=["fact", "lesson"],
-                        limit=1,
-                    ), f"recall({phase_key})"
+                    lambda p=phase: self.memory.get_context(
+                        f"{p.display_name} analysis findings",
+                        max_tokens=2000,
+                    ), f"get_context({phase_key})"
                 )
+                if not result:
+                    # Fallback to recall
+                    result = _safe(
+                        lambda p=phase: self.memory.recall_prior(
+                            f"{p.display_name} findings analysis output",
+                            entry_types=["fact"],
+                            limit=3,
+                        ), f"recall({phase_key})"
+                    )
                 if result:
                     prior_outputs[phase_key] = result
                     print(f"    Recovered {len(result)} chars")

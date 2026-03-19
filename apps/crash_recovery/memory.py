@@ -41,7 +41,7 @@ class Memory:
             return ""
         lines = []
         for e in evidence:
-            lines.append(f"[{e.get('entry_type')}] {e.get('content', '')[:300]}")
+            lines.append(f"[{e.get('entry_type')}] {e.get('content', '')[:2000]}")
         return "\n".join(lines)
 
     def get_context(self, query: str, max_tokens: int = 1200) -> str:
@@ -408,13 +408,18 @@ class Memory:
 
     def print_goal_tree(self, tree: dict):
         def _walk(node, indent=0):
-            desc = node.get("description", "")[:60]
+            desc = (node.get("description") or node.get("goal_description")
+                    or node.get("name") or "")[:60]
             status = node.get("status", "?")
-            print(f"    {'  ' * indent}[{status}] {desc}")
-            for child in node.get("children", []):
+            goal_id = node.get("goal_id", node.get("id", ""))
+            if desc:
+                print(f"    {'  ' * indent}[{status}] {desc}")
+            for child in node.get("children", node.get("sub_goals", [])):
                 _walk(child, indent + 1)
         if "root" in tree:
             _walk(tree["root"])
+        elif "tree" in tree:
+            _walk(tree["tree"])
         elif "goals" in tree:
             for g in tree["goals"]:
                 _walk(g)

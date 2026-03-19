@@ -13,7 +13,12 @@ def _safe(fn, label=""):
         return fn()
     except Exception as e:
         if label:
-            print(f"  {label}: {e}")
+            msg = str(e)
+            if "Max retries exceeded" in msg or "Connection refused" in msg:
+                msg = "Mubit API temporarily unavailable"
+            elif len(msg) > 120:
+                msg = msg[:117] + "..."
+            print(f"  {label}: {msg}")
         return None
 
 
@@ -178,15 +183,21 @@ class DueDiligencePipeline:
             phase.key, goal_id, output[:200],
         ), "state.complete_phase")
 
-        # 12. Handoff to next phase
+        # 12. Handoff to next phase + feedback
         if phase_idx < len(self.phases) - 1:
             next_phase = self.phases[phase_idx + 1]
             next_agent = self._agents[next_phase.key]
-            _safe(lambda: self.memory.store_handoff(
+            handoff_id = _safe(lambda: self.memory.store_handoff(
                 agent.name, next_agent.name,
                 f"Phase {phase_num} ({phase.display_name}) complete. "
                 f"Handing off to Phase {phase_num + 1} ({next_phase.display_name}).",
             ), "handoff")
+            if handoff_id:
+                _safe(lambda: self.memory.store_feedback(
+                    handoff_id, "approve",
+                    f"{next_agent.name} accepts handoff from {agent.name}. "
+                    f"Prior phase output is comprehensive.",
+                ), "feedback")
 
         # 13. Agent heartbeat (idle)
         _safe(lambda: self.memory.agent_heartbeat(agent.name, "idle"),
