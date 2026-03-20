@@ -1,0 +1,4 @@
+agno>=1.0
+mubit-agno>=0.1.0
+mubit-sdk>=0.1.0
+openai>=1.0
