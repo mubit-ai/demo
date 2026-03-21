@@ -239,9 +239,9 @@ def act4_learning(client):
         session_id=SESSION,
         query="How should I implement token rotation for the auth service?",
         agent_id="developer",
-        entry_types=["fact", "rule", "lesson", "feedback"],
+        entry_types=["mental_model", "fact", "rule", "lesson", "feedback"],
         mode="sections",
-        sections=["facts", "lessons", "feedback"],
+        sections=["mental_models", "facts", "lessons", "feedback"],
         max_token_budget=800,
     )
     context_block = context.get("context_block", "")
@@ -294,6 +294,21 @@ def act4_learning(client):
         )
         assert outcome.get("success"), f"record_outcome failed: {outcome}"
         print("  Outcome recorded — lesson confidence updated")
+
+    # Store a mental model consolidating the key finding
+    client.remember(
+        session_id=SESSION,
+        agent_id="planner",
+        content=(
+            "Token rotation for auth services MUST invalidate the Redis cache before "
+            "rotating the signing key. Failure to do so causes stale tokens to be served "
+            "for up to 5 minutes. Always run integration tests after modifying auth."
+        ),
+        intent="mental_model",
+        importance="critical",
+        metadata={"task": "SPRINT-42", "consolidated": True},
+    )
+    print("  Stored mental model: consolidated lesson from failure + recovery")
 
     # Reviewer evaluates attempt 2
     print("\n--- Reviewer evaluates attempt 2 ---")

@@ -190,6 +190,7 @@ def reviewer_node(state: ReviewState) -> dict:
             "text": finding,
             "intent": "lesson",
             "metadata": {"review_item": item, "index": idx},
+            "occurrence_time": int(time.time()),
         },
     )])
 
@@ -217,11 +218,12 @@ def summarizer_node(state: ReviewState) -> dict:
     except Exception as e:
         logger.debug("handoff note: %s", e)
 
-    # Get assembled context from MuBit
+    # Get assembled context from MuBit (including mental_model entries)
     context = store.get_context(
         NAMESPACE,
         query="code review findings security vulnerabilities",
         max_token_budget=4096,
+        entry_types=["mental_model", "fact", "lesson", "rule", "feedback"],
     )
     mubit_context = context.get("context_block", "")
 
@@ -253,6 +255,21 @@ def summarizer_node(state: ReviewState) -> dict:
         )
     except Exception as e:
         logger.debug("record_outcome note: %s", e)
+
+    # Store a mental model summarizing key review patterns
+    try:
+        store.batch([PutOp(
+            namespace=NAMESPACE,
+            key=f"mental-model-{uuid.uuid4().hex[:6]}",
+            value={
+                "text": f"Code review summary: {response.content[:500]}",
+                "intent": "mental_model",
+                "importance": "critical",
+                "metadata": {"consolidated": True},
+            },
+        )])
+    except Exception as e:
+        logger.debug("mental model store note: %s", e)
 
     print(f"\n[Summarizer] Final review assembled.")
 

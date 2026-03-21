@@ -37,6 +37,7 @@ class Memory:
         content = args.get("content", "")
         intent = args.get("intent", "fact")
         importance = args.get("importance", "medium")
+        occurrence_time = args.get("occurrence_time")
         self.client.remember(
             session_id=self.session_id,
             agent_id="orchestrator",
@@ -44,19 +45,44 @@ class Memory:
             intent=intent,
             importance=importance,
             metadata={"source": "orchestrator", "session": self.session_id},
+            occurrence_time=occurrence_time,
         )
         return f"Stored in memory as {intent} (importance: {importance})"
 
+    def _tool_store_mental_model(self, args: dict) -> str:
+        content = args.get("content", "")
+        entity = args.get("entity", "unknown")
+        self.client.remember(
+            session_id=self.session_id,
+            agent_id="orchestrator",
+            content=content[:3000],
+            intent="mental_model",
+            importance="critical",
+            metadata={
+                "source": "orchestrator",
+                "entity": entity,
+                "consolidated": True,
+                "session": self.session_id,
+            },
+        )
+        return f"Stored mental model for entity '{entity}' (importance: critical)"
+
     def _tool_recall_memory(self, args: dict) -> str:
         query = args.get("query", "")
-        types_str = args.get("types", "fact,lesson,rule")
+        types_str = args.get("types", "mental_model,fact,lesson,rule")
         entry_types = [t.strip() for t in types_str.split(",") if t.strip()]
+        min_timestamp = args.get("min_timestamp")
+        max_timestamp = args.get("max_timestamp")
+        budget = args.get("budget")
         result = self.client.recall(
             session_id=self.session_id,
             query=query,
             entry_types=entry_types,
             limit=5,
             include_linked_runs=True,
+            min_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
+            budget=budget,
         )
         evidence = result.get("evidence", [])
         if not evidence:
@@ -66,7 +92,8 @@ class Memory:
             etype = e.get("entry_type", "?")
             content = e.get("content", "")[:500]
             score = e.get("score", 0)
-            lines.append(f"[{etype}, relevance={score:.2f}] {content}")
+            stale_marker = " [STALE]" if e.get("is_stale") else ""
+            lines.append(f"[{etype}, relevance={score:.2f}]{stale_marker} {content}")
         return "\n\n".join(lines)
 
     def _tool_get_assembled_context(self, args: dict) -> str:
@@ -75,7 +102,7 @@ class Memory:
         result = self.client.get_context(
             session_id=self.session_id,
             query=query,
-            entry_types=["fact", "lesson", "rule", "feedback"],
+            entry_types=["mental_model", "fact", "lesson", "rule", "feedback"],
             max_token_budget=max_tokens,
         )
         block = result.get("context_block", "")

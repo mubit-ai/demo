@@ -20,7 +20,7 @@ class Memory:
     # ── Core memory operations ───────────────────────────────────────────
 
     def store_finding(self, agent_name: str, content: str, intent: str = "fact",
-                      importance: str = "medium"):
+                      importance: str = "medium", occurrence_time: int | None = None):
         """remember() — store an agent's output."""
         self.client.remember(
             session_id=self.session_id,
@@ -29,23 +29,45 @@ class Memory:
             intent=intent,
             importance=importance,
             metadata={"agent": agent_name, "session": self.session_id},
+            occurrence_time=occurrence_time,
+        )
+
+    def store_mental_model(self, agent_name: str, content: str, entity: str):
+        """remember() — store a curated mental model summary (highest retrieval priority)."""
+        self.client.remember(
+            session_id=self.session_id,
+            agent_id=agent_name,
+            content=content[:3000],
+            intent="mental_model",
+            importance="critical",
+            metadata={
+                "agent": agent_name,
+                "entity": entity,
+                "consolidated": True,
+                "session": self.session_id,
+            },
         )
 
     def recall_prior(self, query: str, entry_types: list[str] | None = None,
-                     limit: int = 5) -> str:
+                     limit: int = 5, min_timestamp: int | None = None,
+                     max_timestamp: int | None = None, budget: str | None = None) -> str:
         """recall() — search for prior research. Returns formatted context."""
         result = self.client.recall(
             session_id=self.session_id,
             query=query,
-            entry_types=entry_types or ["fact", "lesson"],
+            entry_types=entry_types or ["fact", "lesson", "mental_model"],
             limit=limit,
+            min_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
+            budget=budget,
         )
         evidence = result.get("evidence", [])
         if not evidence:
             return ""
         lines = []
         for e in evidence:
-            lines.append(f"[{e.get('entry_type')}] {e.get('content', '')[:200]}")
+            stale_marker = " [STALE]" if e.get("is_stale") else ""
+            lines.append(f"[{e.get('entry_type')}]{stale_marker} {e.get('content', '')[:200]}")
         return "\n".join(lines)
 
     def get_context(self, query: str, max_tokens: int = 800) -> str:
@@ -53,7 +75,7 @@ class Memory:
         result = self.client.get_context(
             session_id=self.session_id,
             query=query,
-            entry_types=["fact", "lesson", "rule", "feedback"],
+            entry_types=["mental_model", "fact", "lesson", "rule", "feedback"],
             max_token_budget=max_tokens,
         )
         return result.get("context_block", "")
