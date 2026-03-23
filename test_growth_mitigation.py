@@ -125,10 +125,10 @@ def test_prometheus_storage_metrics():
 
     metrics = get_metrics()
 
-    check("mubit_rocksdb_compaction_pending" in metrics, "RocksDB compaction_pending metric exists")
-    check("mubit_rocksdb_write_stall_active" in metrics, "RocksDB write_stall_active metric exists")
-    check("mubit_rocksdb_immutable_memtables" in metrics, "RocksDB immutable_memtables metric exists")
-    check("mubit_rocksdb_live_sst_bytes" in metrics, "RocksDB live_sst_bytes metric exists")
+    check("mubit_storage_compaction_pending" in metrics, "Storage compaction_pending metric exists")
+    check("mubit_storage_write_stall" in metrics, "Storage write_stall metric exists")
+    check("mubit_storage_pending_flushes" in metrics, "Storage pending_flushes metric exists")
+    check("mubit_storage_data_bytes" in metrics, "Storage data_bytes metric exists")
     check("mubit_disk_total_bytes" in metrics, "Disk total_bytes metric exists")
     check("mubit_disk_used_bytes" in metrics, "Disk used_bytes metric exists")
     check("mubit_disk_usage_pct" in metrics, "Disk usage_pct metric exists")
