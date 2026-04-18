@@ -278,7 +278,7 @@ def act4_learning(client):
     print("\n  Stored attempt 2 trace in Mubit")
 
     # Record outcome against the failure lesson
-    lessons = client.control.lessons({"run_id": SESSION, "limit": 10})
+    lessons = client.lessons({"run_id": SESSION, "limit": 10})
     failure_lesson = next(
         (l for l in lessons.get("lessons", []) if l.get("lesson_type") == "failure"),
         None,

@@ -149,7 +149,7 @@ class Memory:
             lesson_importance="high",
         )
         try:
-            lessons = self.client.control.lessons({"run_id": self.session_id, "limit": 5})
+            lessons = self.client.lessons({"run_id": self.session_id, "limit": 5})
             lesson_list = lessons.get("lessons", [])
             if lesson_list:
                 self.client.record_outcome(
@@ -164,7 +164,7 @@ class Memory:
     def reflect(self, include_step_outcomes: bool = False) -> dict:
         """reflect()"""
         payload = {"run_id": self.session_id, "include_step_outcomes": include_step_outcomes}
-        return self.client.control.reflect(payload)
+        return self.client.reflect(payload)
 
     def strategies(self) -> dict:
         """surface_strategies()"""
@@ -178,7 +178,7 @@ class Memory:
 
     def set_variable(self, name: str, value, source: str = "pipeline"):
         """control.set_variable() — store a state variable."""
-        self.client.control.set_variable({
+        self.client.set_variable({
             "run_id": self.session_id,
             "name": name,
             "value_json": json.dumps(value),
@@ -187,7 +187,7 @@ class Memory:
 
     def get_variable(self, name: str):
         """control.get_variable() — read a state variable."""
-        result = self.client.control.get_variable({
+        result = self.client.get_variable({
             "run_id": self.session_id,
             "name": name,
         })
@@ -201,7 +201,7 @@ class Memory:
 
     def list_variables(self) -> dict:
         """control.list_variables() — enumerate all state."""
-        result = self.client.control.list_variables({"run_id": self.session_id})
+        result = self.client.list_variables({"run_id": self.session_id})
         variables = {}
         for v in result.get("variables", []):
             name = v.get("name", "")
@@ -216,7 +216,7 @@ class Memory:
 
     def delete_variable(self, name: str):
         """control.delete_variable()"""
-        self.client.control.delete_variable({
+        self.client.delete_variable({
             "run_id": self.session_id,
             "name": name,
         })
@@ -233,12 +233,12 @@ class Memory:
         }
         if parent_goal_id:
             payload["parent_goal_id"] = parent_goal_id
-        result = self.client.control.add_goal(payload)
+        result = self.client.add_goal(payload)
         return result.get("goal_id", result.get("id"))
 
     def update_goal(self, goal_id: str, status: str):
         """control.update_goal() — mark goal achieved/failed/pending."""
-        self.client.control.update_goal({
+        self.client.update_goal({
             "run_id": self.session_id,
             "goal_id": goal_id,
             "status": status,
@@ -249,7 +249,7 @@ class Memory:
         payload = {"run_id": self.session_id}
         if status_filter:
             payload["status_filter"] = status_filter
-        result = self.client.control.list_goals(payload)
+        result = self.client.list_goals(payload)
         return result.get("goals", [])
 
     def get_goal_tree(self, root_goal_id: str | None = None) -> dict:
@@ -257,13 +257,13 @@ class Memory:
         payload = {"run_id": self.session_id}
         if root_goal_id:
             payload["root_goal_id"] = root_goal_id
-        return self.client.control.get_goal_tree(payload)
+        return self.client.get_goal_tree(payload)
 
     # ── NEW: Actions & decisions ─────────────────────────────────────────
 
     def submit_action(self, agent_id: str, action_type: str, action_data: dict):
         """control.submit_action() — log a pipeline decision."""
-        self.client.control.submit_action({
+        self.client.submit_action({
             "run_id": self.session_id,
             "agent_id": agent_id,
             "action_type": action_type,
@@ -272,7 +272,7 @@ class Memory:
 
     def get_action_log(self, limit: int = 10) -> list:
         """control.get_action_log()"""
-        result = self.client.control.get_action_log({
+        result = self.client.get_action_log({
             "run_id": self.session_id,
             "limit": limit,
         })
@@ -280,14 +280,14 @@ class Memory:
 
     def run_cycle(self, agent_id: str) -> dict:
         """control.run_cycle() — execute a decision cycle."""
-        return self.client.control.run_cycle({
+        return self.client.run_cycle({
             "run_id": self.session_id,
             "agent_id": agent_id,
         })
 
     def get_cycle_history(self, limit: int = 5) -> list:
         """control.get_cycle_history()"""
-        result = self.client.control.get_cycle_history({
+        result = self.client.get_cycle_history({
             "run_id": self.session_id,
             "limit": limit,
         })
@@ -298,7 +298,7 @@ class Memory:
     def record_step_outcome(self, step_id: str, step_name: str, outcome: str,
                             signal: float, rationale: str, agent_id: str = "pipeline"):
         """control.record_step_outcome() — per-phase process reward."""
-        self.client.control.record_step_outcome({
+        self.client.record_step_outcome({
             "run_id": self.session_id,
             "step_id": step_id,
             "step_name": step_name,
@@ -312,7 +312,7 @@ class Memory:
 
     def agent_heartbeat(self, agent_id: str, status: str = "active"):
         """control.agent_heartbeat() — agent liveness signal."""
-        self.client.control.agent_heartbeat({
+        self.client.agent_heartbeat({
             "run_id": self.session_id,
             "agent_id": agent_id,
             "status": status,
@@ -322,7 +322,7 @@ class Memory:
 
     def append_activity(self, agent_id: str, activity_type: str, payload: dict):
         """control.append_activity() — structured activity record."""
-        self.client.control.append_activity({
+        self.client.append_activity({
             "run_id": self.session_id,
             "agent_id": agent_id,
             "activity": {
@@ -334,7 +334,7 @@ class Memory:
 
     def list_activity(self, limit: int = 20) -> list:
         """control.list_activity()"""
-        result = self.client.control.list_activity({
+        result = self.client.list_activity({
             "run_id": self.session_id,
             "limit": limit,
             "sort": "desc",
@@ -343,7 +343,7 @@ class Memory:
 
     def export_activity(self) -> dict:
         """control.export_activity()"""
-        return self.client.control.export_activity({
+        return self.client.export_activity({
             "run_id": self.session_id,
         })
 
@@ -351,14 +351,14 @@ class Memory:
 
     def link_run(self, linked_run_id: str):
         """control.link_run() — link crash run to resume run."""
-        self.client.control.link_run({
+        self.client.link_run({
             "run_id": self.session_id,
             "linked_run_id": linked_run_id,
         })
 
     def get_run_snapshot(self, timeline_limit: int = 20) -> dict:
         """control.context_snapshot() — full run state snapshot."""
-        return self.client.control.context_snapshot({
+        return self.client.context_snapshot({
             "run_id": self.session_id,
             "timeline_limit": timeline_limit,
         })
@@ -367,7 +367,7 @@ class Memory:
 
     def define_concept(self, name: str, schema: dict):
         """control.define_concept() — define a typed schema."""
-        self.client.control.define_concept({
+        self.client.define_concept({
             "run_id": self.session_id,
             "name": name,
             "schema_json": json.dumps(schema),
@@ -375,7 +375,7 @@ class Memory:
 
     def list_concepts(self) -> list:
         """control.list_concepts()"""
-        result = self.client.control.list_concepts({"run_id": self.session_id})
+        result = self.client.list_concepts({"run_id": self.session_id})
         return result.get("concepts", [])
 
     # ── NEW: Diagnostics ─────────────────────────────────────────────────

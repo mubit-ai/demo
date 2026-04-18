@@ -124,7 +124,7 @@ class Memory:
     def _tool_set_goal(self, args: dict) -> str:
         description = args.get("description", "")
         priority = args.get("priority", "high")
-        result = self.client.control.add_goal({
+        result = self.client.add_goal({
             "run_id": self.session_id,
             "description": description,
             "priority": priority,
@@ -135,7 +135,7 @@ class Memory:
     def _tool_update_goal(self, args: dict) -> str:
         goal_id = args.get("goal_id", "")
         status = args.get("status", "achieved")
-        self.client.control.update_goal({
+        self.client.update_goal({
             "run_id": self.session_id,
             "goal_id": goal_id,
             "status": status,

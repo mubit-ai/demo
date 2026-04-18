@@ -147,7 +147,7 @@ class Memory:
             lesson_importance="high",
         )
         try:
-            lessons = self.client.control.lessons({"run_id": self.session_id, "limit": 5})
+            lessons = self.client.lessons({"run_id": self.session_id, "limit": 5})
             lesson_list = lessons.get("lessons", [])
             if lesson_list:
                 self.client.record_outcome(

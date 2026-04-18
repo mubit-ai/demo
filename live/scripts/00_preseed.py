@@ -38,7 +38,7 @@ def main():
     # 3. Clean slate — delete any previous demo session
     print("2. Cleaning previous demo session...")
     try:
-        client.control.delete_run({"run_id": SESSION})
+        client.delete_run({"run_id": SESSION})
         print("   Deleted previous session.")
     except Exception:
         print("   No previous session to delete (clean start).")
@@ -66,7 +66,7 @@ def main():
 
     # Clean up warmup data
     try:
-        client.control.delete_run({"run_id": warmup_session})
+        client.delete_run({"run_id": warmup_session})
     except Exception:
         pass
 
