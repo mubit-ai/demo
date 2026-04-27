@@ -28,9 +28,10 @@ import os
 from google.adk.agents import LlmAgent, SequentialAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
+from google.adk.tools.preload_memory_tool import PreloadMemoryTool
 from google.genai import types as genai_types
 
-from mubit_adk import MubitMemoryService
+from mubit_adk import MubitMemoryService, make_session_memory_callback
 
 
 # -- Tool functions (realistic static data) --
@@ -224,6 +225,7 @@ async def main():
 
     # --- Set up MuBit memory service ---
     mubit_memory = MubitMemoryService(endpoint=endpoint, api_key=api_key)
+    session_memory_callback = make_session_memory_callback(mubit_memory)
 
     # --- Define ADK Agents ---
     flight_finder = LlmAgent(
@@ -236,7 +238,8 @@ async def main():
             "options and recommend the best one based on price, schedule, and "
             "convenience. Present your recommendation clearly."
         ),
-        tools=[search_flights],
+        tools=[PreloadMemoryTool(), search_flights],
+        after_agent_callback=session_memory_callback,
         output_key="flight_results",
     )
 
@@ -250,7 +253,8 @@ async def main():
             "Consider the traveler's needs, budget, and location preferences. "
             "Recommend the best option with reasoning."
         ),
-        tools=[search_hotels],
+        tools=[PreloadMemoryTool(), search_hotels],
+        after_agent_callback=session_memory_callback,
         output_key="hotel_results",
     )
 
@@ -269,6 +273,8 @@ async def main():
             "5. Estimated daily budget\n"
             "6. Practical tips (transit passes, cultural notes, etc.)"
         ),
+        tools=[PreloadMemoryTool()],
+        after_agent_callback=session_memory_callback,
         output_key="final_itinerary",
     )
 

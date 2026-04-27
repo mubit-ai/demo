@@ -21,8 +21,9 @@ A multi-agent travel planner using ADK's `SequentialAgent` orchestration with Mu
 
 ## MuBit APIs exercised
 
-- `MubitMemoryService.add_session_to_memory()` — automatic via ADK Runner
-- `MubitMemoryService.search_memory()` — automatic via ADK Runner
+- `PreloadMemoryTool()` — recalls MuBit memory before each model turn
+- `make_session_memory_callback()` — ingests ADK sessions after agent runs
+- `MubitMemoryService.search_memory()` — queried by ADK memory tools
 - `mubit_memory.register_agent()` — registers all 3 specialized agents
 - `mubit_memory.checkpoint()` — snapshots state after planning completes
 - `mubit_memory.record_outcome()` — records planning success/failure

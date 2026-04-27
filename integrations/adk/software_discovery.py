@@ -11,12 +11,12 @@ tools, pricing, and features. Mubit stores findings across runs — Run 2
 recalls research from Run 1 to produce better recommendations.
 
 Mubit integration via mubit-adk (MubitMemoryService) for:
-  - ADK Runner memory hooks (automatic session ingestion + search)
+  - ADK PreloadMemoryTool recall and session-ingestion callbacks
   - register_agent, handoff, feedback, checkpoint, record_outcome
   - archive, dereference, surface_strategies, get_context, memory_health
 
 Plus mubit-sdk (Client) for APIs not yet on the ADK adapter:
-  - remember, recall, reflect, control.lessons
+  - remember, recall, reflect, lessons
 
 Environment variables:
     GOOGLE_API_KEY   - Google/Gemini API key (required)
@@ -34,15 +34,17 @@ from google.adk.agents import LlmAgent, SequentialAgent, ParallelAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.tools import google_search
+from google.adk.tools.preload_memory_tool import PreloadMemoryTool
 from google.genai import types as genai_types
 
 import mubit
-from mubit_adk import MubitMemoryService
+from mubit_adk import MubitMemoryService, make_session_memory_callback
 
 
 APP_NAME = "software-discovery"
 USER_ID = "demo-user"
 MODEL = "gemini-2.0-flash"
+SESSION_MEMORY_CALLBACK = make_session_memory_callback()
 
 
 # ── Agent Definitions ─────────────────────────────────────────────────────
@@ -59,6 +61,8 @@ coordinator = LlmAgent(
         "budget constraints, and integration requirements.\n\n"
         "Output a clear, structured plan that downstream researchers can follow."
     ),
+    tools=[PreloadMemoryTool()],
+    after_agent_callback=SESSION_MEMORY_CALLBACK,
     output_key="research_plan",
 )
 
@@ -77,7 +81,8 @@ payments_researcher = LlmAgent(
         "- Notable customers or case studies\n\n"
         "Use real, current data from the web. Be specific with pricing numbers."
     ),
-    tools=[google_search],
+    tools=[PreloadMemoryTool(), google_search],
+    after_agent_callback=SESSION_MEMORY_CALLBACK,
     output_key="research_payments",
 )
 
@@ -97,7 +102,8 @@ billing_researcher = LlmAgent(
         "- Notable customers\n\n"
         "Use real, current data from the web. Be specific."
     ),
-    tools=[google_search],
+    tools=[PreloadMemoryTool(), google_search],
+    after_agent_callback=SESSION_MEMORY_CALLBACK,
     output_key="research_billing",
 )
 
@@ -117,7 +123,8 @@ fraud_researcher = LlmAgent(
         "- False positive rates or accuracy metrics if available\n\n"
         "Use real, current data from the web. Be specific."
     ),
-    tools=[google_search],
+    tools=[PreloadMemoryTool(), google_search],
+    after_agent_callback=SESSION_MEMORY_CALLBACK,
     output_key="research_fraud",
 )
 
@@ -144,6 +151,8 @@ evaluator = LlmAgent(
         "provide more confident scoring.\n\n"
         "Identify the top pick and runner-up in each category."
     ),
+    tools=[PreloadMemoryTool()],
+    after_agent_callback=SESSION_MEMORY_CALLBACK,
     output_key="evaluation",
 )
 
@@ -163,6 +172,8 @@ recommender = LlmAgent(
         "If you have context from past recommendations for similar companies, "
         "reference those to strengthen your advice. Be decisive and opinionated."
     ),
+    tools=[PreloadMemoryTool()],
+    after_agent_callback=SESSION_MEMORY_CALLBACK,
     output_key="final_recommendation",
 )
 
@@ -345,7 +356,7 @@ async def run_discovery(runner, session_service, mm, sdk, query, label):
             intent="lesson", lesson_type="success",
             lesson_scope="global", lesson_importance="high",
         )
-        lessons = sdk.control.lessons({"run_id": sid, "limit": 5})
+        lessons = sdk.lessons({"run_id": sid, "limit": 5})
         lesson_list = lessons.get("lessons", [])
         if lesson_list:
             await mm.record_outcome(
