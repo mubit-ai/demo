@@ -1,0 +1,7 @@
+# The demo needs the Mubit Python SDK (installed editable from the repo) and
+# `requests` for the optional live-LLM path.
+#
+#   pip install -e ../../sdk/python/mubit-sdk
+#   pip install -r requirements.txt
+#
+requests>=2.31
