@@ -129,8 +129,6 @@ def main():
     recall_memory()          — check prior knowledge before researching
     store_memory()           — save findings as it discovers them
     get_assembled_context()  — get full context before making decisions
-    set_goal()               — define what it's trying to achieve
-    update_goal()            — mark goals complete
     create_checkpoint()      — save progress at milestones
     reflect_on_session()     — extract lessons after completing research
     archive_artifact()       — store final recommendations

@@ -108,50 +108,6 @@ MUBIT_TOOL_DECLARATIONS = [
         ),
     ),
     types.FunctionDeclaration(
-        name="set_goal",
-        description=(
-            "Set a research goal to track your progress. Use this at the "
-            "start of a task to define what you're trying to achieve."
-        ),
-        parameters=types.Schema(
-            type="OBJECT",
-            properties={
-                "description": types.Schema(
-                    type="STRING",
-                    description="What you want to achieve",
-                ),
-                "priority": types.Schema(
-                    type="STRING",
-                    enum=["low", "medium", "high", "critical"],
-                    description="Priority level",
-                ),
-            },
-            required=["description"],
-        ),
-    ),
-    types.FunctionDeclaration(
-        name="update_goal",
-        description=(
-            "Update the status of a previously set goal. Use this when "
-            "you've achieved a goal or need to mark it as blocked."
-        ),
-        parameters=types.Schema(
-            type="OBJECT",
-            properties={
-                "goal_id": types.Schema(
-                    type="STRING",
-                    description="The goal ID returned by set_goal",
-                ),
-                "status": types.Schema(
-                    type="STRING",
-                    enum=["active", "achieved", "failed", "blocked"],
-                    description="New status",
-                ),
-            },
-            required=["goal_id", "status"],
-        ),
-    ),
-    types.FunctionDeclaration(
         name="reflect_on_session",
         description=(
             "Trigger reflection to extract higher-order lessons from "
