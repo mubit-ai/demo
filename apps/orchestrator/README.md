@@ -60,8 +60,6 @@ pipeline code. Mubit APIs are exposed as Gemini function-calling tools.
 | `recall_memory` | `recall()` | Search for prior knowledge |
 | `get_assembled_context` | `get_context()` | Token-budgeted context assembly |
 | `create_checkpoint` | `checkpoint()` | Save progress snapshot |
-| `set_goal` | `add_goal()` | Track research goals |
-| `update_goal` | `update_goal()` | Mark goals achieved |
 | `reflect_on_session` | `reflect()` | Extract lessons |
 | `archive_artifact` | `archive()` | Store immutable artifacts |
 | `check_memory_health` | `memory_health()` | Memory statistics |
