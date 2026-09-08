@@ -1,89 +1,80 @@
-"""Offline contract simulation, not verification of a live Mubit server."""
+"""Offline boundary checks. Only a live server can verify Mubit lesson extraction."""
 import contextlib
 import io
 import json
-import tempfile
 import unittest
-from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import Mock
 
-from demo import Memory, TRAIN, HELD_OUT, compare, features, handle, reflect, route, run_case
-
-
-class FakeClient:
-    """Disk-backed test double only; deliberately returns irrelevant entries too."""
-    def __init__(self, path):
-        self.path = path
-
-    def recall(self, **kwargs):
-        assert kwargs["entry_types"] == ["lesson"]
-        assert kwargs["include_working_memory"] is False
-        assert kwargs["include_linked_runs"] is False
-        return {"evidence": json.loads(self.path.read_text()) if self.path.exists() else []}
-
-    def remember(self, **kwargs):
-        assert kwargs["wait"] is True and kwargs["intent"] == "lesson"
-        entries = self.recall(entry_types=["lesson"], include_working_memory=False,
-                              include_linked_runs=False)["evidence"]
-        entries.append(dict(id=f"fake-{len(entries)+1}", content=kwargs["content"]))
-        self.path.write_text(json.dumps(entries))
-        return {"status": "completed"}
-
-    def record_outcome(self, **kwargs):
-        assert kwargs["verified_in_production"] is False
+from demo import Memory, TRAIN, HELD_OUT, handle, route, run_case
 
 
 class DemoTest(unittest.TestCase):
-    def test_learning_and_read_only_held_out_comparison(self):
-        with tempfile.TemporaryDirectory() as directory, contextlib.redirect_stdout(io.StringIO()):
-            path = Path(directory)/"fake.json"
-            memory = Memory(FakeClient(path), "test")
-            self.assertEqual(route(HELD_OUT[0][1], memory.recall(HELD_OUT[0][1]))["initial"], "technical_agent")
+    def test_instrumentation_precedes_sdk_reflection(self):
+        client = Mock()
+        client.remember.return_value = {"status": "completed"}
+        client.record_step_outcome.return_value = {"accepted": True}
+        client.advanced.reflect.return_value = {
+            "lessons_stored": 1, "degraded": False,
+            "lessons": [{"lesson_id": "server-id", "content": "Server-generated guidance"}]}
+        memory = Memory(client, "test")
+        with contextlib.redirect_stdout(io.StringIO()):
             for case in TRAIN:
-                decision, outcome = run_case(case, memory, learn=True, execution="teaching")
-                self.assertEqual(outcome["initial_status"], "handoff")
-                self.assertEqual(decision["lesson_ids"], [])
-            before = path.read_bytes()
-            # New adapter/client, with no Python lesson cache carried across executions.
-            memory = Memory(FakeClient(path), "test")
-            totals = compare(memory)
-            self.assertEqual(totals["OFF"], dict(correct_first_route_rate=0.5,
-                unnecessary_handoffs=3, resolution_steps=9))
-            self.assertEqual(totals["ON"], dict(correct_first_route_rate=1.0,
-                unnecessary_handoffs=0, resolution_steps=6))
-            self.assertEqual(path.read_bytes(), before, "evaluation must not write")
-            for case in HELD_OUT[:3]:
-                self.assertNotIn(case[1], [c[1] for c in TRAIN])
-                lessons = memory.recall(case[1])
-                self.assertEqual(len(lessons), 1)
-                self.assertTrue(route(case[1], lessons)["lesson_ids"])
-                self.assertNotEqual(route(case[1], lessons)["initial"], route(case[1], [])["initial"])
-            for case in HELD_OUT[3:]:
-                self.assertEqual(memory.recall(case[1]), [])
-            self.assertEqual(Memory(FakeClient(path), "other").recall(TRAIN[0][1]), [])
+                request = case[1]
+                decision = route(request, [])
+                memory.learn(request, decision, handle(decision["initial"], case[2]), case[0])
+            memory.reflect()
+        self.assertEqual(client.remember.call_count, 3)
+        self.assertEqual(client.record_step_outcome.call_count, 6)
+        for call in client.remember.call_args_list:
+            args = call.kwargs
+            self.assertEqual(args["intent"], "fact")
+            self.assertTrue(args["wait"])
+            self.assertNotIn("lesson", json.loads(args["content"].split(": ", 1)[1]))
+            self.assertNotIn("lesson_type", args)
+        self.assertEqual([c.kwargs["signal"] for c in client.record_step_outcome.call_args_list], [-1, 1]*3)
+        self.assertTrue(all("directive_hint" not in c.kwargs for c in client.record_step_outcome.call_args_list))
+        client.advanced.reflect.assert_called_once_with(dict(
+            run_id="memory-router-v2-test", include_linked_runs=False, include_step_outcomes=True))
+        self.assertEqual(client.mock_calls[-1][0], "advanced.reflect")
 
-    def test_outcomes_and_grounding(self):
-        request = TRAIN[0][1]
-        decision = route(request, [])
-        for resolver in ("billing_agent", "account_agent"):
-            outcome = handle(decision["initial"], resolver)
-            self.assertEqual(reflect(request, decision, outcome, "test")["prefer"], resolver)
+    def test_retrieval_is_scoped_and_decision_has_no_outcome(self):
+        client = Mock()
+        entry = dict(id="lesson-1", content="Server guidance", entry_type="lesson",
+                     run_id="state::actor::memory-router-v2-test")
+        client.recall.return_value = {"evidence": [entry, dict(entry, id="stale", is_stale=True),
+            dict(entry, id="other", run_id="memory-router-v1-other"), dict(entry, entry_type="fact")]}
+        memory = Memory(client, "test")
+        self.assertEqual(memory.recall("new request"), [{"id": "lesson-1", "content": "Server guidance", "conditions": []}])
+        args = client.recall.call_args.kwargs
+        self.assertEqual(args["entry_types"], ["lesson"])
+        self.assertFalse(args["include_working_memory"])
+        self.assertFalse(args["include_linked_runs"])
+        model = Mock()
+        model.models.generate_content.return_value = SimpleNamespace(text=json.dumps(dict(
+            initial="billing_agent", lesson_ids=["lesson-1"], reason="applies")))
+        with contextlib.redirect_stdout(io.StringIO()):
+            run_case(HELD_OUT[0], memory, model=model)
+        payload = json.loads(model.models.generate_content.call_args.kwargs["contents"])
+        self.assertEqual(set(payload), {"request", "baseline", "lessons"})
+        client.remember.assert_not_called()
+        client.record_step_outcome.assert_not_called()
+        client.advanced.reflect.assert_not_called()
+        model.models.generate_content.return_value.text = json.dumps(dict(
+            initial="billing_agent", lesson_ids=["invented"], reason="invalid"))
+        with self.assertRaises(ValueError):
+            route(HELD_OUT[0][1], memory.recall(HELD_OUT[0][1]), model)
+
+    def test_failed_reflection_and_outcomes(self):
+        client = Mock()
+        client.advanced.reflect.return_value = {"lessons": [], "lessons_stored": 0}
+        with contextlib.redirect_stdout(io.StringIO()), self.assertRaises(RuntimeError):
+            Memory(client, "test").reflect()
         self.assertEqual(handle("technical_agent", None)["initial_status"], "failed")
-        self.assertIsNone(reflect(request, decision, handle("technical_agent", None), "test"))
-        self.assertIsNone(reflect(request, decision, handle("technical_agent", "technical_agent"), "test"))
-        conflicting = [dict(id=str(i), when=features(request), prefer=a)
-                       for i, a in enumerate(("billing_agent", "account_agent"))]
-        self.assertEqual(route(request, conflicting), route(request, []))
-
-    def test_ingestion_must_be_retrievable(self):
-        class LostWrite(FakeClient):
-            def remember(self, **kwargs):
-                return {"status": "completed"}
-        with tempfile.TemporaryDirectory() as directory:
-            memory = Memory(LostWrite(Path(directory)/"missing.json"), "test")
-            request = TRAIN[0][1]
-            decision = route(request, [])
-            with self.assertRaisesRegex(RuntimeError, "not retrievable"):
-                memory.learn(request, decision, handle(decision["initial"], "billing_agent"), "test")
+        self.assertEqual(handle("technical_agent", "technical_agent")["initial_status"], "succeeded")
+        model = Mock()
+        self.assertEqual(route(HELD_OUT[0][1], [], model)["initial"], "technical_agent")
+        model.models.generate_content.assert_not_called()
 
 
 if __name__ == "__main__":
