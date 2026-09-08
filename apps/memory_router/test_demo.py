@@ -2,14 +2,29 @@
 import contextlib
 import io
 import json
+import runpy
 import unittest
+from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from demo import Memory, TRAIN, HELD_OUT, handle, route, run_case
 
 
 class DemoTest(unittest.TestCase):
+    def test_launcher_shares_experiment_and_stops_on_failure(self):
+        launch = runpy.run_path(str(Path(__file__).with_name("__main__.py")))["main"]
+        with patch("subprocess.run", return_value=SimpleNamespace(returncode=0)) as run:
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(launch(), 0)
+            commands = [c.args[0] for c in run.call_args_list]
+            self.assertEqual([c[2] for c in commands], ["teach", "evaluate"])
+            self.assertEqual(commands[0][-1], commands[1][-1])
+        with patch("subprocess.run", return_value=SimpleNamespace(returncode=1)) as run:
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(launch(), 1)
+            run.assert_called_once()
+
     def test_instrumentation_precedes_sdk_reflection(self):
         client = Mock()
         client.remember.return_value = {"status": "completed"}
