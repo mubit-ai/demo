@@ -39,5 +39,5 @@ handoffs, and resolution steps. Gemini applies guidance; Mubit generates it via
 `advanced.reflect()` with `include_step_outcomes` enabled.
 
 The recorded live run improved first-route accuracy from **50% to 83.3%** and
-reduced handoffs from **3 to 1**. Results can vary.
+reduced handoffs from **3 to 1**.
 [Teaching trace](live-v2-teach.jsonl) · [Evaluation trace](live-v2-evaluate.jsonl)
