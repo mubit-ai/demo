@@ -1,53 +1,39 @@
-.PHONY: install install-all preseed learn learn-notebook agents agents-notebook langgraph crewai langchain adk discovery crash-recovery orchestrator memory-router help
+.PHONY: help memory-router supply-chain supply-chain-check test test-memory-router test-supply-chain
+
+MEMORY_ROUTER := apps/memory_router
+SUPPLY_CHAIN  := apps/supply_chain_agent
+WITH_DEPS     := uv run --no-project --with-requirements
+PORT          ?= 7870
+
+# A .env at the repository root configures both demos. A .env inside a demo
+# folder also works when you run that demo from its folder; under make, the
+# root file takes precedence because its values are already in the environment.
+ifneq (,$(wildcard .env))
+include .env
+export
+endif
 
 help: ## Show available targets
-	@grep -E '^[a-zA-Z_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*##"}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*##' $(firstword $(MAKEFILE_LIST)) | awk 'BEGIN {FS = ":.*##"}; {printf "  %-20s %s\n", $$1, $$2}'
 
-install: ## Install dependencies with uv
-	uv sync
+# --- Live demos (need MUBIT_ENDPOINT, MUBIT_API_KEY and GEMINI_API_KEY) ---
 
-install-all: ## Install all dependencies including framework integrations
-	uv sync --all-extras
+memory-router: ## Memory router: teach, then compare memory off and on in a new process
+	PYTHONPATH=apps $(WITH_DEPS) $(MEMORY_ROUTER)/requirements.txt python -m memory_router
 
-# --- Live demos ---
+supply-chain: ## Supply chain agent: web page on 127.0.0.1 (PORT, default 7870)
+	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python -m uvicorn app:app --host 127.0.0.1 --port $(PORT)
 
-preseed: ## Pre-warm Mubit (run before demos)
-	cd live && uv run python scripts/00_preseed.py
+supply-chain-check: ## Supply chain agent: teach, then compare in a new process, without the page
+	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python -m tests.check_live
 
-learn: ## Run mubit.learn demo (auto-extraction, zero manual calls)
-	cd live && uv run python scripts/demo_learn.py
+# --- Offline tests (no keys; model and memory are test doubles) ---
 
-agents: ## Run multi-agent demo (planner/developer/reviewer + Gemini)
-	cd live && uv run python scripts/run_all.py
+test: test-memory-router test-supply-chain ## Run the offline tests of both demos
 
-learn-notebook: ## Launch mubit.learn Jupyter notebook
-	uv run jupyter notebook live/demo_learn.ipynb
+test-memory-router: ## Offline tests for the memory router
+	cd $(MEMORY_ROUTER) && $(WITH_DEPS) requirements.txt python -m unittest discover -s tests -t . -v
 
-agents-notebook: ## Launch multi-agent Jupyter notebook
-	uv run jupyter notebook live/demo.ipynb
-
-# --- Framework integration examples ---
-
-langgraph: ## Run LangGraph code review pipeline example
-	cd integrations/langgraph && uv run python main.py
-
-crewai: ## Run CrewAI support ticket triage example
-	cd integrations/crewai && uv run python main.py
-
-langchain: ## Run LangChain research assistant example
-	cd integrations/langchain && uv run python main.py
-
-adk: ## Run Google ADK travel planner example
-	cd integrations/adk && uv run python main.py
-
-discovery: ## Run software discovery app (multi-agent + web search + Mubit)
-	PYTHONPATH=apps uv run python -m discovery
-
-crash-recovery: ## Run crash recovery demo (due diligence pipeline with crash + resume)
-	PYTHONPATH=apps uv run python -m crash_recovery
-
-orchestrator: ## Run autonomous orchestrator agent (Mubit as tools, LLM-driven)
-	PYTHONPATH=apps uv run python -m orchestrator
-
-memory-router: ## Run routing demo (teach with Mubit, then compare Memory OFF vs ON)
-	PYTHONPATH=apps uv run --no-project --with-requirements apps/memory_router/requirements.txt python -m memory_router
+test-supply-chain: ## Offline tests for the supply chain agent (Python and Node.js)
+	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python -m unittest discover -s tests -t . -v
+	cd $(SUPPLY_CHAIN) && node --test tests/test_api.cjs

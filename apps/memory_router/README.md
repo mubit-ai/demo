@@ -15,9 +15,9 @@ request → router ────├── technical_agent
 
 ## Running
 
-Requires Python 3.11+, `uv`, and `apps/memory_router/.env` with
-`MUBIT_ENDPOINT`, `MUBIT_API_KEY`, and `GEMINI_API_KEY`.
-Use `.env.example` for a new checkout; this workspace is already configured.
+Requires Python 3.11+, `uv`, and `MUBIT_ENDPOINT`, `MUBIT_API_KEY`, and
+`GEMINI_API_KEY`, set in `apps/memory_router/.env` or in a `.env` at the
+repository root. Copy `.env.example` to create either file.
 
 From the repo root:
 
@@ -40,4 +40,13 @@ handoffs, and resolution steps. Gemini applies guidance; Mubit generates it via
 
 The recorded live run improved first-route accuracy from **50% to 83.3%** and
 reduced handoffs from **3 to 1**.
-[Teaching trace](live-v2-teach.jsonl) · [Evaluation trace](live-v2-evaluate.jsonl)
+[Teaching trace](traces/teach.jsonl) · [Evaluation trace](traces/evaluate.jsonl)
+
+## Tests
+
+Offline tests replace Mubit and Gemini with test doubles, so they need no keys.
+From the repository root:
+
+```bash
+make test-memory-router
+```
