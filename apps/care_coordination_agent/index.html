@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthetic Longitudinal Care Coordination — operational memory</title>
+<style>
+:root{color-scheme:light;--ink:#1f2d33;--muted:#5f6d74;--line:#d9e0e3;--paper:#f5f7f8;--blue:#1d5f7a;--pale:#e3edf1;--green:#25674b;--mint:#e4efe6;--amber:#8a5a22;--sand:#f4ecdd;--red:#8c3b30;--blush:#f6e5e1}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button,a,input{outline-offset:4px}button{cursor:pointer;border:1px solid var(--line);border-radius:7px;background:white;padding:10px 16px;color:var(--ink);font-weight:600}button.primary{background:var(--blue);border-color:var(--blue);color:white}button:disabled{opacity:.45;cursor:wait}a{color:var(--blue)}code{font:12px/1.5 ui-monospace,monospace}header{border-bottom:1px solid var(--line);padding:18px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.brand{font-size:20px;font-weight:750;letter-spacing:-.5px}.brand span{color:var(--muted);font-weight:400;font-size:13px;margin-left:14px}.badges{display:flex;gap:8px;flex-wrap:wrap}.badge{font:10.5px/1.6 ui-monospace,monospace;text-transform:uppercase;letter-spacing:1px;background:var(--pale);padding:5px 10px;border-radius:4px;color:var(--ink)}.badge.warn{background:var(--sand)}main{max-width:1180px;margin:0 auto;padding:30px 24px 60px}h1{font-size:clamp(26px,3.4vw,38px);line-height:1.15;letter-spacing:-1.2px;margin:8px 0 6px}.eyebrow{font:11px ui-monospace,monospace;text-transform:uppercase;letter-spacing:1.7px;color:var(--blue)}.intro{max-width:760px;color:var(--muted);margin:6px 0 18px}.statusbar{display:flex;gap:18px;flex-wrap:wrap;align-items:center;border:1px solid var(--line);background:white;border-radius:9px;padding:12px 16px;font-size:13px;margin:14px 0}.statusbar b{font-weight:650}.dot{width:9px;height:9px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px}.dot.off{background:var(--red)}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0 8px}.experiment{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}input{border:1px solid var(--line);background:white;border-radius:5px;padding:7px 10px;width:240px}section{margin:34px 0}section>h2{font-size:18px;margin:0 0 4px}section>.note{color:var(--muted);font-size:13.5px;max-width:760px;margin:2px 0 14px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.card{border:1px solid var(--line);background:white;border-radius:9px;padding:16px}.card h3{margin:0 0 2px;font-size:15px}.card small{color:var(--muted)} .timeline{margin:10px 0;border-left:2px solid var(--line);padding-left:14px}.timeline .step{display:flex;gap:10px;justify-content:space-between;font-size:13.5px;padding:3px 0}.timeline .step b{font-weight:600}.tag{display:inline-block;font:10.5px ui-monospace,monospace;letter-spacing:.6px;text-transform:uppercase;border-radius:4px;padding:3px 8px;margin:2px 4px 2px 0;background:var(--pale)}.tag.ok{background:var(--mint);color:var(--green)}.tag.warn{background:var(--sand);color:var(--amber)}.tag.bad{background:var(--blush);color:var(--red)}.lesson{border-left:3px solid var(--blue)}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.metrics div{background:var(--paper);border-radius:6px;padding:8px 10px;font-size:13px}.metrics b{display:block;font-size:15px}.verdict{border-radius:7px;padding:10px 14px;font-weight:650;margin:8px 0;background:var(--pale)}.verdict.win{background:var(--mint);color:var(--green)}.verdict.regression{background:var(--blush);color:var(--red)}.verdict small{display:block;font-weight:400;color:var(--muted);font-size:12.5px;margin-top:2px}.empty{color:var(--muted);border:1px dashed var(--line);border-radius:9px;padding:22px;text-align:center;background:white}.notice{border-radius:7px;background:var(--blush);color:var(--red);padding:10px 14px;margin:10px 0;display:none}.notice.show{display:block}.feed{font:12px/1.7 ui-monospace,monospace;color:var(--muted);max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:white;padding:10px 12px;margin-top:12px;white-space:nowrap;overflow-x:auto}footer{border-top:1px solid var(--line);margin-top:40px;padding:16px 5%;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12.5px}.detail{color:var(--muted);font-size:12.5px}.downloads{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px}blockquote{margin:10px 0;padding:10px 14px;border-left:3px solid var(--amber);background:var(--sand);border-radius:0 7px 7px 0;font-size:14px}
+</style>
+</head>
+<body>
+<header><div class="brand">Care coordination<span>Longitudinal operational memory · Mubit</span></div><div class="badges"><span class="badge warn">All patient data is synthetic</span><span class="badge">No healthcare system connected</span><span class="badge">Coordination only — no diagnosis or treatment selection</span></div></header>
+<main>
+<div class="eyebrow">Synthetic longitudinal care coordination demo</div>
+<h1>Learn the strategy, not the chart.</h1>
+<p class="intro">A coordination agent starts with no knowledge of what works for this synthetic patient. Teaching encounters turn observed outcomes and one clinician correction into persistent Mubit lessons. Later, completely fresh executions run with no memory, full memory, or a single lesson removed — so policy change, not fact recall, is what you can see.</p>
+<div class="notice" id="notice" role="alert"></div>
+<div class="statusbar" id="status" aria-live="polite"></div>
+<div class="controls"><button class="primary" id="teach">1&nbsp; Run teaching encounters</button><button id="compare">2&nbsp; Compare fresh runs</button><span class="experiment"><input id="experiment" spellcheck="false" aria-label="Experiment identifier"><button id="use">Use</button><button id="new">New experiment</button><span id="reps-wrap">repetitions <select id="reps"><option>1</option><option>3</option></select></span></span></div>
+<div class="downloads"><a id="dl-teach" hidden>Download teaching trace ↗</a><a id="dl-compare" hidden>Download comparison report ↗</a></div>
+<div class="feed" id="feed" hidden></div>
+
+<section id="s-teach"><h2>Teach the agent</h2><p class="note">T1 contact strategy · T2 communication strategy · T3 coordination sequence. Behavioral misses stay visible; a lesson is stored only when its evidence actually occurred, and its real Mubit reference appears only after the write succeeds.</p><div class="grid" id="teach-cards"><div class="empty">Run the teaching encounters for the active experiment.</div></div></section>
+
+<section id="s-lessons"><h2>What Mubit learned</h2><p class="note">Current chart information comes from the synthetic encounter. Mubit stores <b>learned operational lessons</b> from previous outcomes and clinician corrections — these are not current EHR facts, and current chart instructions always outrank them.</p><div class="grid" id="lessons"><div class="empty">No lessons yet for this experiment.</div></div></section>
+
+<section id="s-compare"><h2>Fresh-run comparison — E1 combined coordination</h2><p class="note">A brand-new encounter with new appointment details. Each arm starts from an identical simulator state and the same frozen Mubit snapshot; only the lessons supplied to the agent differ.</p>
+<blockquote>The <b>Contact Lesson Removed</b> run receives the same frozen Mubit memory as the Full Memory run except for the previously learned contact-strategy lesson. If contact behavior changes while the other lessons stay identical, that is evidence consistent with that specific memory affecting the agent's policy — not absolute causal proof from a single stochastic run.</blockquote>
+<div class="grid" id="arms"></div><div id="verdicts"></div></section>
+
+<section id="s-override"><h2>Does fresh information override old memory?</h2><p class="note">E2 — a new encounter whose current chart carries an explicit patient request that conflicts with the historical contact lesson still stored in Mubit.</p>
+<blockquote id="e2-instruction">Current patient request (synthetic chart): the patient asks to be called in the morning, between 09:00 and 11:00.</blockquote>
+<div class="grid" id="e2"></div><div id="override-verdict"></div></section>
+</main>
+<footer><span>One Gemini agent · Persistent operational memory by Mubit · Deterministic simulator</span><span>Synthetic patient, clinicians, and clinical content · Fresh executions only · Citations are claimed influence, not proven causality</span></footer>
+<script>
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let source=null,busy=false,teach=new Map(),armRuns=new Map(),lastReport=null;
+const shortId=id=>id?String(id).slice(0,8)+'…':'—';
+async function api(path,body){
+ const response=await fetch(path,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ let data;try{data=await response.json();}catch{throw new Error(`Request failed (HTTP ${response.status}). Check the server log; no simulated fallback was used.`);}
+ if(!response.ok)throw new Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail)||`HTTP ${response.status}`);
+ return data;}
+function setBusy(v,label){busy=v;for(const id of ['teach','compare','new','use','reps'])$(id).disabled=v;$('status').innerHTML=esc(label);}
+function showNotice(msg){$('notice').textContent=msg;$('notice').classList.add('show');}
+function renderStatus(s){
+ const m=s.memory||{};const dot=m.status==='connected'?'<span class="dot"></span>':(m.status==='unavailable'?'<span class="dot off"></span>':'<span class="dot off"></span>');
+ $('status').innerHTML=`<span>${dot}<b>Mubit ${m.status}</b>${m.endpoint?` <code>${esc(m.endpoint)}</code>`:''}${m.detail?` — ${esc(m.detail.slice(0,140))}`:''}</span>
+ <span>Experiment <b>${esc(s.experiment)}</b></span><span>Model <b>${esc(s.model)}</b></span>
+ <span>Lessons <b>${m.lesson_count??0}</b>${m.categories?` (${esc(m.categories.join(', '))})`:''}</span>
+ <span>Execution <b>${s.active?'active':'idle'}</b></span>${s.missing&&s.missing.length?`<span class="tag bad">missing ${esc(s.missing.join(', '))}</span>`:''}`;
+ if(s.last_teaching){$('dl-teach').href=`/api/runs/${s.last_teaching}`;$('dl-teach').hidden=false;}
+ if(s.last_comparison){$('dl-compare').href=`/api/runs/${s.last_comparison}`;$('dl-compare').hidden=false;}}
+function teachCard(sid){
+ const d=teach.get(sid);if(!d)return `<div class="card"><h3>${esc(sid)}</h3><p class="detail">Waiting…</p></div>`;
+ const t={T1:'Contact strategy',T2:'Communication strategy',T3:'Coordination sequence'}[sid]||'';
+ let html=`<div class="card" id="teach-${sid}"><h3>${esc(sid)} · ${t}</h3><span class="tag ${d.status==='completed'?'ok':(d.status==='failed'?'bad':'warn')}">${esc(d.status)}</span><div class="timeline">`;
+ for(const step of d.steps)html+=`<div class="step"><span><b>${esc(step.action)}</b> ${esc(step.args)}</span><span>${esc(step.outcome)}</span></div>`;
+ if(d.correction)html+=`<div class="step"><span><b>clinician correction</b></span><span>approved wording added</span></div>`;
+ html+=`</div>`;
+ for(const w of d.writes)html+=`<p><span class="tag ok">lesson stored</span> <code>${shortId(w.reference_id)}</code><br><span class="detail">${esc(w.category)} · evidence: ${esc(w.evidence_type)}</span></p>`;
+ if(d.failedWrites)html+=`<p><span class="tag bad">memory write failed</span> <span class="detail">${esc(d.failedWrites)}</span></p>`;
+ if(d.reason)html+=`<p class="detail">${esc(d.reason)}</p>`;
+ return html+'</div>';}
+function renderTeach(){$('teach-cards').innerHTML=[...teach.entries()].map(([sid])=>teachCard(sid)).join('')||'<div class="empty">Run the teaching encounters.</div>';}
+function renderLessons(lessons){
+ if(!lessons.length)return;
+ $('lessons').innerHTML=lessons.map(l=>`<article class="card lesson"><span class="tag">learned lesson · ${esc(l.category)}</span><p><b>${esc(l.guidance)}</b></p><p class="detail">Applies: ${esc(l.applicability)}<br>Evidence: ${esc(l.evidence_summary)}</p><code>${shortId(l.id)}</code></article>`).join('');}
+function armLabel(arm){return{no_memory:'No memory',full_memory:'Full Mubit memory',ablated_contact:'Contact lesson removed'}[arm]||arm;}
+function renderArms(){
+ if(!armRuns.size)return;
+ const byScenario={};
+ for(const r of armRuns.values()){(byScenario[r.scenario_id]=byScenario[r.scenario_id]||new Map()).set(r.arm,r);}
+ const e1=byScenario['E1'];
+ $('arms').innerHTML=[...e1.values()].map(r=>`<div class="card"><h3>${esc(armLabel(r.arm))}</h3><span class="tag ${r.status==='completed'?'ok':(r.status==='failed'?'bad':'warn')}">${esc(r.status)}</span>
+  <div class="metrics"><div><b>${r.metrics.completed?'yes':'no'}</b><span>completed</span></div><div><b>${r.metrics.unsuccessful_outreach_before_contact}</b><span>failed outreach</span></div><div><b>${r.metrics.comprehension_confirmed?'yes':'no'}</b><span>understanding</span></div><div><b>${r.metrics.transport_confirmed_booking?'yes':'no'}</b><span>ride-confirmed booking</span></div><div><b>${r.metrics.premature_booking_attempts}</b><span>premature bookings</span></div><div><b>${r.metrics.actions_used}</b><span>actions used</span></div></div>
+  <p class="detail">lessons available ${r.available??'—'} · cited ${r.cited&&r.cited.length?r.cited.map(shortId).join(', '):'none'}</p></div>`).join('');
+ const e2=byScenario['E2'];
+ if(e2){const full=[...e2.values()].find(r=>r.arm==='full_memory');
+  $('e2').innerHTML=[...e2.values()].map(r=>`<div class="card"><h3>${esc(armLabel(r.arm))}</h3><span class="tag ${r.status==='completed'?'ok':(r.status==='failed'?'bad':'warn')}">${esc(r.status)}</span><div class="metrics"><div><b>${r.metrics.followed_current_instruction===null?'—':(r.metrics.followed_current_instruction?'yes':'no')}</b><span>followed current instruction</span></div><div><b>${(r.metrics.stale_evening_calls||[]).length}</b><span>stale evening attempts</span></div><div><b>${r.metrics.completed?'yes':'no'}</b><span>completed</span></div><div><b>${r.metrics.actions_used}</b><span>actions</span></div></div></div>`).join('');}}
+function renderReport(){
+ if(!lastReport)return;
+ for(const scenario of lastReport.scenarios||[]){
+  const target=scenario.scenario_id==='E1'?$('verdicts'):$('override-verdict');
+  if(scenario.scenario_id==='E2'){
+   const o=scenario.comparison.current_instruction_override;
+   target.innerHTML=`<div class="verdict ${o&&o.passed?'win':'regression'}">Current instruction override: ${o&&o.passed?'PASS':'FAIL'}<small>${esc(o?o.reason:'not measured')}</small></div><p class="detail">Historical evening-contact lesson remained in Mubit during this run.</p>`;
+   continue;}
+  let html='';
+  for(const [name,label] of [['full_vs_none','Full vs No Memory'],['full_vs_ablated','Full vs Contact-Ablated']]){
+   const entry=scenario.comparison.pairwise[name];
+   html+=`<div class="verdict ${entry.overall}">${label}: ${entry.overall.toUpperCase()}<small>${esc(entry.per_repetition.map(r=>`rep ${r.repetition}: ${r.reason}`).join(' · '))}</small></div>`;}
+  html+=`<p class="detail">Ablation changed contact behavior: ${scenario.comparison.interpretation.contact_behavior_changed_by_ablation?'yes':'no'} · removed lesson(s): ${(lastReport.base_memory.ablated_contact_lesson_ids||[]).map(id=>`<code>${shortId(id)}</code>`).join(', ')}</p>`;
+  target.innerHTML=html;}}
+function feedLine(text){const node=$('feed');node.hidden=false;node.insertAdjacentHTML('beforeend',esc(text)+'\n');node.scrollTop=node.scrollHeight;}
+function handle(event){
+ const t=event.type;
+ if(t==='encounter_started'){teach.set(event.scenario_id,{status:'running',steps:[],writes:[],reason:null});renderTeach();feedLine(`encounter ${event.scenario_id} started`);}
+ else if(t==='agent_step'){const d=teach.get(event.scenario_id);if(d){const a=event.action||{};d.steps.push({action:a.name,args:Object.entries(a).filter(([k])=>k!=='name').map(([k,v])=>`${k}=${v}`).join(' '),outcome:event.outcome_status});renderTeach();}feedLine(`${event.scenario_id||''} ${event.arm||''} ${((event.action||{}).name)||''} -> ${event.outcome_status}`);}
+ else if(t==='clinician_correction'){const d=teach.get(event.scenario_id);if(d){d.correction=true;renderTeach();}feedLine('clinician correction delivered');}
+ else if(t==='memory_write_finished'){const d=teach.get(event.scenario_id);if(d){d.writes.push({reference_id:event.reference_id,category:event.category});renderTeach();}feedLine(`Mubit write ok ${shortId(event.reference_id)} (${event.category})`);}
+ else if(t==='memory_write_failed'){const d=teach.get(event.scenario_id);if(d){d.failedWrites=(event.message||'').slice(0,160);renderTeach();}feedLine(`Mubit write FAILED: ${(event.message||'').slice(0,120)}`);}
+ else if(t==='encounter_finished'){const d=teach.get(event.scenario_id);if(d){d.status=event.status;d.reason=event.completion_reason||event.error;renderTeach();}feedLine(`encounter ${event.scenario_id} ${event.status}${event.lessons_stored?` · ${event.lessons_stored} lesson(s) stored`:''}`);}
+ else if(t==='lessons_refreshed'){renderLessons(event.lessons||[]);feedLine(`memory now holds ${event.count} lesson(s)`);}
+ else if(t==='comparison_event'){
+  if(event.event==='base_memory_frozen')feedLine(`base memory frozen (${event.count} lessons)`);
+  else if(event.event==='arm_run_started')feedLine(`arm ${event.scenario_id}/${event.arm} started`);
+  else if(event.event==='arm_run_finished')feedLine(`arm ${event.scenario_id}/${event.arm} ${event.status}`);}
+ else if(t==='memory_snapshot_frozen'){feedLine(`arm ${event.arm||''} memory frozen (${event.count} lessons)`);}
+ else if(t==='comparison_finished'){
+  feedLine(`comparison ${event.status}${event.reason?' — '+String(event.reason).slice(0,120):''}`);
+  fetch('/api/runs/'+currentRun).then(r=>r.json()).then(trace=>{if(trace.report){applyReport(trace.report);}}).catch(()=>{});}
+ else if(t==='run_error'){showNotice(event.message);feedLine(`ERROR: ${event.message}`);}
+ else if(t==='provider_error'||t==='agent_error'||t==='memory_recall_failed'){feedLine(`ERROR: ${event.message}`);if(t==='provider_error')showNotice('Gemini provider error — execution stopped.');if(t==='memory_recall_failed')showNotice('Mubit memory unavailable — no fallback memory was used.');}}
+let currentRun=null;
+function applyReport(report){lastReport=report;armRuns.clear();
+ for(const scenario of report.scenarios||[])for(const run of scenario.runs)armRuns.set(`${scenario.scenario_id}/${run.arm}/${run.repetition}`,{scenario_id:scenario.scenario_id,arm:run.arm,status:run.status,metrics:run.metrics,available:(run.available_lesson_ids||[]).length||0,cited:run.cited_lesson_ids});
+ renderArms();renderReport();}
+function watch(id){if(source)source.close();currentRun=id;source=new EventSource(`/api/runs/${id}/events`);source.onmessage=e=>handle(JSON.parse(e.data));source.addEventListener('end',e=>{source.close();const status=JSON.parse(e.data).status;setBusy(false,status==='completed'?'Idle — run '+status:'Run '+status+'. Partial artifacts remain downloadable.');refreshStatus();});source.onerror=()=>{};}
+async function refreshStatus(){try{renderStatus(await api('/api/status'));}catch(e){showNotice(e.message);}}
+async function run(phase){
+ try{setBusy(true,'Starting…');$('notice').classList.remove('show');teach.clear();armRuns.clear();lastReport=null;renderTeach();
+  const body={phase};if(phase==='compare')body.repetitions=parseInt($('reps').value,10)||1;
+  const data=await api('/api/runs',body);watch(data.id);
+  if(phase==='teach'){$('dl-teach').href=`/api/runs/${data.id}`;$('dl-teach').hidden=false;}else{$('dl-compare').href=`/api/runs/${data.id}`;$('dl-compare').hidden=false;}}
+ catch(e){setBusy(false,'Idle');showNotice(e.message);}}
+async function changeExperiment(body){try{const data=await api('/api/experiment',body);$('experiment').value=data.experiment;teach.clear();armRuns.clear();lastReport=null;renderTeach();$('lessons').innerHTML='<div class="empty">No lessons yet for this experiment.</div>';$('arms').innerHTML='';$('verdicts').innerHTML='';$('e2').innerHTML='';$('override-verdict').innerHTML='';setBusy(busy,'Busy');await refreshStatus();await refreshLessons();}catch(e){showNotice(e.message);}}
+async function refreshLessons(){try{const data=await api('/api/lessons');renderLessons(data.lessons);}catch(e){/* lessons unavailable until configured */}}
+$('teach').onclick=()=>run('teach');$('compare').onclick=()=>run('compare');
+$('new').onclick=()=>changeExperiment({});$('use').onclick=()=>changeExperiment({experiment:$('experiment').value});
+(async()=>{try{const s=await api('/api/status');$('experiment').value=s.experiment;renderStatus(s);await refreshLessons();setBusy(Boolean(s.active),s.active?'An execution is active…':'Idle');}catch(e){showNotice(e.message);}})();
+</script>
+</body></html>

@@ -1,0 +1,9 @@
+# Offline tests need only pydantic; the live agent additionally needs google-genai,
+# python-dotenv, and mubit-sdk. Versions match apps/supply_chain_agent.
+pydantic==2.13.5
+google-genai==2.22.0
+python-dotenv==1.2.3
+mubit-sdk==0.13.2
+fastapi==0.141.1
+uvicorn==0.52.4
+httpx==0.28.1
