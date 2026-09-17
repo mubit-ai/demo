@@ -90,7 +90,7 @@
   <h2>1 · The scenario</h2>
   <p class="lead">A regex baseline routes by keywords: <code class="inline">api|endpoint → technical</code>,
   <code class="inline">invoice|receipt → billing</code>, else <code class="inline">account</code>. It is
-  wrong in both directions on the held-out set — requests that need <em>semantic</em> reading, not keyword
+  wrong in both directions on the held-out set — requests that need meaning-level reading, not keyword
   matching:</p>
   <table>
     <tr><th>Case</th><th>Request</th><th>Correct specialist</th><th>Keyword baseline says</th></tr>
@@ -206,7 +206,7 @@
   <h2>5 · What this demonstrates (the indirect answers)</h2>
   <div class="grid g2">
     <div class="card"><span class="pill p-mubit">Mubit-decided memory</span><p>What to store, what to discard, and what to recall are decided by Mubit's reflect + validation gate from raw evidence and step outcomes — not by hand-written rules or free-form LLM writes.</p></div>
-    <div class="card"><span class="pill p-lesson">semantic transfer without capture</span><p>Lessons generalize across paraphrases (H1, H3) while keyword-adjacent negative controls (C2) stay on baseline — conditions and scoping survive the round trip through memory.</p></div>
+    <div class="card"><span class="pill p-lesson">pattern transfer without capture</span><p>Lessons generalize across paraphrases (H1, H3) while keyword-adjacent negative controls (C2) stay on baseline — conditions and scoping survive the round trip through memory.</p></div>
     <div class="card"><span class="pill p-guard">grounded overrides only</span><p>In every mode, an override must cite lesson IDs that actually came back; invented citations fail the run. Filtered recall (<code class="inline">is_stale</code>, type, scope) means discarded knowledge never reaches the model.</p></div>
     <div class="card"><span class="pill p-ok">tool-mediated memory</span><p><code class="inline">--mode tools</code> shows the third integration shape: the model spends a tool call on memory only when it judges it useful — selective recall at decision time, with identical grounding rules.</p></div>
   </div>
