@@ -1,4 +1,4 @@
-.PHONY: install install-all preseed learn learn-notebook agents agents-notebook langgraph crewai langchain adk discovery crash-recovery orchestrator memory-router help
+.PHONY: install install-all preseed learn learn-notebook agents agents-notebook langgraph crewai langchain adk discovery crash-recovery orchestrator memory-router oncall-agent help
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*##"}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -51,3 +51,6 @@ orchestrator: ## Run autonomous orchestrator agent (Mubit as tools, LLM-driven)
 
 memory-router: ## Run routing demo (teach with Mubit, then compare Memory OFF vs ON)
 	PYTHONPATH=apps uv run --no-project --with-requirements apps/memory_router/requirements.txt python -m memory_router
+
+oncall-agent: ## Run on-call triage demo (attribution loop: outcomes, step outcomes, reflect)
+	PYTHONPATH=apps uv run --no-project --with-requirements apps/oncall_agent/requirements.txt python -m oncall_agent

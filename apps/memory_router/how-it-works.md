@@ -160,5 +160,5 @@ make memory-router                                            # teach + evaluate
 ```
 
 Part of the Mubit demo suite: [Care Coordination Agent](../care_coordination_agent/how-it-works.md) ·
-[Supply Chain Agent](../supply_chain_agent/how-it-works.md) · benchmark evidence:
+[Supply Chain Agent](../supply_chain_agent/how-it-works.md) · [On-Call Triage](../oncall_agent/how-it-works.md) · benchmark evidence:
 [mubit-cl-bench](https://github.com/mubit-ai/mubit-cl-bench).
