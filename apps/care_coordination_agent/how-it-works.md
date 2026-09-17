@@ -138,5 +138,5 @@ cp .env.example .env          # GEMINI_API_KEY, MUBIT_ENDPOINT, MUBIT_API_KEY
 ```
 
 Part of the Mubit demo suite: [Supply Chain Agent](../supply_chain_agent/how-it-works.md) ·
-[Memory Router](../memory_router/how-it-works.md) · benchmark evidence:
+[Memory Router](../memory_router/how-it-works.md) · [On-Call Triage](../oncall_agent/how-it-works.md) · benchmark evidence:
 [mubit-cl-bench](https://github.com/mubit-ai/mubit-cl-bench).
