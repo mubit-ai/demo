@@ -18,7 +18,7 @@
   main{max-width:1020px;margin:0 auto;padding:26px 22px 80px}
   header.hero{padding:34px 26px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);border:1px solid var(--line);border-radius:16px;margin-bottom:26px}
   header.hero h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
-  header.hero p{margin:0;color:#374151;max-width:70ch}
+  header.hero p{margin:0 0 6px;color:#374151;max-width:70ch}
   .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
   .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid}
   .b-path{color:var(--agent);border-color:#bfdbfe;background:var(--agentbg)}
@@ -30,19 +30,16 @@
   section{scroll-margin-top:64px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
   .grid{display:grid;gap:14px}
-  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
   .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
   pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
-  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
   pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
+  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
   table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
   th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
   th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
   td.n{font-variant-numeric:tabular-nums}
   .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
-  .p-agent{background:var(--agentbg);color:var(--agent)} .p-env{background:var(--envbg);color:var(--env)}
-  .p-mubit{background:var(--mubitbg);color:var(--mubit)} .p-lesson{background:var(--lessonbg);color:var(--lesson)}
-  .p-guard{background:var(--guardbg);color:var(--guard)} .p-ok{background:var(--okbg);color:var(--ok)}
+  .p-lesson{background:var(--lessonbg);color:var(--lesson)} .p-env{background:var(--envbg);color:var(--env)}
   .steps{counter-reset:st}
   .step{position:relative;padding:14px 16px 14px 58px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0}
   .step:before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:999px;background:var(--mubit);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
@@ -66,59 +63,57 @@
 <nav>
   <b>Supply Chain Agent</b>
   <a href="#scenario">Scenario</a><a href="#lessons">The rules</a><a href="#flow">Flow</a>
-  <a href="#loop">Mubit loop</a><a href="#results">Results</a><a href="#proves">What it proves</a><a href="#run">Run</a>
+  <a href="#loop">Mubit loop</a><a href="#results">Results</a><a href="#run">Run</a>
 </nav>
 <main>
 <header class="hero">
   <h1>Supply Chain Agent</h1>
-  <p>Cedar Manufacturing (fictional) hits a component shortage. One Gemini agent chooses a recovery
-  option; a deterministic simulator computes consequences; scripted <b>operator feedback</b> teaches the
-  organization's real tradeoff preferences — stored verbatim in Mubit and carried into fresh processes.</p>
+  <p>Cedar Manufacturing (fictional) has a component shortage. One agent selects 1 recovery option.
+  A deterministic simulator computes the consequences. Scripted operator feedback teaches the real
+  tradeoff rules of the organization. Mubit stores the rules verbatim. Fresh processes recall them.</p>
   <div class="badges">
     <span class="badge b-path">Pathway: deterministic (harness-owned SDK calls)</span>
     <span class="badge b-mubit">Mubit: remember · recall · record_outcome</span>
-    <span class="badge b-syn">All plants, inventory &amp; feedback are fictional</span>
+    <span class="badge b-syn">All plants, inventory and feedback are fictional</span>
   </div>
 </header>
 
 <section id="scenario">
-  <h2>1 · The scenario</h2>
-  <p class="lead">Each incident presents logistics facts and one eligible-choice set (buy a substitute,
-  wait out replenishment, transfer stock, expedite freight). The agent starts with a conservative public
-  default — <em>absent an applicable local precedent, minimize combined downtime, then spend</em> — and no
-  local tolerance. The organization's actual preferences exist only in the private evaluator and the
-  teaching feedback:</p>
+  <h2>1 · Scenario</h2>
+  <p class="lead">Each incident gives logistics facts and 4 options: buy a substitute, wait for
+  replenishment, transfer stock, or expedite freight. The agent starts with a public default: minimize
+  combined downtime, then spend. The organization holds private preferences. The preferences exist
+  only in the private evaluator and in the teaching feedback:</p>
   <div class="grid g3">
-    <div class="card"><span class="pill p-lesson">Replenishment</span><p>Accept up to <b>2 hours</b> of receiving downtime, zero donor downtime; cheapest acceptable option first.</p></div>
-    <div class="card"><span class="pill p-lesson">Firm orders</span><p><b>Zero</b> receiving and donor downtime — freight is justified to prevent even a small delay.</p></div>
-    <div class="card"><span class="pill p-env">Fallback</span><p>If no option is acceptable: minimize combined downtime, then spend.</p></div>
+    <div class="card"><span class="pill p-lesson">Replenishment</span><p>Accept up to 2 hours of receiving downtime and 0 donor downtime. Select the cheapest acceptable option first.</p></div>
+    <div class="card"><span class="pill p-lesson">Firm orders</span><p>Permit 0 hours of receiving and donor downtime. Freight is approved to prevent a delay.</p></div>
+    <div class="card"><span class="pill p-env">Fallback</span><p>No acceptable option: minimize combined downtime, then spend.</p></div>
   </div>
-  <p class="lead">T1/T2 are live teaching decisions followed by labeled operator feedback. E1–E3 are fresh
-  evaluation cases — including E3, a firm order that <b>must still expedite</b>, which exists purely to catch
-  the agent over-generalizing "wait is preferred" to the wrong order class.</p>
+  <p class="lead">T1 and T2 are live teaching decisions with labeled operator feedback. E1–E3 are
+  fresh evaluation cases. E3 is a firm order that must still expedite. E3 checks that the agent does
+  not learn "always wait".</p>
 </section>
 
 <section id="lessons">
-  <h2>2 · What actually gets stored — verbatim, scoped, exception-carrying</h2>
-  <div class="grid g2">
+  <h2>2 · The stored rules</h2>
+  <div class="grid g3">
     <div class="lesson-card"><h4>Lesson 1 · applies_to: replenishment</h4>
       <p style="margin:4px 0"><b>Applicability:</b> Cedar stock-replenishment orders only.</p>
-      <p style="margin:4px 0"><b>Guidance:</b> Accept up to 2 hours of receiving-plant downtime with zero donor downtime; select the cheapest acceptable option, then the least downtime.</p>
+      <p style="margin:4px 0"><b>Guidance:</b> Accept up to 2 hours of receiving-plant downtime with 0 donor downtime. Select the cheapest acceptable option, then the least downtime.</p>
       <p style="margin:4px 0"><b>Exceptions:</b> Do not apply this tolerance to firm customer orders. If no option meets the limits…</p></div>
     <div class="lesson-card"><h4>Lesson 2 · applies_to: firm</h4>
       <p style="margin:4px 0"><b>Applicability:</b> Cedar firm customer orders only.</p>
-      <p style="margin:4px 0"><b>Guidance:</b> Allow zero receiving and donor downtime. Among options meeting those limits, select the cheapest.</p>
-      <p style="margin:4px 0"><b>Exceptions:</b> Do not extend this zero-delay preference to stock replenishment…</p></div>
+      <p style="margin:4px 0"><b>Guidance:</b> Allow 0 hours of receiving and donor downtime. Among options that meet the limits, select the cheapest.</p>
+      <p style="margin:4px 0"><b>Exceptions:</b> Do not extend this preference to stock replenishment…</p></div>
   </div>
-  <div class="callout g"><b>No invented thresholds can enter.</b> The store path refuses to write unless the
-  lesson is byte-identical to the operator's confirmed lesson (<code class="inline">if lesson !=
-  operator["confirmed_lesson"]: raise</code>). There is no generative distillation call that could hallucinate a
-  number. The full incident evidence (snapshot, decision, outcome, feedback) is stored as a separate
-  supporting entry that <b>never enters decision prompts</b>.</div>
+  <div class="callout g">The store path refuses any lesson that differs from the operator's confirmed
+  lesson (<code class="inline">if lesson != operator["confirmed_lesson"]: raise</code>). No
+  distillation step can invent a threshold. The full incident evidence is stored as a separate entry.
+  That entry never enters a decision prompt.</div>
 </section>
 
 <section id="flow">
-  <h2>3 · How the agent and Mubit are wired</h2>
+  <h2>3 · Flow</h2>
   <svg viewBox="0 0 960 340" role="img" aria-label="Flow: snapshot and lessons to decision, simulator, operator feedback, Mubit">
     <defs><marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#64748b"/></marker></defs>
     <rect class="box" x="20" y="30" width="190" height="80" fill="#fffbeb" stroke="#b45309"/>
@@ -153,18 +148,18 @@
 </section>
 
 <section id="loop">
-  <h2>4 · The learning loop, step by step</h2>
+  <h2>4 · The learning loop</h2>
   <div class="steps">
-    <div class="step"><span class="who pill p-agent">owned by: harness</span><h3>Capture</h3>The harness records the incident snapshot, the agent's live decision, and the simulator's deterministic consequences. Every teaching decision is real — nothing is forced.</div>
-    <div class="step"><span class="who pill p-lesson">owned by: operator</span><h3>Distill</h3>Explicitly labeled operator feedback states the confirmed applicability / guidance / exceptions. The lesson <em>is</em> the operator's text — acquisition of explicit organizational feedback, not autonomous threshold discovery.</div>
-    <div class="step"><span class="who pill p-guard">owned by: code</span><h3>Gate</h3>Byte-equality check against the confirmed lesson, plus schema validation (enum <code class="inline">applies_to</code>, bounded fields). Storage fails loudly on any mismatch.</div>
-    <div class="step"><span class="who pill p-mubit">owned by: Mubit</span><h3>Promote</h3><code class="inline">remember(intent="lesson", upsert_key=demo_version:experiment:case)</code> — re-teaching a case updates its slot; version suffixes isolate v2 from v1 when objectives change.</div>
-    <div class="step"><span class="who pill p-agent">owned by: harness</span><h3>Inject</h3>Recall before deciding; only five fields per lesson enter the prompt (id, source case, applies_to, applicability, guidance, exceptions). Full evidence stays in the trace and UI, never in the decision context.</div>
-    <div class="step"><span class="who pill p-mubit">owned by: Mubit</span><h3>Attribute</h3><code class="inline">record_outcome</code> reinforces only lessons the decision cited. Evaluation runs perform zero writes.</div>
+    <div class="step"><span class="who pill p-env">owned by: harness</span><h3>Capture</h3>The harness records the incident snapshot, the agent's live decision, and the simulator's consequences. Every teaching decision is live. Nothing is forced.</div>
+    <div class="step"><span class="who pill p-lesson">owned by: operator</span><h3>Distill</h3>Labeled operator feedback states the confirmed applicability, guidance, and exceptions. The lesson equals the operator's text. This is acquisition of explicit feedback. It is not autonomous discovery of a threshold.</div>
+    <div class="step"><span class="who pill" style="background:var(--guardbg);color:var(--guard)">owned by: code</span><h3>Gate</h3>The code checks byte equality against the confirmed lesson. Then it validates the schema. Storage fails loudly on any mismatch.</div>
+    <div class="step"><span class="who pill" style="background:var(--mubitbg);color:var(--mubit)">owned by: Mubit</span><h3>Promote</h3><code class="inline">remember(intent="lesson", upsert_key=demo_version:experiment:case)</code>. Re-teaching a case updates its slot. Version suffixes isolate v2 from v1 when the objective changes.</div>
+    <div class="step"><span class="who pill p-env">owned by: harness</span><h3>Inject</h3>Recall runs before each decision. Only 5 fields per lesson enter the prompt: id, source case, applies_to, applicability, guidance, exceptions. Full evidence stays in the trace. It never enters the decision context.</div>
+    <div class="step"><span class="who pill" style="background:var(--mubitbg);color:var(--mubit)">owned by: Mubit</span><h3>Attribute</h3><code class="inline">record_outcome</code> reinforces only lessons the decision cited. Evaluation runs write nothing.</div>
   </div>
 
-  <h3>Example data at each step (real field values)</h3>
-  <div class="card"><b>① Capture</b> — the incident snapshot the agent sees, and its live decision:
+  <h3>Example data at each step</h3>
+  <div class="card"><b>① Capture</b> — snapshot in, decision out, consequences out:
 <pre class="mini">// snapshot in (from scenarios.py; the agent gets logistics facts, never the private preference)
 {"id": "T1", "plant": "Cedar assembly", "component": "Controller C-24", "shortage_quantity": 3,
  "needed_at": "…T14:00", "receiving": {"opens": 8, "closes": 17}, "order_class": "replenishment",
@@ -178,17 +173,18 @@
 // simulator outcome out (deterministic)
 {"receiving_downtime_h": 0.0, "donor_downtime_h": 0.0, "recovery_cost": 800}</pre></div>
 
-  <div class="card"><b>② Distill</b> — the operator's labeled feedback teaches the real rule verbatim:
+  <div class="card"><b>② Distill</b> — operator feedback in:
 <pre class="mini">{"verdict": "Instructive", "confirmed_lesson":
   {"applies_to": "replenishment",
    "applicability": "Cedar stock-replenishment orders only.",
    "guidance": "Accept up to 2 hours of receiving-plant downtime … choose the lowest recovery spend …",
    "exceptions": "Do not apply this tolerance to firm customer orders. …"}}</pre></div>
 
-  <div class="card"><b>③ Gate</b> — storage refuses anything that is not byte-identical to the confirmed
-  lesson: <code class="inline">if lesson != operator["confirmed_lesson"]: raise</code>. No invented threshold can enter.</div>
+  <div class="card"><b>③ Gate</b> — the code refuses anything that is not byte-identical to the
+  confirmed lesson. No invented threshold can enter.</div>
 
-  <div class="card"><b>④ Promote</b> — the write, with full evidence stored separately (never prompted):
+  <div class="card"><b>④ Promote</b> — the write. The evidence is stored as a separate entry and is
+  never prompted:
 <pre class="mini">client.remember(
   content = "[experiment:sc-x] [demo:judgment-v2]\n" + json.dumps({"source_case": "T1", "lesson": …})
             + "\nSupporting observed incident: " + json.dumps({snapshot, decision, outcome, operator_feedback}),
@@ -199,44 +195,31 @@
 <pre class="mini">[{"id": "a1b2…", "source_case": "T1", "applies_to": "replenishment",
   "applicability": "Cedar stock-replenishment orders only.",
   "guidance": "Accept up to 2 hours …", "exceptions": "Do not apply … firm customer orders. …"}]
-// with that, the fresh decision flips to the operator's preference:
+// with that, the fresh decision changes to the operator preference:
 {"option_id": "wait", "lesson_ids": ["a1b2…"],
  "rationale": "Operator-confirmed tolerance accepts up to 2 h receiving downtime for replenishment; wait costs $0."}</pre></div>
 
   <div class="card"><b>⑥ Attribute</b> — reinforcement for cited lessons only:
 <pre class="mini">client.record_outcome(reference_id="a1b2…", outcome="success", signal=1.0,
                       rationale="Simulated teaching result: …operator confirmed…")</pre></div>
-
 </section>
 
 <section id="results">
-  <h2>5 · Measured results (committed live run, 2026-09-07)</h2>
+  <h2>5 · Results (committed live run, 2026-09-07)</h2>
   <table>
     <tr><th>Condition</th><th>Aligned cases</th><th>Downtime</th><th>Recovery spend</th></tr>
     <tr><td>No memory</td><td class="n">1 / 3</td><td class="n">0 h</td><td class="n">$3,000</td></tr>
     <tr><td><b>Full memory</b></td><td class="n"><b>3 / 3</b></td><td class="n">2 h</td><td class="n">$1,750</td></tr>
     <tr><td>Applicable lesson removed</td><td class="n">1 / 3</td><td class="n">0 h</td><td class="n">$3,000</td></tr>
   </table>
-  <div class="callout k"><p style="margin:0"><b>Removing one lesson reversed both replenishment choices.</b>
-  Influence is measured by behavior change, not by citations — the third condition deletes the applicable
-  lesson while keeping the unrelated one, and the agent's choices flip back to the no-memory behavior. The
-  firm-order case (E3) stays correct in every condition: the agent applied the waiting tolerance <em>only</em>
-  to its stated order class. Input-token overhead of memory in this run: 40.2% (total 19.4%) — the cost side
-  is reported as honestly as the win.</p></div>
-</section>
-
-<section id="proves">
-  <h2>6 · What this demonstrates (the indirect answers)</h2>
-  <div class="grid g2">
-    <div class="card"><span class="pill p-lesson">human-in-the-loop knowledge</span><p>Operator-confirmed judgment enters memory verbatim, scoped, and exception-carrying — the shape real organizational knowledge has.</p></div>
-    <div class="card"><span class="pill p-guard">over-indexing control</span><p>Exceptions travel with the lesson; E3 measures that "wait" never broadens to firm orders; removal control measures true influence.</p></div>
-    <div class="card"><span class="pill p-mubit">persistence across restarts</span><p>Teaching and evaluation run in separate processes; the lessons come back through Mubit recall, not local state.</p></div>
-    <div class="card"><span class="pill p-agent">deterministic pathway</span><p>Fixed SDK call sites, byte-equality gating, and a prompt allowlist — fully auditable by code inspection.</p></div>
-  </div>
+  <div class="callout k">Removal of 1 lesson reversed both replenishment choices. The firm-order case
+  (E3) stayed correct in all 3 conditions. The waiting tolerance never extended past its stated order
+  class. Memory cost in this run: 40.2% input tokens, 19.4% total tokens. The costs are reported as
+  measured.</div>
 </section>
 
 <section id="run">
-  <h2>7 · Run it</h2>
+  <h2>6 · Run</h2>
 <pre>python3 -m venv .venv &amp;&amp; .venv/bin/pip install -r requirements.txt
 cp .env.example .env                    # GEMINI_API_KEY, MUBIT_ENDPOINT, MUBIT_API_KEY
 .venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 7870   # browser demo

@@ -18,7 +18,7 @@
   main{max-width:1020px;margin:0 auto;padding:26px 22px 80px}
   header.hero{padding:34px 26px;background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid var(--line);border-radius:16px;margin-bottom:26px}
   header.hero h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
-  header.hero p{margin:0;color:#374151;max-width:70ch}
+  header.hero p{margin:0 0 6px;color:#374151;max-width:70ch}
   .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
   .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid}
   .b-path{color:var(--agent);border-color:#bfdbfe;background:var(--agentbg)}
@@ -30,19 +30,15 @@
   section{scroll-margin-top:64px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
   .grid{display:grid;gap:14px}
-  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
   .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
   pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
-  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
   pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
-  .io{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--mut);text-transform:uppercase;margin:8px 0 0}
+  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
   table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
   th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
   th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
   .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
-  .p-agent{background:var(--agentbg);color:var(--agent)} .p-env{background:var(--envbg);color:var(--env)}
-  .p-mubit{background:var(--mubitbg);color:var(--mubit)} .p-lesson{background:var(--lessonbg);color:var(--lesson)}
-  .p-guard{background:var(--guardbg);color:var(--guard)} .p-ok{background:var(--okbg);color:var(--ok)}
+  .p-env{background:var(--envbg);color:var(--env)}
   .steps{counter-reset:st}
   .step{position:relative;padding:14px 16px 14px 58px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0}
   .step:before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:999px;background:var(--mubit);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
@@ -50,7 +46,6 @@
   .who{float:right}
   svg{max-width:100%;height:auto;display:block;margin:10px auto}
   .callout{border-left:4px solid var(--mubit);background:var(--mubitbg);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
-  .callout.g{border-color:var(--guard);background:var(--guardbg)}
   .callout.k{border-color:var(--ok);background:var(--okbg)}
   footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--mut);font-size:13.5px}
   footer a{color:var(--mubit);text-decoration:none}
@@ -64,37 +59,36 @@
 <nav>
   <b>Care Coordination Agent</b>
   <a href="#scenario">Scenario</a><a href="#flow">Flow</a><a href="#loop">Mubit loop</a>
-  <a href="#data">Data</a><a href="#results">Results</a><a href="#proves">What it proves</a><a href="#run">Run</a>
+  <a href="#data">Data</a><a href="#results">Results</a><a href="#run">Run</a>
 </nav>
 <main>
 <header class="hero">
   <h1>Care Coordination Agent</h1>
-  <p>A bounded LLM agent coordinates one synthetic patient's care encounters. Across fresh process
-  restarts it learns <em>patient-specific operational strategies</em> from observed outcomes and one
-  clinician correction — while current chart instructions always outrank historical memory.</p>
+  <p>One agent coordinates care for one synthetic patient. The agent acts through 7 validated actions
+  in a deterministic simulator. It learns patient-specific strategies from observed outcomes and 1
+  clinician correction. The lessons stay in Mubit across process restarts.</p>
+  <p>Current chart instructions always outrank stored lessons.</p>
   <div class="badges">
     <span class="badge b-path">Pathway: deterministic (harness-owned SDK calls)</span>
     <span class="badge b-mubit">Mubit: remember · recall · record_outcome</span>
-    <span class="badge b-syn">All patients, charts &amp; clinicians are synthetic</span>
+    <span class="badge b-syn">All patients, charts and clinicians are synthetic</span>
   </div>
 </header>
 
 <section id="scenario">
-  <h2>1 · The scenario</h2>
-  <p class="lead">The agent works through validated structured actions inside a deterministic encounter
-  simulator with an 8-action budget: <code class="inline">outreach</code> → <code class="inline">explain_instructions</code> →
-  <code class="inline">check_understanding</code> → <code class="inline">arrange_transportation</code> →
-  <code class="inline">book_follow_up</code> → <code class="inline">close_encounter</code> (or <code class="inline">escalate</code>).
-  The simulator hides patient-specific ground truth the agent must discover:</p>
+  <h2>1 · Scenario</h2>
+  <p class="lead">The simulator gives an 8-action budget. The agent must establish contact, explain
+  chart-approved instructions, verify understanding, arrange transportation, and book the follow-up.
+  The simulator hides patient-specific ground truth:</p>
   <div class="grid g3">
-    <div class="card"><span class="pill p-env">T1 · Contact</span><p>SMS gets no reply; calls before 17:00 hit voicemail; a call at ≥17:00 establishes contact. <em>Deliberately not</em> a universal "SMS never works" rule.</p></div>
-    <div class="card"><span class="pill p-env">T2 · Communication</span><p>Generic label-style explanations never establish understanding. A failed comprehension check triggers a scripted clinician correction adding approved wording to the chart; only that text plus a check confirms understanding.</p></div>
-    <div class="card"><span class="pill p-env">T3 · Coordination</span><p>Booking before transportation is arranged fails. Transport first, then booking, succeeds.</p></div>
+    <div class="card"><span class="pill p-env">T1 · Contact</span><p>SMS gets no reply. Calls before 17:00 go to voicemail. A call at 17:00 or later establishes contact. This rule is patient-specific. It is not a general "SMS never works" rule.</p></div>
+    <div class="card"><span class="pill p-env">T2 · Communication</span><p>The generic label-style text does not establish understanding. A failed comprehension check triggers 1 scripted clinician correction. The correction adds approved wording to the chart. Only that text, then a check, confirms understanding.</p></div>
+    <div class="card"><span class="pill p-env">T3 · Coordination</span><p>Booking before transportation fails. Transportation first, then booking, succeeds.</p></div>
   </div>
 </section>
 
 <section id="flow">
-  <h2>2 · How the agent and Mubit are wired</h2>
+  <h2>2 · Flow</h2>
   <svg viewBox="0 0 960 330" role="img" aria-label="Architecture: simulator, agent loop, lessons module, Mubit">
     <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#64748b"/></marker></defs>
     <rect class="box" x="20"  y="30" width="200" height="86" fill="#f1f5f9" stroke="#64748b"/>
@@ -121,51 +115,51 @@
     <text class="sub" x="60" y="180">recall once, before action 1</text>
     <text class="sub" x="600" y="150">validated candidate only</text>
   </svg>
-  <div class="callout"><b>Two guarantees are structural, not prompt-level:</b> every SDK call happens at a
-  fixed code point in the harness, and lesson text can only be produced by <code class="inline">lessons.py</code>
-  from evidence that actually occurred. The runtime model chooses actions — it cannot author memory.</div>
+  <div class="callout">Every SDK call happens at a fixed code point in the harness. Lesson text comes
+  only from <code class="inline">lessons.py</code>, and only from evidence that occurred. The runtime
+  model chooses actions. It cannot write memory.</div>
 </section>
 
 <section id="loop">
-  <h2>3 · The learning loop, step by step</h2>
+  <h2>3 · The learning loop</h2>
   <div class="steps">
-    <div class="step"><span class="who pill p-agent">owned by: harness</span><h3>Capture</h3>The agent acts; the simulator returns observed outcomes (SMS <code class="inline">no_response</code>, failed comprehension check, unsuccessful booking…). Only what the agent was allowed to see can become evidence.</div>
-    <div class="step"><span class="who pill p-agent">owned by: code</span><h3>Distill</h3><code class="inline">lessons.py</code> derives a candidate <b>only</b> if the full evidence pattern occurred — e.g. a contact lesson requires SMS no-reply <em>followed by</em> a successful call. Guidance stays conditional: "when no newer contact preference is available…", never "SMS never works".</div>
-    <div class="step"><span class="who pill p-guard">owned by: code</span><h3>Gate</h3>The candidate is persisted only if it re-derives identically from the finished encounter, provenance matches, and it contains no treatment-like language and no hidden-simulator markers. Anything else is dropped.</div>
-    <div class="step"><span class="who pill p-mubit">owned by: Mubit</span><h3>Promote</h3><code class="inline">remember(intent="lesson", upsert_key=version:experiment:patient:category)</code> — idempotent per patient+category, run-scoped. Re-teaching updates the slot instead of duplicating.</div>
-    <div class="step"><span class="who pill p-agent">owned by: harness</span><h3>Inject</h3>One recall before action 1, re-validated against the Lesson schema; the list is <b>frozen and SHA-256-hashed</b> for the whole execution. Prompt policy fixes authority: current chart → current observations → recalled lessons.</div>
-    <div class="step"><span class="who pill p-mubit">owned by: Mubit</span><h3>Attribute</h3>After the encounter, <code class="inline">record_outcome</code> reinforces exactly the lessons the agent cited — success raises their evidence counters; failure decays them.</div>
+    <div class="step"><span class="who pill p-env">owned by: harness</span><h3>Capture</h3>The agent acts. The simulator returns observed outcomes. Only data the agent was allowed to see can become evidence.</div>
+    <div class="step"><span class="who pill p-env">owned by: code</span><h3>Distill</h3>The code derives a candidate only when the full evidence pattern occurred. A contact lesson needs an SMS with no reply. Then it needs a successful call. The guidance stays conditional: "when no newer contact preference is available". The guidance never says "SMS never works".</div>
+    <div class="step"><span class="who pill" style="background:var(--guardbg);color:var(--guard)">owned by: code</span><h3>Gate</h3>The candidate must re-derive identically from the finished encounter. The provenance must match. The text must contain no treatment-like language and no hidden-simulator markers. Anything else is dropped.</div>
+    <div class="step"><span class="who pill" style="background:var(--mubitbg);color:var(--mubit)">owned by: Mubit</span><h3>Promote</h3><code class="inline">remember(intent="lesson", upsert_key=version:experiment:patient:category)</code>. The write is idempotent per patient and category. Re-teaching updates the slot. It does not create a duplicate.</div>
+    <div class="step"><span class="who pill p-env">owned by: harness</span><h3>Inject</h3>One recall runs before action 1. The list is frozen and SHA-256 hashed for the whole execution. The prompt policy fixes the authority order: current chart first, then current observations, then recalled lessons.</div>
+    <div class="step"><span class="who pill" style="background:var(--mubitbg);color:var(--mubit)">owned by: Mubit</span><h3>Attribute</h3>After the encounter, <code class="inline">record_outcome</code> reinforces exactly the lessons the agent cited. Success raises the evidence counters. Failure lowers them.</div>
   </div>
 </section>
 
 <section id="data">
   <h2>4 · Example data at each step</h2>
-  <p class="lead">Real field values from the code and scenarios (patient <code class="inline">SYNTH-PT-0042</code>,
-  channels <code class="inline">sms|phone_call</code>, chart slots <code class="inline">2026-10-21T09:00</code>…).
-  Every lesson becomes a hypervector in the medium; recall is the SDM consensus read over it.</p>
+  <p class="lead">Field values come from the code and the scenarios. The patient is
+  <code class="inline">SYNTH-PT-0042</code>. The channels are <code class="inline">sms</code> and
+  <code class="inline">phone_call</code>. Each lesson becomes a hypervector in the medium. Recall is
+  the SDM consensus read over it.</p>
 
-  <div class="card"><b>① Capture</b> — agent decision in, simulator outcome out (teaching encounter T1):
+  <div class="card"><b>① Capture</b> — decision in, outcome out (teaching encounter T1):
 <pre class="mini">// agent → simulator (pydantic-validated structured decision)
 {"action": "outreach", "arguments": {"channel": "sms", "local_time": "09:00"},
  "rationale": "Chart lists sms and phone_call; try the lighter channel first.",
  "recalled_lesson_ids": []}
-// simulator → observed outcome (the only ground truth the agent ever sees)
+// simulator → observed outcome (the only ground truth the agent sees)
 {"action": "outreach", "channel": "sms", "local_time": "09:00", "status": "no_response"}</pre></div>
 
-  <div class="card"><b>② Distill</b> — what lessons.py derives from that evidence (and only if the full
-  pattern occurred: SMS no-reply followed by a successful call at ≥17:00):
+  <div class="card"><b>② Distill</b> — the derived lesson. The full pattern must occur: SMS no-reply,
+  then a successful call at 17:00 or later:
 <pre class="mini">{"category": "contact_strategy", "patient_id": "SYNTH-PT-0042",
  "applicability": "when no newer contact preference is available for this patient",
  "guidance": "SMS receives no reply; a phone call at 17:00 or later establishes contact",
  "evidence_type": "observed_outcome",
  "evidence_summary": "T1: outreach(sms,09:00)→no_response; outreach(phone_call,17:05)→contact"}</pre></div>
 
-  <div class="card"><b>③ Gate</b> — a candidate is persisted only if it re-derives identically from the
-  finished encounter, provenance matches, and it carries <em>no</em> treatment-like language and no
-  hidden-simulator markers. Dropped example: a draft saying "switch the evening dose" — medication
-  wording — never reaches Mubit.</div>
+  <div class="card"><b>③ Gate</b> — the candidate must re-derive identically. The provenance must
+  match. The text must contain no treatment-like language. Example of a rejection: a draft says
+  "switch the evening dose". Medication wording is dropped before Mubit sees it.</div>
 
-  <div class="card"><b>④ Promote</b> — the write, idempotent per patient + category:
+  <div class="card"><b>④ Promote</b> — the write:
 <pre class="mini">client.remember(
   content = "[experiment:cc-x] [demo:cc-memory-1]\n" + json.dumps({…lesson, experiment_id, source_encounter_id…}),
   intent="lesson", lesson_type="failure",          // learned from a failed SMS, not a correction
@@ -173,66 +167,56 @@
   upsert_key="cc-memory-1:cc-x:SYNTH-PT-0042:contact_strategy",   // re-teaching updates this slot
   wait=True)</pre></div>
 
-  <div class="card"><b>⑤ Inject</b> — recall before action 1; only prompt-safe fields survive validation,
-  and the list is frozen and hashed for the whole execution:
+  <div class="card"><b>⑤ Inject</b> — recall before action 1. Only prompt-safe fields pass
+  validation. The list is frozen and hashed for the whole execution:
 <pre class="mini">// in: recall(query="care coordination operational lessons for synthetic patient SYNTH-PT-0042",
 //          entry_types=["lesson"], evidence_only=True)
 // out: entry {"id": "5d3f…", "content": "[experiment:cc-x] [demo:cc-memory-1]\n{…}"}
 // → after strict re-validation, the frozen snapshot the model receives:
 [{"id": "5d3f…", "category": "contact_strategy", "applicability": "…",
-  "guidance": "…", "evidence_summary": "…"}]      // snapshot SHA-256 identical across all three arms</pre></div>
+  "guidance": "…", "evidence_summary": "…"}]      // snapshot SHA-256 identical across all 3 arms</pre></div>
 
-  <div class="card"><b>⑥ Attribute</b> — after the encounter, only cited lessons are reinforced:
+  <div class="card"><b>⑥ Attribute</b> — only cited lessons are reinforced:
 <pre class="mini">memory.record(reference_id="5d3f…", succeeded=True,
               rationale="E1: contact established on first call after 17:00")
 // → client.record_outcome(reference_id="5d3f…", outcome="success", signal=1.0,
 //                         verified_in_production=False)</pre>
-  <p style="margin:8px 0 0">And in E2, the same store must lose: chart says "morning calls 09:00–11:00",
-  the stored lesson says "call ≥17:00" — the agent calls at 09:30 and the run scores PASS on current
-  instruction winning.</p></div>
+  <p style="margin:8px 0 0">In E2, the chart says "morning calls, 09:00–11:00". The stored lesson says
+  "call at 17:00 or later". The agent calls at 09:30. The run scores PASS only when the current
+  instruction wins.</p></div>
 
-  <div class="callout k"><b>Recall is strict:</b> entries failing the marker, experiment, patient, category or
-  schema checks are dropped before the model ever sees them. Reference IDs shown in the UI come only from
-  real Mubit recalls — none are ever fabricated.</div>
+  <div class="callout k">Recall rejects entries that fail the marker, experiment, patient, category or
+  schema checks. Reference IDs shown in the UI come from real Mubit recalls only. The app never
+  fabricates an ID.</div>
 </section>
 
 <section id="results">
-  <h2>5 · What gets measured</h2>
+  <h2>5 · Results</h2>
   <div class="card">
-  <h3 style="margin-top:0">E1 — three-arm controlled comparison (fresh processes, frozen snapshot)</h3>
+  <h3 style="margin-top:0">E1 — 3-arm comparison (fresh processes, frozen snapshot)</h3>
   <table>
-    <tr><th>Arm</th><th>Memory</th><th>What it isolates</th></tr>
-    <tr><td><code class="inline">no_memory</code></td><td>empty</td><td>cold agent behavior</td></tr>
-    <tr><td><code class="inline">full_memory</code></td><td>the exact frozen, hashed snapshot</td><td>what the learned lessons change</td></tr>
-    <tr><td><code class="inline">ablated_contact</code></td><td>contact lessons removed, others intact</td><td><b>per-category causal attribution</b> — removing one lesson type must reverse exactly the behaviors it drove</td></tr>
+    <tr><th>Arm</th><th>Memory</th><th>Isolates</th></tr>
+    <tr><td><code class="inline">no_memory</code></td><td>empty</td><td>cold behavior</td></tr>
+    <tr><td><code class="inline">full_memory</code></td><td>the exact frozen, hashed snapshot</td><td>what the lessons change</td></tr>
+    <tr><td><code class="inline">ablated_contact</code></td><td>contact lessons removed, others intact</td><td>per-category attribution: removing 1 lesson type must reverse the behavior it drove</td></tr>
   </table>
-  <p style="margin-bottom:0">Scoring is deterministic (completion, comprehension, premature booking, transport-confirmed
-  booking, efficiency…) — no LLM judge. Zero Mubit writes during evaluation.</p>
+  <p style="margin-bottom:0">Scoring is deterministic. There is no LLM judge. Evaluation writes
+  nothing to Mubit.</p>
   </div>
   <div class="card">
   <h3 style="margin-top:0">E2 — current-preference override</h3>
-  <p style="margin-bottom:0">The chart now says "morning calls, 09:00–11:00", contradicting the stored after-17:00
-  lesson. The simulator rewards only the current instruction, and the run reports a hard PASS/FAIL on the
-  memory system <b>not</b> overriding current truth. Memory is operational guidance, never a second chart.</p>
-  </div>
-</section>
-
-<section id="proves">
-  <h2>6 · What this demonstrates (the indirect answers)</h2>
-  <div class="grid g2">
-    <div class="card"><span class="pill p-agent">deterministic pathway</span><p>Mubit calls at fixed code points; memory content is auditable by reading code. The right shape when lessons are compliance-grade.</p></div>
-    <div class="card"><span class="pill p-guard">over-indexing control</span><p>Lessons are conditional by construction, E2 proves current truth wins, and ablation shows influence is measured by behavior change — not by citations.</p></div>
-    <div class="card"><span class="pill p-mubit">durable cross-run learning</span><p>Lessons survive process restarts — Mubit is the only memory; local trace files are audit artifacts. Fresh executions behave differently because of what was learned.</p></div>
-    <div class="card"><span class="pill p-lesson">influence attribution</span><p>Reinforcement touches only cited lessons; the ablation arm proves the causal story per category.</p></div>
+  <p style="margin-bottom:0">The chart changes to "morning calls, 09:00–11:00". This conflicts with
+  the stored after-17:00 lesson. The simulator rewards only the current instruction. The run reports
+  PASS or FAIL on memory not overriding current truth.</p>
   </div>
 </section>
 
 <section id="run">
-  <h2>7 · Run it</h2>
+  <h2>6 · Run</h2>
 <pre>python3 -m venv .venv &amp;&amp; .venv/bin/pip install -r requirements.txt
 cp .env.example .env                    # GEMINI_API_KEY, MUBIT_ENDPOINT, MUBIT_API_KEY
 .venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 7880   # browser demo
-.venv/bin/python compare.py --experiment cc-your-id                # three-arm comparison</pre>
+.venv/bin/python compare.py --experiment cc-your-id                # 3-arm comparison</pre>
 </section>
 
 <footer>
@@ -242,8 +226,8 @@ cp .env.example .env                    # GEMINI_API_KEY, MUBIT_ENDPOINT, MUBIT_
   <a href="../oncall_agent/how-it-works.html">On-Call Triage Agent</a> ·
   repo: <a href="https://github.com/mubit-ai/demo">mubit-ai/demo</a> ·
   benchmark evidence: <a href="https://github.com/mubit-ai/mubit-cl-bench">mubit-cl-bench</a>.
-  <br>All patients, clinicians, charts, medications and statements are synthetic. Care coordination only —
-  no diagnosis, treatment selection, or medication changes.
+  <br>All patients, clinicians, charts, medications and statements are synthetic. Care coordination
+  only — no diagnosis, treatment selection, or medication changes.
 </footer>
 </main>
 <script>
