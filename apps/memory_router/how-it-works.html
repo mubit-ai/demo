@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory-Augmented Router — How it works</title>
+<style>
+  :root{--ink:#111827;--mut:#6b7280;--line:#e5e7eb;--bg:#f7f8fa;--card:#fff;
+        --agent:#2563eb;--env:#64748b;--mubit:#7c3aed;--lesson:#b45309;--guard:#dc2626;--ok:#059669;
+        --agentbg:#eff6ff;--envbg:#f1f5f9;--mubitbg:#f5f3ff;--lessonbg:#fffbeb;--guardbg:#fef2f2;--okbg:#ecfdf5;}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  nav{position:sticky;top:0;z-index:9;background:#ffffffee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 22px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  nav b{font-size:15px}
+  nav a{color:var(--mut);text-decoration:none;font-size:13.5px;padding:3px 8px;border-radius:6px}
+  nav a:hover{color:var(--ink);background:var(--bg)}
+  nav a.on{color:#fff;background:var(--agent)}
+  main{max-width:1020px;margin:0 auto;padding:26px 22px 80px}
+  header.hero{padding:34px 26px;background:linear-gradient(135deg,#f5f3ff,#ecfdf5);border:1px solid var(--line);border-radius:16px;margin-bottom:26px}
+  header.hero h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
+  header.hero p{margin:0;color:#374151;max-width:72ch}
+  .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid}
+  .b-path{color:var(--mubit);border-color:#ddd6fe;background:var(--mubitbg)}
+  .b-path2{color:var(--ok);border-color:#a7f3d0;background:var(--okbg)}
+  .b-mubit{color:var(--mubit);border-color:#ddd6fe;background:var(--mubitbg)}
+  .b-syn{color:var(--mut);border-color:var(--line);background:#fff}
+  h2{font-size:21px;margin:38px 0 12px;letter-spacing:-.3px}
+  h3{font-size:16px;margin:20px 0 8px}
+  p.lead{color:#374151;max-width:78ch}
+  section{scroll-margin-top:64px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
+  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
+  pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
+  td.n{font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .p-agent{background:var(--agentbg);color:var(--agent)} .p-env{background:var(--envbg);color:var(--env)}
+  .p-mubit{background:var(--mubitbg);color:var(--mubit)} .p-lesson{background:var(--lessonbg);color:var(--lesson)}
+  .p-guard{background:var(--guardbg);color:var(--guard)} .p-ok{background:var(--okbg);color:var(--ok)}
+  .steps{counter-reset:st}
+  .step{position:relative;padding:14px 16px 14px 58px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0}
+  .step:before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:999px;background:var(--mubit);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step h3{margin:0 0 4px;font-size:15px}
+  .who{float:right}
+  svg{max-width:100%;height:auto;display:block;margin:10px auto}
+  .callout{border-left:4px solid var(--mubit);background:var(--mubitbg);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+  .callout.g{border-color:var(--guard);background:var(--guardbg)}
+  .callout.k{border-color:var(--ok);background:var(--okbg)}
+  .modes{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .mode{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}
+  .mode h3{margin-top:0}
+  .mode.hot{border-color:#a7f3d0;background:linear-gradient(180deg,#ecfdf5,#fff)}
+  footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--mut);font-size:13.5px}
+  footer a{color:var(--mubit);text-decoration:none}
+  .arrow{stroke:var(--mut);stroke-width:1.6;fill:none;marker-end:url(#ah3)}
+  .box{stroke-width:1.4}
+  .lbl{font:600 12.5px -apple-system,Segoe UI,sans-serif}
+  .sub{font:11.5px -apple-system,Segoe UI,sans-serif;fill:var(--mut)}
+  .flip{color:#92400e;font-weight:600}
+</style>
+</head>
+<body>
+<nav>
+  <b>Memory-Augmented Router</b>
+  <a href="#scenario">Scenario</a><a href="#modes">Three pathways</a><a href="#teach">Teach loop</a>
+  <a href="#results">Results</a><a href="#proves">What it proves</a><a href="#run">Run</a>
+</nav>
+<main>
+<header class="hero">
+  <h1>Memory-Augmented Router</h1>
+  <p>A keyword-baseline router delegates support requests to three fictional specialists, and keeps
+  getting the wrong specialist first. The agent stores only raw evidence and per-step outcomes —
+  <b>Mubit itself</b> reflects, gates, and decides which lessons exist, which are discarded, and what
+  gets recalled into future runs.</p>
+  <div class="badges">
+    <span class="badge b-path">Pathway B: Mubit-decided lessons</span>
+    <span class="badge b-path2">Pathway C: model-mediated tool calls (--mode tools)</span>
+    <span class="badge b-mubit">remember(fact) · record_step_outcome · reflect · recall</span>
+    <span class="badge b-syn">All requests &amp; specialists are fictional</span>
+  </div>
+</header>
+
+<section id="scenario">
+  <h2>1 · The scenario</h2>
+  <p class="lead">A regex baseline routes by keywords: <code class="inline">api|endpoint → technical</code>,
+  <code class="inline">invoice|receipt → billing</code>, else <code class="inline">account</code>. It is
+  wrong in both directions on the held-out set — requests that need meaning-level reading, not keyword
+  matching:</p>
+  <table>
+    <tr><th>Case</th><th>Request</th><th>Correct specialist</th><th>Keyword baseline says</th></tr>
+    <tr><td>H1</td><td>"Our endpoint stopped working when the subscription rolled over."</td><td>billing</td><td class="flip">technical ✗</td></tr>
+    <tr><td>H2</td><td>"Please correct the organisation printed on my receipt."</td><td>account</td><td class="flip">billing ✗</td></tr>
+    <tr><td>H3</td><td>"All users are unable to sign in this morning."</td><td>technical</td><td class="flip">account ✗</td></tr>
+    <tr><td>C1</td><td>"API returns a parser error on malformed JSON."</td><td>technical</td><td>technical ✓</td></tr>
+    <tr><td>C2</td><td>"Please send a duplicate invoice."</td><td>billing</td><td>billing ✓</td></tr>
+    <tr><td>C3</td><td>"I forgot my login password."</td><td>account</td><td>account ✓</td></tr>
+  </table>
+  <p class="lead">The teaching set (T1–T3) is three requests like H1–H3. The learned lessons must transfer
+  <b>across paraphrases</b> (H-cases) without capturing the negative controls (C-cases) — C2 shares the word
+  "invoice" with a billing-context lesson, so naive similarity is actively misleading here.</p>
+</section>
+
+<section id="modes">
+  <h2>2 · The three Mubit integration pathways — one app, switchable</h2>
+  <div class="modes">
+    <div class="mode">
+      <span class="pill p-agent">A · deterministic</span>
+      <h3>Harness calls the SDK at fixed points</h3>
+      <p>The harness recalls before the decision, passes lessons into the prompt, and records outcomes
+      after. Lesson content is authored outside the model. <em>Used by the sibling apps
+      (<a href="../care_coordination_agent/how-it-works.html">care coordination</a>,
+      <a href="../supply_chain_agent/how-it-works.html">supply chain</a>). Best when lessons are
+      compliance-grade and auditable by inspection.</em></p>
+    </div>
+    <div class="mode hot">
+      <span class="pill p-mubit">B · Mubit-decided</span>
+      <h3>The agent stores evidence; Mubit writes the lessons</h3>
+      <p>The agent never authors a lesson. It stores raw observed attempts
+      (<code class="inline">remember(intent="fact")</code>) and one outcome per step
+      (<code class="inline">record_step_outcome</code>). Mubit's <code class="inline">reflect()</code>
+      extracts lesson candidates server-side and the <b>validation gate</b> (accept ≥ 0.6, reject ≤ 0.25,
+      revalidation from realized success rates) decides what becomes a lesson, what stays pending, and what
+      is discarded — rejected entries return marked <code class="inline">is_stale</code> and are filtered at
+      recall. <em>This is the default mode here.</em></p>
+    </div>
+    <div class="mode">
+      <span class="pill p-ok">C · model-mediated tools</span>
+      <h3>The model itself calls <code class="inline">mubit_recall</code></h3>
+      <p>With <code class="inline">--mode tools</code>, the harness calls nothing. The router model invokes
+      Mubit recall as a function tool — deciding <b>whether</b> to consult memory at all (skipping is
+      allowed and correct for C1–C3), <b>what query</b> to use, and how often (capped at 2). Grounding is
+      enforced in code: any baseline override must cite lesson IDs the tool actually returned, or the run
+      fails. <em>New in this branch.</em></p>
+    </div>
+  </div>
+  <svg viewBox="0 0 960 300" role="img" aria-label="Teach-phase flow: request, decision, outcome, evidence and step outcomes to Mubit, reflect, gated lessons, recall">
+    <defs><marker id="ah3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#64748b"/></marker></defs>
+    <rect class="box" x="20" y="40" width="170" height="70" fill="#f1f5f9" stroke="#64748b"/>
+    <text class="lbl" x="34" y="66" fill="#334155">Request + baseline</text>
+    <text class="sub" x="34" y="84">keyword router + lessons</text>
+    <rect class="box" x="250" y="40" width="180" height="70" fill="#eff6ff" stroke="#2563eb"/>
+    <text class="lbl" x="264" y="66" fill="#1e40af">Router decision</text>
+    <text class="sub" x="264" y="84">initial · cited lesson IDs</text>
+    <rect class="box" x="490" y="40" width="170" height="70" fill="#f1f5f9" stroke="#64748b"/>
+    <text class="lbl" x="504" y="66" fill="#334155">Specialist sim</text>
+    <text class="sub" x="504" y="84">resolved · handoff · failed</text>
+    <rect class="box" x="250" y="185" width="410" height="92" fill="#f5f3ff" stroke="#7c3aed"/>
+    <text class="lbl" x="264" y="211" fill="#5b21b6">Mubit (the only lesson store)</text>
+    <text class="sub" x="264" y="231">remember(intent="fact") — raw evidence, no authored lessons</text>
+    <text class="sub" x="264" y="247">record_step_outcome(±1 per step) · record_outcome(cited lessons)</text>
+    <text class="sub" x="264" y="263">reflect(include_step_outcomes) → validation gate → lessons / is_stale</text>
+    <path class="arrow" d="M190,75 L250,75"/>
+    <path class="arrow" d="M430,75 L490,75"/>
+    <path class="arrow" d="M575,110 L575,185" stroke="#7c3aed"/>
+    <path class="arrow" d="M250,231 C160,231 90,150 90,110" stroke="#7c3aed"/>
+    <text class="sub" x="60" y="160">recall next run:</text>
+    <text class="sub" x="60" y="176">lessons only, is_stale dropped</text>
+  </svg>
+</section>
+
+<section id="teach">
+  <h2>3 · The teaching loop — who decides what</h2>
+  <div class="steps">
+    <div class="step"><span class="who pill p-agent">owned by: harness instrumentation</span><h3>Capture</h3>After each routing attempt, the observed facts are stored exactly as they happened: <code class="inline">remember(content="Observed fictional routing attempt: …", intent="fact")</code>. No preferred route, rule, or hindsight directive is written anywhere — the write path physically cannot editorialize.</div>
+    <div class="step"><span class="who pill p-mubit">owned by: Mubit reflect</span><h3>Distill</h3>One call — <code class="inline">advanced.reflect(include_step_outcomes=True)</code> — has Mubit's server-side LLM read the evidence stream (including the per-step rewards) and propose structured lessons. The agent app never prompts for lessons itself.</div>
+    <div class="step"><span class="who pill p-guard">owned by: Mubit's validation gate</span><h3>Gate</h3>Candidates are scored: ≥ 0.6 → active, ≤ 0.25 → rejected and marked stale, between → pending until outcome evidence arrives. Once ≥ 3 outcomes accumulate, realized success rate re-runs the gate — trust is losable. Recall filters <code class="inline">is_stale</code>, non-lesson types, and wrong-run entries before the model sees anything.</div>
+    <div class="step"><span class="who pill p-mubit">owned by: Mubit scope rules</span><h3>Promote</h3>Lessons that keep earning outcomes climb the scope ladder (run → session → global); here the demo keeps them run-scoped to the experiment, and promotion is server policy, not app code.</div>
+    <div class="step"><span class="who pill p-agent">owned by: harness (or the model, in tools mode)</span><h3>Inject</h3>Preload mode: harness recalls with the routing query and supplies lessons. Tools mode: the model invokes <code class="inline">mubit_recall</code> itself, choosing the query — and may skip it when the baseline is clearly right.</div>
+    <div class="step"><span class="who pill p-mubit">owned by: Mubit counters</span><h3>Attribute</h3>Two granularities: <code class="inline">record_outcome</code> on cited lessons (a lesson that wasn't used can't be reinforced), and <code class="inline">record_step_outcome</code> per step with <code class="inline">signal=±1.0</code> — the committed teach trace shows the honest pattern <code class="inline">[-1, +1] × 3</code>: wrong first route, resolved after handoff, for every teaching case.</div>
+  </div>
+
+  <h3>Example data at each step — from the committed live traces</h3>
+  <div class="card"><b>① Capture</b> — teaching case T1, before any lesson exists:
+<pre class="mini">// decision (trace, abbreviated)
+{"case": "T1", "request": "API access stopped immediately after renewal.",
+ "initial": "technical_agent", "lesson_ids": []}
+// outcome (only disclosed after the decision)
+{"case": "T1", "initial_status": "handoff", "resolved_by": "billing_agent", "handoffs": 1}</pre></div>
+
+  <div class="card"><b>② Store raw evidence + step outcomes</b> — real events from
+  <code class="inline">live-v2-teach.jsonl</code>; nothing here authors a lesson:
+<pre class="mini">{"event": "evidence_stored", "source": "5edb…/T1", "job_id": "e10e09a4-…",
+ "record_ids": ["84678ca9-…"]}
+{"event": "step_recorded", "step": 0, "result": {"accepted": true,
+ "step_outcome_id": "50bff3c5-…"}}   // initial route: signal −1.0
+{"event": "step_recorded", "step": 1, "result": {"accepted": true,
+ "step_outcome_id": "b288499b-…"}}   // handoff resolution: signal +1.0</pre></div>
+
+  <div class="card"><b>③ Mubit decides the lessons</b> — the verbatim
+  <code class="inline">reflect()</code> output (3 lessons, none written by the app):
+<pre class="mini">{"degraded": false, "lessons_stored": 3, "lessons": [
+ {"lesson_id": "4a7687f5-…", "lesson_type": "success",
+  "content": "Requests concerning API access stopping immediately after a renewal should be
+              routed directly to the billing agent instead of the technical agent."},
+ {"lesson_id": "ee23b165-…", "content": "Requests regarding incorrect workspace names appearing on
+              invoices should be routed directly to the account agent instead of the billing agent."},
+ {"lesson_id": "c32706e1-…", "content": "Requests about login failures for everyone during a system
+              outage should be routed directly to the technical agent instead of the account agent."}]}
+// each lesson becomes a hypervector in the medium; a failing lesson would decay through
+// its outcome counters and return marked is_stale — filtered before the model sees it</pre></div>
+
+  <div class="card"><b>④–⑤ Recall and decide</b> — held-out H1, memory ON (trace):
+<pre class="mini">{"case": "H1", "request": "Our endpoint stopped working when the subscription rolled over.",
+ "baseline": "technical_agent",                    // keyword "endpoint"
+ "initial": "billing_agent",                       // lesson-cited override
+ "lesson_ids": ["4a7687f5-1c91-49fc-a1fa-0659f72a767f"],
+ "reason": "The request involves an API endpoint failing right after a subscription renewal…"}
+→ {"initial_status": "succeeded"}                   // correct on the first route
+// and the honest counter-example, H2: no lesson applied —
+{"case": "H2", "initial": "billing_agent", "lesson_ids": []}  → handoff (declined an ungrounded override)</pre></div>
+
+  <div class="card"><b>Tool mode</b> — the same recall as a model-chosen function call
+  (<code class="inline">--mode tools</code>):
+<pre class="mini">// model → harness
+{"function_call": {"name": "mubit_recall",
+                   "args": {"query": "api stopped working after renewal"}}}
+// harness → model (real recall, then the final decision must cite only these IDs)
+{"function_response": {"name": "mubit_recall",
+                       "response": {"lessons": [{"id": "4a7687f5-…", "content": "…", "conditions": []}]}}}</pre></div>
+
+</section>
+
+<section id="results">
+  <h2>4 · Measured results (committed live traces)</h2>
+  <div class="grid g2">
+    <div class="card"><h3 style="margin-top:0">Headline</h3>
+      <table>
+        <tr><th></th><th>Memory OFF</th><th>Memory ON</th></tr>
+        <tr><td>First-route accuracy</td><td class="n">50%</td><td class="n"><b>83.3%</b></td></tr>
+        <tr><td>Unnecessary handoffs</td><td class="n">3</td><td class="n"><b>1</b></td></tr>
+      </table>
+      <p style="margin-bottom:0">Fresh process, six held-out requests, no writes during evaluation.</p></div>
+    <div class="card"><h3 style="margin-top:0">Per case, memory ON (from the trace)</h3>
+      <table>
+        <tr><th>Case</th><th>Decision</th><th>Grounded by</th><th>Result</th></tr>
+        <tr><td>H1</td><td>technical → <b>billing</b></td><td>cited lesson</td><td class="n">✓ first route</td></tr>
+        <tr><td>H2</td><td>billing (kept baseline)</td><td>no applicable lesson</td><td class="n">handoff</td></tr>
+        <tr><td>H3</td><td>account → <b>technical</b></td><td>cited lesson</td><td class="n">✓ first route</td></tr>
+        <tr><td>C1–C3</td><td>baseline kept</td><td>correctly no lesson</td><td class="n">✓ all three</td></tr>
+      </table></div>
+  </div>
+  <div class="callout"><b>The honest edge case is in the table.</b> H2's paraphrase did <em>not</em> transfer
+  in this run — and the model correctly declined an ungrounded override instead of guessing, so the run
+  still resolved via one handoff. Generalization improved routing on H1/H3, restraint preserved C1–C3, and
+  nothing overrode without citation. Lessons that prove wrong would decay through their outcome counters,
+  and Mubit's gate marks them stale — they stop being recalled.</div>
+</section>
+
+<section id="proves">
+  <h2>5 · What this demonstrates (the indirect answers)</h2>
+  <div class="grid g2">
+    <div class="card"><span class="pill p-mubit">Mubit-decided memory</span><p>What to store, what to discard, and what to recall are decided by Mubit's reflect + validation gate from raw evidence and step outcomes — not by hand-written rules or free-form LLM writes.</p></div>
+    <div class="card"><span class="pill p-lesson">pattern transfer without capture</span><p>Lessons generalize across paraphrases (H1, H3) while keyword-adjacent negative controls (C2) stay on baseline — conditions and scoping survive the round trip through memory.</p></div>
+    <div class="card"><span class="pill p-guard">grounded overrides only</span><p>In every mode, an override must cite lesson IDs that actually came back; invented citations fail the run. Filtered recall (<code class="inline">is_stale</code>, type, scope) means discarded knowledge never reaches the model.</p></div>
+    <div class="card"><span class="pill p-ok">tool-mediated memory</span><p><code class="inline">--mode tools</code> shows the third integration shape: the model spends a tool call on memory only when it judges it useful — selective recall at decision time, with identical grounding rules.</p></div>
+  </div>
+</section>
+
+<section id="run">
+  <h2>6 · Run it</h2>
+<pre>make memory-router                                     # teach + evaluate, fresh experiment (preloaded mode)
+.venv/bin/python demo.py evaluate --experiment &lt;id&gt; --mode tools   # model-mediated recall
+.venv/bin/python -m unittest test_demo                 # offline checks incl. the tools-mode round-trip</pre>
+</section>
+
+<footer>
+  Part of the Mubit demo suite:
+  <a href="../care_coordination_agent/how-it-works.html">Care Coordination Agent</a> ·
+  <a href="../supply_chain_agent/how-it-works.html">Supply Chain Agent</a> ·
+  repo: <a href="https://github.com/mubit-ai/demo">mubit-ai/demo</a> ·
+  benchmark evidence: <a href="https://github.com/mubit-ai/mubit-cl-bench">mubit-cl-bench</a>.
+  <br>All requests, specialists, and specialists' competence are fictional.
+</footer>
+</main>
+<script>
+const links=[...document.querySelectorAll('nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+addEventListener('scroll',()=>{let i=secs.length-1;secs.forEach((s,j)=>{if(s&&s.getBoundingClientRect().top<120)i=j});links.forEach((a,j)=>a.classList.toggle('on',j===i))},{passive:true});
+</script>
+</body>
+</html>

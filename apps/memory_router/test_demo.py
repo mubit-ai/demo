@@ -91,6 +91,41 @@ class DemoTest(unittest.TestCase):
         self.assertEqual(route(HELD_OUT[0][1], [], model)["initial"], "technical_agent")
         model.models.generate_content.assert_not_called()
 
+    def test_tools_mode_recalls_then_routes_grounded(self):
+        from demo import route_tools
+        from google.genai import types
+        client = Mock()
+        entry = dict(id="lesson-7", content="Renewal-day API loss routes to billing",
+                     entry_type="lesson", run_id="state::actor::memory-router-v2-test")
+        client.recall.return_value = {"evidence": [entry]}
+        memory = Memory(client, "test")
+        call_turn = SimpleNamespace(candidates=[SimpleNamespace(content=SimpleNamespace(parts=[
+            types.Part(function_call=types.FunctionCall(name="mubit_recall", args={"query": "api stopped after renewal"}))]))])
+        final_turn = SimpleNamespace(candidates=[SimpleNamespace(content=SimpleNamespace(parts=[]))],
+                                     text=json.dumps(dict(initial="billing_agent", lesson_ids=["lesson-7"],
+                                                          reason="lesson matches renewal loss")))
+        model = Mock()
+        model.models.generate_content.side_effect = [call_turn, final_turn]
+        with contextlib.redirect_stdout(io.StringIO()):
+            decision = route_tools(HELD_OUT[0][1], memory, model)
+        self.assertEqual(decision["initial"], "billing_agent")
+        self.assertEqual(decision["lesson_ids"], ["lesson-7"])
+        self.assertEqual(decision["tool_recalls"], [dict(query="api stopped after renewal", returned=1)])
+        self.assertEqual(client.recall.call_args.kwargs["query"],
+                         "Relevant first-specialist routing lessons for: api stopped after renewal")
+        self.assertEqual(model.models.generate_content.call_count, 2)
+        # The second call must carry the executed tool call and its response back to the model.
+        followup = model.models.generate_content.call_args_list[1].kwargs["contents"]
+        self.assertTrue(any(getattr(p, "function_call", None) for c in followup[1:]
+                            for p in getattr(c, "parts", []) or []))
+        # An override citing an ID the tool never returned is rejected, not trusted.
+        ungrounded = SimpleNamespace(candidates=[SimpleNamespace(content=SimpleNamespace(parts=[]))],
+                                     text=json.dumps(dict(initial="account_agent", lesson_ids=["invented"],
+                                                          reason="no")))
+        model.models.generate_content.side_effect = [call_turn, ungrounded]
+        with contextlib.redirect_stdout(io.StringIO()), self.assertRaises(ValueError):
+            route_tools(HELD_OUT[0][1], memory, model)
+
 
 if __name__ == "__main__":
     unittest.main()
