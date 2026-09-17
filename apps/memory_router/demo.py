@@ -62,6 +62,76 @@ def route(request, lessons, model=None):
     return dict(**decision, baseline=baseline)
 
 
+def route_tools(request, memory, model, max_recalls=2):
+    """Model-mediated memory: the router itself decides whether and what to recall.
+
+    Instead of the harness preloading lessons into the prompt, the Mubit recall
+    is exposed as a function tool. The model calls it only when it judges prior
+    experience useful, chooses the query, and must ground any baseline override
+    in lesson IDs the tool actually returned. Same grounding rules as route().
+    """
+    from google.genai import types
+    recall_tool = types.Tool(function_declarations=[types.FunctionDeclaration(
+        name="mubit_recall",
+        description=("Search the persistent Mubit lesson store for routing lessons for fictional "
+                     "support requests. Call it when the baseline specialist may be wrong and prior "
+                     "experience could help; skip it when the baseline is clearly right."),
+        parameters=types.Schema(type="OBJECT", properties={
+            "query": types.Schema(type="STRING",
+                                  description="What to search the lesson store for")},
+            required=["query"]))])
+    baseline = ("technical_agent" if re.search(r"\b(api|endpoint)\b", request.lower()) else
+                "billing_agent" if re.search(r"\b(invoice|receipt)\b", request.lower()) else "account_agent")
+    system = (
+        "You route fictional support requests. A keyword baseline specialist is supplied; use it "
+        "unless a lesson from mubit_recall clearly supports a better first specialist. Interpret "
+        "lessons semantically, including paraphrases; respect every limiting condition and do not "
+        "broaden a lesson to requests missing its distinguishing characteristics. Call mubit_recall "
+        "at most twice; skipping it is allowed. When done, respond with ONLY a JSON object with "
+        "keys initial (one specialist), lesson_ids (only IDs the tool returned and you actually "
+        "used; empty if you kept the baseline), and reason (brief rationale). Overriding the "
+        "baseline requires citing returned lesson IDs. Do not generate new lessons.")
+    contents = [json.dumps(dict(request=request, baseline=baseline))]
+    recalled, calls = {}, []
+    for _ in range(max_recalls + 2):  # tool turns + a final answer retry
+        result = model.models.generate_content(
+            model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"), contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=system, temperature=0,
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+                tools=[recall_tool]))
+        calls_made = [p.function_call for p in (getattr(getattr(result.candidates[0], "content", None), "parts", None) or [])
+                      if getattr(p, "function_call", None)] if result.candidates else []
+        if calls_made and len(calls) < max_recalls:
+            call = calls_made[0]
+            if call.name != "mubit_recall" or not isinstance(call.args, dict):
+                raise ValueError("Router invoked an unexpected tool")
+            query = str(call.args.get("query", "")).strip()[:400] or request
+            lessons = memory.recall(query)
+            recalled.update({lesson["id"]: lesson for lesson in lessons})
+            calls.append(dict(query=query, returned=len(lessons)))
+            emit("tool_call", tool="mubit_recall", query=query, returned=len(lessons))
+            contents = [*contents,
+                        types.Content(role="model", parts=[types.Part(function_call=call)]),
+                        types.Content(role="user", parts=[types.Part(
+                            function_response=types.FunctionResponse(name="mubit_recall", response={
+                                "lessons": [{"id": l["id"], "content": l["content"],
+                                             "conditions": l["conditions"]} for l in lessons]}))])]
+            continue
+        try:
+            decision = json.loads(result.text or "")
+        except ValueError:
+            raise ValueError("Router returned no parseable decision") from None
+        if (decision.get("initial") not in AGENTS
+                or not isinstance(decision.get("lesson_ids"), list)
+                or not set(decision["lesson_ids"]) <= set(recalled)
+                or (decision["initial"] != baseline and not decision["lesson_ids"])):
+            raise ValueError("Router chose an invalid specialist or an ungrounded override")
+        return dict(**decision, baseline=baseline, tool_recalls=calls,
+                    lessons=[recalled[i] for i in decision["lesson_ids"]])
+    raise ValueError("Router kept calling mubit_recall instead of deciding")
+
+
 def specialist(agent, resolver):
     """Three synthetic specialists share this tiny handler; each owns its cases."""
     if agent not in AGENTS:
@@ -153,10 +223,14 @@ def emit(event, **fields):
     print(json.dumps(dict(event=event, **fields)), flush=True)
 
 
-def run_case(case, memory=None, learn=False, execution="evaluation", arm="ON", model=None):
+def run_case(case, memory=None, learn=False, execution="evaluation", arm="ON", model=None, mode="preload"):
     case_id, request, resolver = case
-    lessons = memory.recall(request) if memory else []
-    decision = route(request, lessons, model)
+    if mode == "tools" and memory is not None:
+        decision = route_tools(request, memory, model)
+        lessons = decision.pop("lessons")
+    else:
+        lessons = memory.recall(request) if memory else []
+        decision = route(request, lessons, model)
     emit("decision", case=case_id, arm=arm, request=request, lessons=lessons, **decision)
     # Only after the decision does the environment disclose success/handoff.
     outcome = handle(decision["initial"], resolver)
@@ -166,11 +240,12 @@ def run_case(case, memory=None, learn=False, execution="evaluation", arm="ON", m
     return decision, outcome
 
 
-def compare(memory, model=None):
+def compare(memory, model=None, mode="preload"):
     # No writes, outcome reinforcement, or evaluation-label access in retrieval/routing.
     totals = {}
     for arm in ("OFF", "ON"):
-        outcomes = [run_case(c, memory if arm == "ON" else None, arm=arm, model=model)[1] for c in HELD_OUT]
+        outcomes = [run_case(c, memory if arm == "ON" else None, arm=arm, model=model,
+                             mode=mode)[1] for c in HELD_OUT]
         totals[arm] = dict(
             correct_first_route_rate=sum(o["initial_status"] == "succeeded" for o in outcomes)/len(outcomes),
             unnecessary_handoffs=sum(o["handoffs"] for o in outcomes),
@@ -187,6 +262,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("phase", choices=("teach", "evaluate"))
     parser.add_argument("--experiment", required=True, help="Reuse this ID across processes; use a new ID for a clean experiment")
+    parser.add_argument("--mode", choices=("preload", "tools"), default="preload",
+                        help="preload: harness recalls lessons and supplies them (default). "
+                             "tools: the router model calls mubit_recall itself and decides when/what to recall")
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", args.experiment):
         parser.error("experiment must be 1–80 letters, digits, underscores or hyphens")
@@ -204,10 +282,10 @@ def main():
     emit("start", backend="Mubit", experiment=args.experiment, execution=execution, phase=args.phase)
     if args.phase == "teach":
         for case in TRAIN:
-            run_case(case, memory, learn=True, execution=execution, model=model)
+            run_case(case, memory, learn=True, execution=execution, model=model, mode=args.mode)
         memory.reflect()
     else:
-        compare(memory, model)
+        compare(memory, model, mode=args.mode)
 
 
 if __name__ == "__main__":
