@@ -35,6 +35,7 @@
   .g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
   pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
   code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
+  pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
   table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
   th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
   th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
@@ -174,6 +175,56 @@
     <div class="step"><span class="who pill p-agent">owned by: harness (or the model, in tools mode)</span><h3>Inject</h3>Preload mode: harness recalls with the routing query and supplies lessons. Tools mode: the model invokes <code class="inline">mubit_recall</code> itself, choosing the query — and may skip it when the baseline is clearly right.</div>
     <div class="step"><span class="who pill p-mubit">owned by: Mubit counters</span><h3>Attribute</h3>Two granularities: <code class="inline">record_outcome</code> on cited lessons (a lesson that wasn't used can't be reinforced), and <code class="inline">record_step_outcome</code> per step with <code class="inline">signal=±1.0</code> — the committed teach trace shows the honest pattern <code class="inline">[-1, +1] × 3</code>: wrong first route, resolved after handoff, for every teaching case.</div>
   </div>
+
+  <h3>Example data at each step — from the committed live traces</h3>
+  <div class="card"><b>① Capture</b> — teaching case T1, before any lesson exists:
+<pre class="mini">// decision (trace, abbreviated)
+{"case": "T1", "request": "API access stopped immediately after renewal.",
+ "initial": "technical_agent", "lesson_ids": []}
+// outcome (only disclosed after the decision)
+{"case": "T1", "initial_status": "handoff", "resolved_by": "billing_agent", "handoffs": 1}</pre></div>
+
+  <div class="card"><b>② Store raw evidence + step outcomes</b> — real events from
+  <code class="inline">live-v2-teach.jsonl</code>; nothing here authors a lesson:
+<pre class="mini">{"event": "evidence_stored", "source": "5edb…/T1", "job_id": "e10e09a4-…",
+ "record_ids": ["84678ca9-…"]}
+{"event": "step_recorded", "step": 0, "result": {"accepted": true,
+ "step_outcome_id": "50bff3c5-…"}}   // initial route: signal −1.0
+{"event": "step_recorded", "step": 1, "result": {"accepted": true,
+ "step_outcome_id": "b288499b-…"}}   // handoff resolution: signal +1.0</pre></div>
+
+  <div class="card"><b>③ Mubit decides the lessons</b> — the verbatim
+  <code class="inline">reflect()</code> output (3 lessons, none written by the app):
+<pre class="mini">{"degraded": false, "lessons_stored": 3, "lessons": [
+ {"lesson_id": "4a7687f5-…", "lesson_type": "success",
+  "content": "Requests concerning API access stopping immediately after a renewal should be
+              routed directly to the billing agent instead of the technical agent."},
+ {"lesson_id": "ee23b165-…", "content": "Requests regarding incorrect workspace names appearing on
+              invoices should be routed directly to the account agent instead of the billing agent."},
+ {"lesson_id": "c32706e1-…", "content": "Requests about login failures for everyone during a system
+              outage should be routed directly to the technical agent instead of the account agent."}]}
+// each lesson becomes a hypervector in the medium; a failing lesson would decay through
+// its outcome counters and return marked is_stale — filtered before the model sees it</pre></div>
+
+  <div class="card"><b>④–⑤ Recall and decide</b> — held-out H1, memory ON (trace):
+<pre class="mini">{"case": "H1", "request": "Our endpoint stopped working when the subscription rolled over.",
+ "baseline": "technical_agent",                    // keyword "endpoint"
+ "initial": "billing_agent",                       // lesson-cited override
+ "lesson_ids": ["4a7687f5-1c91-49fc-a1fa-0659f72a767f"],
+ "reason": "The request involves an API endpoint failing right after a subscription renewal…"}
+→ {"initial_status": "succeeded"}                   // correct on the first route
+// and the honest counter-example, H2: no lesson applied —
+{"case": "H2", "initial": "billing_agent", "lesson_ids": []}  → handoff (declined an ungrounded override)</pre></div>
+
+  <div class="card"><b>Tool mode</b> — the same recall as a model-chosen function call
+  (<code class="inline">--mode tools</code>):
+<pre class="mini">// model → harness
+{"function_call": {"name": "mubit_recall",
+                   "args": {"query": "api stopped working after renewal"}}}
+// harness → model (real recall, then the final decision must cite only these IDs)
+{"function_response": {"name": "mubit_recall",
+                       "response": {"lessons": [{"id": "4a7687f5-…", "content": "…", "conditions": []}]}}}</pre></div>
+
 </section>
 
 <section id="results">

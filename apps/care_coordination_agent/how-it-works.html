@@ -34,6 +34,8 @@
   .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
   pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
   code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
+  pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
+  .io{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--mut);text-transform:uppercase;margin:8px 0 0}
   table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
   th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
   th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
@@ -137,18 +139,58 @@
 </section>
 
 <section id="data">
-  <h2>4 · The data that moves</h2>
-  <p class="lead">Every lesson is a typed, schema-validated record — with provenance — stored as a Mubit <code class="inline">lesson</code> entry:</p>
-<pre>{
-  "category": "contact_strategy",            // or communication_strategy | coordination_sequence
-  "patient_id": "pat-synthetic-01",
-  "applicability": "when no newer contact preference is available for this patient",
-  "guidance": "SMS receives no reply; call at 17:00 or later establishes contact",
-  "evidence_type": "observed_outcome",       // or clinician_correction
-  "evidence_summary": "T1: outreach(sms)→no_response, outreach(phone,17:05)→contact"
-}
-// written with: remember(content=marker+record, intent="lesson", lesson_scope="run",
-//                       lesson_importance="high", upsert_key="cc-memory-1:&lt;exp&gt;:&lt;patient&gt;:&lt;category&gt;)</pre>
+  <h2>4 · Example data at each step</h2>
+  <p class="lead">Real field values from the code and scenarios (patient <code class="inline">SYNTH-PT-0042</code>,
+  channels <code class="inline">sms|phone_call</code>, chart slots <code class="inline">2026-10-21T09:00</code>…).
+  Every lesson becomes a hypervector in the medium; recall is the SDM consensus read over it.</p>
+
+  <div class="card"><b>① Capture</b> — agent decision in, simulator outcome out (teaching encounter T1):
+<pre class="mini">// agent → simulator (pydantic-validated structured decision)
+{"action": "outreach", "arguments": {"channel": "sms", "local_time": "09:00"},
+ "rationale": "Chart lists sms and phone_call; try the lighter channel first.",
+ "recalled_lesson_ids": []}
+// simulator → observed outcome (the only ground truth the agent ever sees)
+{"action": "outreach", "channel": "sms", "local_time": "09:00", "status": "no_response"}</pre></div>
+
+  <div class="card"><b>② Distill</b> — what lessons.py derives from that evidence (and only if the full
+  pattern occurred: SMS no-reply followed by a successful call at ≥17:00):
+<pre class="mini">{"category": "contact_strategy", "patient_id": "SYNTH-PT-0042",
+ "applicability": "when no newer contact preference is available for this patient",
+ "guidance": "SMS receives no reply; a phone call at 17:00 or later establishes contact",
+ "evidence_type": "observed_outcome",
+ "evidence_summary": "T1: outreach(sms,09:00)→no_response; outreach(phone_call,17:05)→contact"}</pre></div>
+
+  <div class="card"><b>③ Gate</b> — a candidate is persisted only if it re-derives identically from the
+  finished encounter, provenance matches, and it carries <em>no</em> treatment-like language and no
+  hidden-simulator markers. Dropped example: a draft saying "switch the evening dose" — medication
+  wording — never reaches Mubit.</div>
+
+  <div class="card"><b>④ Promote</b> — the write, idempotent per patient + category:
+<pre class="mini">client.remember(
+  content = "[experiment:cc-x] [demo:cc-memory-1]\n" + json.dumps({…lesson, experiment_id, source_encounter_id…}),
+  intent="lesson", lesson_type="failure",          // learned from a failed SMS, not a correction
+  lesson_scope="run", lesson_importance="high", agent_id="care-coordination-agent",
+  upsert_key="cc-memory-1:cc-x:SYNTH-PT-0042:contact_strategy",   // re-teaching updates this slot
+  wait=True)</pre></div>
+
+  <div class="card"><b>⑤ Inject</b> — recall before action 1; only prompt-safe fields survive validation,
+  and the list is frozen and hashed for the whole execution:
+<pre class="mini">// in: recall(query="care coordination operational lessons for synthetic patient SYNTH-PT-0042",
+//          entry_types=["lesson"], evidence_only=True)
+// out: entry {"id": "5d3f…", "content": "[experiment:cc-x] [demo:cc-memory-1]\n{…}"}
+// → after strict re-validation, the frozen snapshot the model receives:
+[{"id": "5d3f…", "category": "contact_strategy", "applicability": "…",
+  "guidance": "…", "evidence_summary": "…"}]      // snapshot SHA-256 identical across all three arms</pre></div>
+
+  <div class="card"><b>⑥ Attribute</b> — after the encounter, only cited lessons are reinforced:
+<pre class="mini">memory.record(reference_id="5d3f…", succeeded=True,
+              rationale="E1: contact established on first call after 17:00")
+// → client.record_outcome(reference_id="5d3f…", outcome="success", signal=1.0,
+//                         verified_in_production=False)</pre>
+  <p style="margin:8px 0 0">And in E2, the same store must lose: chart says "morning calls 09:00–11:00",
+  the stored lesson says "call ≥17:00" — the agent calls at 09:30 and the run scores PASS on current
+  instruction winning.</p></div>
+
   <div class="callout k"><b>Recall is strict:</b> entries failing the marker, experiment, patient, category or
   schema checks are dropped before the model ever sees them. Reference IDs shown in the UI come only from
   real Mubit recalls — none are ever fabricated.</div>

@@ -34,6 +34,7 @@
   .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
   pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
   code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
+  pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
   table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
   th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
   th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
@@ -161,6 +162,51 @@
     <div class="step"><span class="who pill p-agent">owned by: harness</span><h3>Inject</h3>Recall before deciding; only five fields per lesson enter the prompt (id, source case, applies_to, applicability, guidance, exceptions). Full evidence stays in the trace and UI, never in the decision context.</div>
     <div class="step"><span class="who pill p-mubit">owned by: Mubit</span><h3>Attribute</h3><code class="inline">record_outcome</code> reinforces only lessons the decision cited. Evaluation runs perform zero writes.</div>
   </div>
+
+  <h3>Example data at each step (real field values)</h3>
+  <div class="card"><b>① Capture</b> — the incident snapshot the agent sees, and its live decision:
+<pre class="mini">// snapshot in (from scenarios.py; the agent gets logistics facts, never the private preference)
+{"id": "T1", "plant": "Cedar assembly", "component": "Controller C-24", "shortage_quantity": 3,
+ "needed_at": "…T14:00", "receiving": {"opens": 8, "closes": 17}, "order_class": "replenishment",
+ "options": [{"id": "wait",      "cost": 0,    "inspection_hours": 0},
+             {"id": "expedite",  "cost": 1400, "inspection_hours": 1},
+             {"id": "transfer",  "cost": 350,  "donor_stock": 500},
+             {"id": "substitute","cost": 800,  "inspection_hours": 1}]}
+// decision out (cold: conservative default, no lesson to cite)
+{"option_id": "substitute", "lesson_ids": [],
+ "rationale": "No local precedent. Default: minimize combined downtime — substitute avoids receiving stoppage."}
+// simulator outcome out (deterministic)
+{"receiving_downtime_h": 0.0, "donor_downtime_h": 0.0, "recovery_cost": 800}</pre></div>
+
+  <div class="card"><b>② Distill</b> — the operator's labeled feedback teaches the real rule verbatim:
+<pre class="mini">{"verdict": "Instructive", "confirmed_lesson":
+  {"applies_to": "replenishment",
+   "applicability": "Cedar stock-replenishment orders only.",
+   "guidance": "Accept up to 2 hours of receiving-plant downtime … choose the lowest recovery spend …",
+   "exceptions": "Do not apply this tolerance to firm customer orders. …"}}</pre></div>
+
+  <div class="card"><b>③ Gate</b> — storage refuses anything that is not byte-identical to the confirmed
+  lesson: <code class="inline">if lesson != operator["confirmed_lesson"]: raise</code>. No invented threshold can enter.</div>
+
+  <div class="card"><b>④ Promote</b> — the write, with full evidence stored separately (never prompted):
+<pre class="mini">client.remember(
+  content = "[experiment:sc-x] [demo:judgment-v2]\n" + json.dumps({"source_case": "T1", "lesson": …})
+            + "\nSupporting observed incident: " + json.dumps({snapshot, decision, outcome, operator_feedback}),
+  intent="lesson", lesson_type="success", lesson_scope="run", lesson_importance="high",
+  upsert_key="judgment-v2:sc-x:T1", wait=True)</pre></div>
+
+  <div class="card"><b>⑤ Inject</b> — next run, the prompt receives only the allowlisted fields:
+<pre class="mini">[{"id": "a1b2…", "source_case": "T1", "applies_to": "replenishment",
+  "applicability": "Cedar stock-replenishment orders only.",
+  "guidance": "Accept up to 2 hours …", "exceptions": "Do not apply … firm customer orders. …"}]
+// with that, the fresh decision flips to the operator's preference:
+{"option_id": "wait", "lesson_ids": ["a1b2…"],
+ "rationale": "Operator-confirmed tolerance accepts up to 2 h receiving downtime for replenishment; wait costs $0."}</pre></div>
+
+  <div class="card"><b>⑥ Attribute</b> — reinforcement for cited lessons only:
+<pre class="mini">client.record_outcome(reference_id="a1b2…", outcome="success", signal=1.0,
+                      rationale="Simulated teaching result: …operator confirmed…")</pre></div>
+
 </section>
 
 <section id="results">
