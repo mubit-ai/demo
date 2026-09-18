@@ -1,0 +1,6 @@
+{"event": "start", "backend": "Mubit", "experiment": "soc-184017", "phase": "teach"}
+{"event": "taught", "alert": "T1", "verdict": "close_benign"}
+{"event": "taught", "alert": "T2", "verdict": "close_benign"}
+{"event": "taught", "alert": "T3", "verdict": "escalate"}
+{"event": "taught", "alert": "T4", "verdict": "escalate"}
+{"event": "outcome_recorded", "reference": "e443f0cc-2831-4acc-8437-2b3485326423", "correct": true}

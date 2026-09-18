@@ -1,6 +1,6 @@
-.PHONY: help memory-router oncall-agent policy-analyst team-pipeline self-tuner librarian researcher supply-chain supply-chain-check \
+.PHONY: help memory-router oncall-agent policy-analyst team-pipeline self-tuner librarian researcher data-analyst helpdesk soc-triage code-reviewer supply-chain supply-chain-check \
         care-coordination care-coordination-compare \
-        test test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-supply-chain test-care-coordination
+        test test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination
 
 MEMORY_ROUTER    := apps/memory_router
 POLICY_ANALYST   := apps/policy_analyst
@@ -44,6 +44,18 @@ librarian: ## Librarian: consolidation distillation + archive/dereference revers
 researcher: ## Researcher: checkpoint survival across compaction wipes, two arms
 	PYTHONPATH=apps $(WITH_DEPS) $(POLICY_ANALYST)/requirements.txt python -m researcher
 
+data-analyst: ## Data analyst: tribal-knowledge rules, schema drift, two arms
+	PYTHONPATH=apps $(WITH_DEPS) $(POLICY_ANALYST)/requirements.txt python -m data_analyst
+
+helpdesk: ## Internal helpdesk: per-user memory, runbooks, admin guardrail
+	PYTHONPATH=apps $(WITH_DEPS) $(POLICY_ANALYST)/requirements.txt python -m helpdesk
+
+soc-triage: ## SOC triage: benign-pattern lessons, drift re-classification
+	PYTHONPATH=apps $(WITH_DEPS) $(POLICY_ANALYST)/requirements.txt python -m soc_triage
+
+code-reviewer: ## Code reviewer: convention lessons, incident-linked findings
+	PYTHONPATH=apps $(WITH_DEPS) $(POLICY_ANALYST)/requirements.txt python -m code_reviewer
+
 supply-chain: ## Supply chain agent: web page on 127.0.0.1 (PORT, default 7870)
 	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python -m uvicorn app:app --host 127.0.0.1 --port $(PORT)
 
@@ -58,7 +70,7 @@ care-coordination-compare: ## Care coordination agent: 3-arm comparison on a fre
 
 # --- Offline tests (no keys; model and memory are test doubles) ---
 
-test: test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-supply-chain test-care-coordination ## Run every offline suite
+test: test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination ## Run every offline suite
 
 test-memory-router: ## Offline tests for the memory router (incl. the tools-mode round-trip)
 	cd $(MEMORY_ROUTER) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
@@ -80,6 +92,18 @@ test-librarian: ## Offline tests for the librarian
 
 test-researcher: ## Offline tests for the researcher
 	cd apps/researcher && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
+
+test-data-analyst: ## Offline tests for the data analyst
+	cd apps/data_analyst && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
+
+test-helpdesk: ## Offline tests for the helpdesk
+	cd apps/helpdesk && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
+
+test-soc-triage: ## Offline tests for the SOC triage agent
+	cd apps/soc_triage && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
+
+test-code-reviewer: ## Offline tests for the code reviewer
+	cd apps/code_reviewer && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
 
 test-supply-chain: ## Offline tests for the supply chain agent (Python and Node.js)
 	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v

@@ -1,0 +1,2 @@
+{"event": "start", "backend": "Mubit", "experiment": "hd-183745", "phase": "teach"}
+{"event": "teach_done", "runbook": 1, "user_facts": 2, "guardrail": 1}

@@ -34,6 +34,23 @@
   .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
   pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
   pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin:2px 0 6px}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:999px;margin-right:5px;vertical-align:-1px}
+  .d-id{background:var(--mubit)} .d-ok{background:var(--ok)} .d-bad{background:var(--guard)} .d-warn{background:var(--lesson)}
+  .flow{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin-top:8px}
+  .panel{flex:1 1 270px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .panel h4{margin:0;padding:7px 12px;font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:#fff}
+  .panel.in h4{background:var(--agent)} .panel.out h4{background:var(--env)} .panel.mem h4{background:var(--mubit)}
+  .kv{display:flex;gap:10px;padding:6px 12px;border-top:1px solid #eef1f5;font-size:13.5px;align-items:baseline}
+  .panel .kv:first-of-type{border-top:0}
+  .kv b{color:var(--mut);font-weight:600;min-width:96px;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+  .kv span{flex:1}
+  .v-id{color:var(--mubit);font-weight:600;font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all}
+  .v-ok{color:var(--ok);font-weight:700} .v-bad{color:var(--guard);font-weight:700} .v-warn{color:var(--lesson);font-weight:700}
+  .v-code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#eef2f7;border-radius:4px;padding:0 5px}
+  .lrow{display:flex;gap:10px;padding:7px 12px;border-top:1px solid #eef1f5;font-size:13.5px;align-items:baseline}
+  .lrow .v-id{flex:0 0 88px}
+  .trace{font:11px ui-monospace,Menlo,monospace;color:var(--mut);margin-top:8px}
   code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
   table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
   th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
@@ -61,6 +78,15 @@
   .box{stroke-width:1.4}
   .lbl{font:600 12.5px -apple-system,Segoe UI,sans-serif}
   .sub{font:11.5px -apple-system,Segoe UI,sans-serif;fill:var(--mut)}
+  svg .band{fill:#f8fafc;stroke:var(--line);rx:12}
+  svg .bandlab{font:700 11px -apple-system,Segoe UI,sans-serif;letter-spacing:1.1px;fill:#6b7280}
+  svg .tt{font:700 12.5px -apple-system,Segoe UI,sans-serif}
+  svg .dt{font:11px ui-monospace,Menlo,monospace}
+  svg .t-id{fill:#7c3aed;font-weight:600}
+  svg .t-ok{fill:#059669;font-weight:700}
+  svg .t-bad{fill:#dc2626;font-weight:700}
+  svg .t-warn{fill:#b45309;font-weight:600}
+  svg .dsh{stroke-dasharray:5 4}
   .flip{color:#92400e;font-weight:600}
 </style>
 </head>
@@ -136,28 +162,140 @@
       lesson IDs that the tool returned. Otherwise the run fails.</p>
     </div>
   </div>
-  <svg viewBox="0 0 960 300" role="img" aria-label="Teach-phase flow: request, decision, outcome, evidence and step outcomes to Mubit, reflect, gated lessons, recall">
+  <svg viewBox="0 0 1000 780" role="img" aria-label="Memory Router workflow with data snapshots: teach phase, Mubit learning, next-run evaluation, attribution loop">
     <defs><marker id="ah3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#64748b"/></marker></defs>
-    <rect class="box" x="20" y="40" width="170" height="70" fill="#f1f5f9" stroke="#64748b"/>
-    <text class="lbl" x="34" y="66" fill="#334155">Request + baseline</text>
-    <text class="sub" x="34" y="84">keyword router + lessons</text>
-    <rect class="box" x="250" y="40" width="180" height="70" fill="#eff6ff" stroke="#2563eb"/>
-    <text class="lbl" x="264" y="66" fill="#1e40af">Router decision</text>
-    <text class="sub" x="264" y="84">initial · cited lesson IDs</text>
-    <rect class="box" x="490" y="40" width="170" height="70" fill="#f1f5f9" stroke="#64748b"/>
-    <text class="lbl" x="504" y="66" fill="#334155">Specialist sim</text>
-    <text class="sub" x="504" y="84">resolved · handoff · failed</text>
-    <rect class="box" x="250" y="185" width="410" height="92" fill="#f5f3ff" stroke="#7c3aed"/>
-    <text class="lbl" x="264" y="211" fill="#5b21b6">Mubit (the only lesson store)</text>
-    <text class="sub" x="264" y="231">remember(intent="fact") — raw evidence, no authored lessons</text>
-    <text class="sub" x="264" y="247">record_step_outcome(±1 per step) · record_outcome(cited lessons)</text>
-    <text class="sub" x="264" y="263">reflect(include_step_outcomes) → validation gate → lessons / is_stale</text>
-    <path class="arrow" d="M190,75 L250,75"/>
-    <path class="arrow" d="M430,75 L490,75"/>
-    <path class="arrow" d="M575,110 L575,185" stroke="#7c3aed"/>
-    <path class="arrow" d="M250,231 C160,231 90,150 90,110" stroke="#7c3aed"/>
-    <text class="sub" x="60" y="160">recall next run:</text>
-    <text class="sub" x="60" y="176">lessons only, is_stale dropped</text>
+
+    <!-- PHASE 1 band -->
+    <rect class="band" x="12" y="16" width="976" height="212"/>
+    <text class="bandlab" x="28" y="40">PHASE 1 · TEACH — OBSERVE (3 requests, cold policy)</text>
+
+    <rect class="box" x="32" y="56" width="212" height="104" fill="#fff" stroke="#64748b"/>
+    <text class="tt" x="46" y="76" fill="#334155">Request T1</text>
+    <text class="sub" x="46" y="96">"API access stopped</text>
+    <text class="sub" x="46" y="112">immediately after renewal."</text>
+    <text class="dt" x="46" y="136"><tspan class="t-warn">baseline: technical_agent</tspan></text>
+
+    <rect class="box" x="296" y="56" width="196" height="104" fill="#eff6ff" stroke="#2563eb"/>
+    <text class="tt" x="310" y="76" fill="#1e40af">Router decision</text>
+    <text class="dt" x="310" y="98">initial: technical_agent</text>
+    <text class="dt" x="310" y="116">lesson_ids: none exist yet</text>
+    <text class="sub" x="310" y="140">cites nothing</text>
+
+    <rect class="box" x="544" y="56" width="176" height="104" fill="#f1f5f9" stroke="#64748b"/>
+    <text class="tt" x="558" y="76" fill="#334155">Specialist sim</text>
+    <text class="dt" x="558" y="98">technical → handoff</text>
+    <text class="dt" x="558" y="116">billing → resolved</text>
+    <text class="dt" x="558" y="134">handoffs: 1</text>
+
+    <rect class="box" x="772" y="56" width="200" height="104" fill="#f1f5f9" stroke="#64748b"/>
+    <text class="tt" x="786" y="76" fill="#334155">Outcome</text>
+    <text class="dt" x="786" y="98"><tspan class="t-warn">initial_status: handoff</tspan></text>
+    <text class="dt" x="786" y="116">resolved_by: billing_agent</text>
+    <text class="sub" x="786" y="140">disclosed only after the decision</text>
+
+    <path class="arrow" d="M244,108 L296,108"/>
+    <path class="arrow" d="M492,108 L544,108"/>
+    <path class="arrow" d="M720,108 L772,108"/>
+
+    <!-- writes connector: attempt → Mubit -->
+    <path class="arrow" d="M394,160 L394,196 L135,196 L135,286" stroke="#7c3aed"/>
+    <text class="sub" x="410" y="192" fill="#5b21b6">after each attempt, the app writes evidence and step rewards</text>
+
+    <!-- PHASE 2 band -->
+    <rect class="band" x="12" y="248" width="976" height="248"/>
+    <text class="bandlab" x="28" y="272">PHASE 2 · MUBIT LEARNS (no app-authored lessons)</text>
+
+    <rect class="box" x="32" y="290" width="216" height="92" fill="#f5f3ff" stroke="#7c3aed"/>
+    <text class="tt" x="46" y="310" fill="#5b21b6">Evidence write</text>
+    <text class="dt" x="46" y="330">remember — intent: "fact"</text>
+    <text class="sub" x="46" y="348">"Observed routing attempt:</text>
+    <text class="sub" x="46" y="362">{request, decision, outcome}"</text>
+
+    <rect class="box" x="32" y="396" width="216" height="86" fill="#f5f3ff" stroke="#7c3aed"/>
+    <text class="tt" x="46" y="416" fill="#5b21b6">Step rewards ×2</text>
+    <text class="dt" x="46" y="436">step 0 initial: <tspan class="t-bad">−1.0</tspan></text>
+    <text class="dt" x="46" y="454">step 1 handoff: <tspan class="t-ok">+1.0</tspan></text>
+    <text class="dt" x="46" y="472"><tspan class="t-id">50bff3c5 · b288499b</tspan></text>
+
+    <rect class="box" x="312" y="290" width="200" height="92" fill="#f5f3ff" stroke="#7c3aed"/>
+    <text class="tt" x="326" y="310" fill="#5b21b6">reflect()</text>
+    <text class="dt" x="326" y="330">include_step_outcomes:</text>
+    <text class="dt" x="326" y="348">true</text>
+    <text class="sub" x="326" y="370">reads facts + rewards</text>
+
+    <rect class="box" x="312" y="396" width="200" height="86" fill="#fff" stroke="#dc2626"/>
+    <text class="tt" x="326" y="416" fill="#b91c1c">Validation gate</text>
+    <text class="dt" x="326" y="436">≥ 0.6 → <tspan class="t-ok">active</tspan></text>
+    <text class="dt" x="326" y="454">≤ 0.25 → <tspan class="t-bad">rejected, stale</tspan></text>
+    <text class="dt" x="326" y="472">between → <tspan class="t-warn">pending</tspan></text>
+
+    <rect class="box" x="576" y="290" width="396" height="192" fill="#fffbeb" stroke="#b45309"/>
+    <text class="tt" x="590" y="310" fill="#92400e">3 lessons stored (snapshot)</text>
+    <text class="dt" x="590" y="334"><tspan class="t-id">4a7687f5</tspan>  renewal API loss → route to billing</text>
+    <text class="dt" x="590" y="354"><tspan class="t-id">ee23b165</tspan>  invoice workspace name → account</text>
+    <text class="dt" x="590" y="374"><tspan class="t-id">c32706e1</tspan>  all-user login failure → technical</text>
+    <text class="sub" x="590" y="402">each lesson = 1 hypervector in the medium</text>
+    <text class="sub" x="590" y="420">a failing lesson decays through its outcome counters</text>
+    <text class="sub" x="590" y="438">it returns marked <tspan class="dt">is_stale</tspan> — recall filters it</text>
+    <text class="sub" x="590" y="466">the app wrote none of these lessons</text>
+
+    <path class="arrow" d="M248,336 L312,336" stroke="#7c3aed"/>
+    <path class="arrow" d="M248,439 L312,439" stroke="#7c3aed"/>
+    <path class="arrow" d="M412,382 L412,396" stroke="#7c3aed"/>
+    <path class="arrow" d="M512,439 L576,404" stroke="#7c3aed"/>
+    <text class="sub" x="252" y="284" fill="#5b21b6">× 3 teaching requests</text>
+
+    <!-- PHASE 3 band -->
+    <rect class="band" x="12" y="516" width="976" height="252"/>
+    <text class="bandlab" x="28" y="540">PHASE 3 · NEXT RUN — EVALUATE (fresh process, 6 held-out requests)</text>
+
+    <rect class="box" x="32" y="560" width="222" height="96" fill="#fff" stroke="#64748b"/>
+    <text class="tt" x="46" y="580" fill="#334155">Held-out H1</text>
+    <text class="sub" x="46" y="600">"Our endpoint stopped working</text>
+    <text class="sub" x="46" y="614">when the subscription rolled over."</text>
+    <text class="dt" x="46" y="638"><tspan class="t-warn">keyword baseline: technical</tspan></text>
+
+    <rect class="box" x="310" y="560" width="204" height="96" fill="#f5f3ff" stroke="#7c3aed"/>
+    <text class="tt" x="324" y="580" fill="#5b21b6">recall — lessons only</text>
+    <text class="dt" x="324" y="602">returns <tspan class="t-id">4a7687f5-…</tspan></text>
+    <text class="sub" x="324" y="622">is_stale entries dropped</text>
+    <text class="sub" x="324" y="640">scope: this experiment only</text>
+
+    <rect class="box" x="572" y="560" width="196" height="96" fill="#eff6ff" stroke="#2563eb"/>
+    <text class="tt" x="586" y="580" fill="#1e40af">Decision (memory ON)</text>
+    <text class="dt" x="586" y="602">baseline: technical <tspan class="t-bad">✗</tspan></text>
+    <text class="dt" x="586" y="620">initial: billing <tspan class="t-ok">✓</tspan></text>
+    <text class="dt" x="586" y="640">cites <tspan class="t-id">[4a7687f5]</tspan></text>
+
+    <rect class="box" x="792" y="560" width="180" height="96" fill="#f1f5f9" stroke="#64748b"/>
+    <text class="tt" x="806" y="580" fill="#334155">Outcome</text>
+    <text class="dt" x="806" y="602"><tspan class="t-ok">first route: correct</tspan></text>
+    <text class="dt" x="806" y="620">handoffs: 0</text>
+    <text class="sub" x="806" y="640">C1–C3 keep the baseline</text>
+
+    <path class="arrow" d="M254,608 L310,608"/>
+    <path class="arrow" d="M514,608 L572,608"/>
+    <path class="arrow" d="M768,608 L792,608"/>
+
+    <!-- attribution loop back to the lesson -->
+    <path class="arrow" d="M882,560 L882,486" stroke="#7c3aed"/>
+    <text class="sub" x="700" y="524" fill="#5b21b6">record_outcome — cited entries only, signal +1.0</text>
+    <text class="sub" x="700" y="540">after 3 outcomes the gate re-runs: trust is losable</text>
+
+    <!-- tool mode note -->
+    <rect class="box dsh" x="310" y="682" width="204" height="64" fill="#ecfdf5" stroke="#059669"/>
+    <text class="tt" x="324" y="702" fill="#065f46">Pathway C — tools mode</text>
+    <text class="sub" x="324" y="720">the model calls mubit_recall itself</text>
+    <text class="sub" x="324" y="736">and selects the query</text>
+
+    <!-- mini legend -->
+    <circle cx="590" cy="700" r="4" fill="#7c3aed"/><text class="sub" x="600" y="704">entry ID</text>
+    <circle cx="680" cy="700" r="4" fill="#059669"/><text class="sub" x="690" y="704">success</text>
+    <circle cx="762" cy="700" r="4" fill="#dc2626"/><text class="sub" x="772" y="704">failure</text>
+    <circle cx="842" cy="700" r="4" fill="#b45309"/><text class="sub" x="852" y="704">partial</text>
+    <circle cx="590" cy="724" r="4" fill="#2563eb"/><text class="sub" x="600" y="728">router</text>
+    <circle cx="680" cy="724" r="4" fill="#64748b"/><text class="sub" x="690" y="728">environment</text>
+    <circle cx="800" cy="724" r="4" fill="#7c3aed"/><text class="sub" x="810" y="728">Mubit</text>
   </svg>
 </section>
 
@@ -173,54 +311,95 @@
   </div>
 
   <h3>Example data at each step — from the committed live traces</h3>
-  <div class="card"><b>① Capture</b> — teaching case T1, before any lesson exists:
-<pre class="mini">// decision (trace, abbreviated)
-{"case": "T1", "request": "API access stopped immediately after renewal.",
- "initial": "technical_agent", "lesson_ids": []}
-// outcome (disclosed only after the decision)
-{"case": "T1", "initial_status": "handoff", "resolved_by": "billing_agent", "handoffs": 1}</pre></div>
+  <div class="legend">
+    <span><span class="dot d-id"></span>Mubit entry ID</span>
+    <span><span class="dot d-ok"></span>success / positive signal</span>
+    <span><span class="dot d-bad"></span>failure / negative signal</span>
+    <span><span class="dot d-warn"></span>partial (handoff, pending)</span>
+  </div>
 
-  <div class="card"><b>② Evidence + step outcomes</b> — real events from
-  <code class="inline">live-v2-teach.jsonl</code>. Nothing here writes a lesson:
-<pre class="mini">{"event": "evidence_stored", "source": "5edb…/T1", "job_id": "e10e09a4-…",
- "record_ids": ["84678ca9-…"]}
-{"event": "step_recorded", "step": 0, "result": {"accepted": true,
- "step_outcome_id": "50bff3c5-…"}}   // initial route: signal −1.0
-{"event": "step_recorded", "step": 1, "result": {"accepted": true,
- "step_outcome_id": "b288499b-…"}}   // handoff resolution: signal +1.0</pre></div>
+  <div class="card"><b>① Capture</b> — teaching case T1, before any lesson exists.
+  <p style="margin:6px 0 0">The router sends the request to the keyword specialist first. The
+  environment discloses the result only after the decision.</p>
+  <div class="flow">
+    <div class="panel in"><h4>Router decision</h4>
+      <div class="kv"><b>request</b><span>"API access stopped immediately after renewal."</span></div>
+      <div class="kv"><b>initial</b><span class="v-code">technical_agent</span></div>
+      <div class="kv"><b>lesson_ids</b><span>none exist yet</span></div>
+    </div>
+    <div class="panel out"><h4>Environment outcome</h4>
+      <div class="kv"><b>initial_status</b><span class="v-warn">handoff</span></div>
+      <div class="kv"><b>resolved_by</b><span class="v-code">billing_agent</span></div>
+      <div class="kv"><b>handoffs</b><span>1</span></div>
+    </div>
+  </div>
+  <div class="trace">live-v2-teach.jsonl · events "decision", "outcome"</div></div>
 
-  <div class="card"><b>③ Mubit decides the lessons</b> — the verbatim
-  <code class="inline">reflect()</code> output. The app wrote none of these 3 lessons:
-<pre class="mini">{"degraded": false, "lessons_stored": 3, "lessons": [
- {"lesson_id": "4a7687f5-…", "lesson_type": "success",
-  "content": "Requests concerning API access stopping immediately after a renewal should be
-              routed directly to the billing agent instead of the technical agent."},
- {"lesson_id": "ee23b165-…", "content": "Requests regarding incorrect workspace names appearing on
-              invoices should be routed directly to the account agent instead of the billing agent."},
- {"lesson_id": "c32706e1-…", "content": "Requests about login failures for everyone during a system
-              outage should be routed directly to the technical agent instead of the account agent."}]}
-// each lesson becomes a hypervector in the medium. A failing lesson decays through its
-// outcome counters and returns marked is_stale. Recall filters it before the model sees it.</pre></div>
+  <div class="card"><b>② Evidence + step rewards</b> — written to Mubit after the attempt.
+  <p style="margin:6px 0 0">The app writes the attempt as a fact. The app writes 1 signal per step.
+  Nothing here writes a lesson.</p>
+  <div class="flow">
+    <div class="panel mem"><h4>Evidence write → Mubit</h4>
+      <div class="kv"><b>intent</b><span class="v-code">"fact"</span></div>
+      <div class="kv"><b>content</b><span>"Observed fictional routing attempt: {request, decision, outcome}"</span></div>
+      <div class="kv"><b>record_ids</b><span class="v-id">84678ca9-…</span></div>
+    </div>
+    <div class="panel mem"><h4>Step rewards → Mubit</h4>
+      <div class="kv"><b>step 0</b><span>initial route — signal <span class="v-bad">−1.0</span> · id <span class="v-id">50bff3c5-…</span></span></div>
+      <div class="kv"><b>step 1</b><span>handoff resolution — signal <span class="v-ok">+1.0</span> · id <span class="v-id">b288499b-…</span></span></div>
+    </div>
+  </div>
+  <div class="trace">pattern [-1, +1] × 3: wrong first route, then resolution by handoff, for all 3 teaching cases</div></div>
 
-  <div class="card"><b>④–⑤ Recall and decide</b> — held-out H1, memory ON (trace):
-<pre class="mini">{"case": "H1", "request": "Our endpoint stopped working when the subscription rolled over.",
- "baseline": "technical_agent",                    // keyword "endpoint"
- "initial": "billing_agent",                       // lesson-cited override
- "lesson_ids": ["4a7687f5-1c91-49fc-a1fa-0659f72a767f"],
- "reason": "The request involves an API endpoint failing right after a subscription renewal…"}
-→ {"initial_status": "succeeded"}                   // correct on the first route
+  <div class="card"><b>③ Mubit decides the lessons</b> — the <code class="inline">reflect()</code> output.
+  <p style="margin:6px 0 0">Mubit read the evidence. Mubit wrote these 3 lessons. The app wrote none
+  of them.</p>
+  <div class="panel mem" style="margin-top:8px"><h4>reflect(include_step_outcomes=true)</h4>
+    <div class="kv"><b>lessons_stored</b><span class="v-ok">3</span></div>
+    <div class="kv"><b>degraded</b><span>false</span></div>
+    <div class="lrow"><span class="v-id">4a7687f5</span><span>API access stops right after a renewal → route to <b>billing</b>, not technical.</span></div>
+    <div class="lrow"><span class="v-id">ee23b165</span><span>Wrong workspace name on an invoice → route to <b>account</b>, not billing.</span></div>
+    <div class="lrow"><span class="v-id">c32706e1</span><span>Login fails for all users during an outage → route to <b>technical</b>, not account.</span></div>
+  </div>
+  <p style="margin:8px 0 0">Each lesson becomes a hypervector in the medium. A failing lesson decays
+  through its outcome counters. It returns marked <code class="inline">is_stale</code>. Recall filters
+  it before the model sees it.</p></div>
 
-// H2 found no applicable lesson. The router kept the baseline and cited nothing:
-{"case": "H2", "initial": "billing_agent", "lesson_ids": []}  → handoff, resolved by account_agent</pre></div>
+  <div class="card"><b>④ Recall and decide</b> — held-out H1, memory ON.
+  <p style="margin:6px 0 0">The keyword baseline says technical. A recalled lesson supports billing.
+  The router cites the lesson and overrides.</p>
+  <div class="flow">
+    <div class="panel mem"><h4>Recall returned</h4>
+      <div class="kv"><b>lesson</b><span class="v-id">4a7687f5-1c91-49fc-a1fa-0659f72a767f</span></div>
+      <div class="kv"><b>conditions</b><span>none</span></div>
+    </div>
+    <div class="panel in"><h4>Decision</h4>
+      <div class="kv"><b>baseline</b><span class="v-code">technical_agent</span> <span class="v-bad">✗</span></div>
+      <div class="kv"><b>initial</b><span class="v-code">billing_agent</span> <span class="v-ok">✓</span></div>
+      <div class="kv"><b>lesson_ids</b><span class="v-id">[4a7687f5-…]</span></div>
+      <div class="kv"><b>result</b><span class="v-ok">correct on the first route</span></div>
+    </div>
+  </div>
+  <div class="panel out" style="margin-top:10px"><h4>H2 — no lesson applied</h4>
+    <div class="kv"><b>decision</b><span>kept baseline <span class="v-code">billing_agent</span> · cited nothing</span></div>
+    <div class="kv"><b>result</b><span class="v-warn">resolved with 1 handoff</span></div>
+  </div>
+  <div class="trace">live-v2-evaluate.jsonl</div></div>
 
-  <div class="card"><b>Tool mode</b> — the same recall as a model-chosen function call
-  (<code class="inline">--mode tools</code>):
-<pre class="mini">// model → harness
-{"function_call": {"name": "mubit_recall",
-                   "args": {"query": "api stopped working after renewal"}}}
-// harness → model (a real recall; the final decision may cite only these IDs)
-{"function_response": {"name": "mubit_recall",
-                       "response": {"lessons": [{"id": "4a7687f5-…", "content": "…", "conditions": []}]}}}</pre></div>
+  <div class="card"><b>⑤ Tool mode</b> — the model calls memory itself (<code class="inline">--mode tools</code>).
+  <p style="margin:6px 0 0">The harness calls nothing. The model selects the query. The final
+  decision may cite only the IDs that the tool returned.</p>
+  <div class="flow">
+    <div class="panel in"><h4>Model → harness</h4>
+      <div class="kv"><b>tool</b><span class="v-code">mubit_recall</span></div>
+      <div class="kv"><b>query</b><span>"api stopped working after renewal"</span></div>
+    </div>
+    <div class="panel mem"><h4>Harness → model</h4>
+      <div class="kv"><b>lessons</b><span>1 returned</span></div>
+      <div class="kv"><b>id</b><span class="v-id">4a7687f5-…</span></div>
+      <div class="kv"><b>conditions</b><span>none</span></div>
+    </div>
+  </div></div>
 
   <div class="callout">Validation applies in both modes. The initial specialist must be valid. Cited
   IDs must be a subset of the supplied or returned IDs. An override without citations fails the run.</div>
@@ -264,6 +443,14 @@
   <a href="../supply_chain_agent/how-it-works.html">Supply Chain Agent</a> ·
   <a href="../oncall_agent/how-it-works.html">On-Call Triage Agent</a> ·
   <a href="../policy_analyst/how-it-works.html">Policy Analyst</a> ·
+  <a href="../team_pipeline/how-it-works.html">Team Pipeline</a> ·
+  <a href="../self_tuner/how-it-works.html">Self-Tuner</a> ·
+  <a href="../librarian/how-it-works.html">Librarian</a> ·
+  <a href="../researcher/how-it-works.html">Researcher</a> ·
+  <a href="../data_analyst/how-it-works.html">Data Analyst</a> ·
+  <a href="../helpdesk/how-it-works.html">Helpdesk</a> ·
+  <a href="../soc_triage/how-it-works.html">SOC Triage</a> ·
+  <a href="../code_reviewer/how-it-works.html">Code Reviewer</a> ·
   repo: <a href="https://github.com/mubit-ai/demo">mubit-ai/demo</a> ·
   benchmark evidence: <a href="https://github.com/mubit-ai/mubit-cl-bench">mubit-cl-bench</a>.
   <br>All requests, specialists, and specialists' competence are fictional.
