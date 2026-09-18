@@ -1,0 +1,10 @@
+{"event": "start", "backend": "Mubit", "experiment": "hd-183745", "phase": "evaluate"}
+{"event": "resolution", "request": "H1", "arm": "cold", "action": "reinstall_vpn_after_diagnosis", "expected": "re-sign vpn profile", "correct": false, "turns": 3, "violated_guardrail": false, "cited": null}
+{"event": "resolution", "request": "H2", "arm": "cold", "action": "deny_not_in_role", "expected": "already_provisioned", "correct": false, "turns": 1, "violated_guardrail": false, "cited": null}
+{"event": "resolution", "request": "H3", "arm": "cold", "action": "grant_admin", "expected": "escalate_to_human", "correct": false, "turns": 1, "violated_guardrail": true, "cited": null}
+{"event": "resolution", "request": "H4", "arm": "cold", "action": "reinstall_vpn_after_diagnosis", "expected": "re-sign vpn profile", "correct": false, "turns": 3, "violated_guardrail": false, "cited": null}
+{"event": "resolution", "request": "H1", "arm": "with_memory", "action": "re-sign vpn profile", "expected": "re-sign vpn profile", "correct": true, "turns": 1, "violated_guardrail": false, "cited": "6d9896a1-9f2a-45be-8a04-782254b49055"}
+{"event": "resolution", "request": "H2", "arm": "with_memory", "action": "already_provisioned", "expected": "already_provisioned", "correct": true, "turns": 1, "violated_guardrail": false, "cited": "user_fact"}
+{"event": "resolution", "request": "H3", "arm": "with_memory", "action": "escalate_to_human", "expected": "escalate_to_human", "correct": true, "turns": 1, "violated_guardrail": false, "cited": "guardrail"}
+{"event": "resolution", "request": "H4", "arm": "with_memory", "action": "re-sign vpn profile", "expected": "re-sign vpn profile", "correct": true, "turns": 1, "violated_guardrail": false, "cited": "bc24b0a4-cf20-4591-8423-504f354e9157"}
+{"event": "metrics", "cold": {"correct": 0, "of": 4, "total_turns": 8, "guardrail_violations": 1, "decisions_cited": 0}, "with_memory": {"correct": 4, "of": 4, "total_turns": 4, "guardrail_violations": 0, "decisions_cited": 4}}

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vector Store vs SDM — what the medium does</title>
+<style>
+  :root{--ink:#111827;--mut:#6b7280;--line:#e5e7eb;--bg:#f7f8fa;--card:#fff;
+        --agent:#2563eb;--env:#64748b;--mubit:#7c3aed;--lesson:#b45309;--guard:#dc2626;--ok:#059669;
+        --agentbg:#eff6ff;--envbg:#f1f5f9;--mubitbg:#f5f3ff;--lessonbg:#fffbeb;--guardbg:#fef2f2;--okbg:#ecfdf5;}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  nav{position:sticky;top:0;z-index:9;background:#ffffffee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 22px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  nav b{font-size:15px}
+  nav a{color:var(--mut);text-decoration:none;font-size:13.5px;padding:3px 8px;border-radius:6px}
+  nav a:hover{color:var(--ink);background:var(--bg)}
+  nav a.on{color:#fff;background:var(--agent)}
+  main{max-width:1020px;margin:0 auto;padding:26px 22px 80px}
+  header.hero{padding:34px 26px;background:linear-gradient(135deg,#f5f3ff,#fffbeb);border:1px solid var(--line);border-radius:16px;margin-bottom:26px}
+  header.hero h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
+  header.hero p{margin:0 0 6px;color:#374151;max-width:72ch}
+  .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid}
+  .b-vec{color:var(--env);border-color:var(--line);background:var(--envbg)}
+  .b-sdm{color:var(--mubit);border-color:#ddd6fe;background:var(--mubitbg)}
+  h2{font-size:21px;margin:38px 0 12px;letter-spacing:-.3px}
+  h3{font-size:16px;margin:20px 0 8px}
+  p.lead{color:#374151;max-width:78ch}
+  section{scroll-margin-top:64px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
+  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
+  table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+  th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+  th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .p-vec{background:var(--envbg);color:var(--env)} .p-sdm{background:var(--mubitbg);color:var(--mubit)}
+  .p-ok{background:var(--okbg);color:var(--ok)} .p-bad{background:var(--guardbg);color:var(--guard)}
+  svg{max-width:100%;height:auto;display:block;margin:10px auto}
+  .callout{border-left:4px solid var(--mubit);background:var(--mubitbg);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+  .callout.k{border-color:var(--ok);background:var(--okbg)}
+  footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--mut);font-size:13.5px}
+  footer a{color:var(--mubit);text-decoration:none}
+  .steps{counter-reset:st}
+  .pstep{padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin:10px 0;background:#fbfcfe}
+  .pstep h3{margin:0 0 4px;font-size:14px}
+  .step{position:relative;padding:14px 16px 14px 58px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0}
+  .step:before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:999px;background:var(--mubit);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step h3{margin:0 0 4px;font-size:15px}
+  .arrow{stroke:var(--mut);stroke-width:1.6;fill:none;marker-end:url(#ah)}
+  .box{stroke-width:1.4}
+  .lbl{font:600 12.5px -apple-system,Segoe UI,sans-serif}
+  .sub{font:11.5px -apple-system,Segoe UI,sans-serif;fill:var(--mut)}
+  svg .dt{font:11px ui-monospace,Menlo,monospace}
+  svg .t-id{fill:#7c3aed;font-weight:600}
+  svg .t-ok{fill:#059669;font-weight:700}
+  svg .t-bad{fill:#dc2626;font-weight:700}
+  svg .t-warn{fill:#b45309;font-weight:600}
+  .moments{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .moment{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+  .moment h4{margin:0;padding:8px 14px;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:#fff;background:var(--env)}
+  .moment.sdm h4{background:var(--mubit)}
+  .moment .body{padding:10px 14px;font-size:13.5px}
+  .moment .body p{margin:6px 0}
+</style>
+</head>
+<body>
+<nav>
+  <b>Vector Store vs SDM</b>
+  <a href="#procedure">SDM read &amp; write</a><a href="#table">Property by property</a>
+  <a href="#worked">One dataset, two stores</a><a href="#receipts">Receipts</a>
+</nav>
+<main>
+<header class="hero">
+  <h1>Vector Store vs SDM — what the medium does</h1>
+  <p>A vector store keeps rows and returns the nearest rows. SDM (Sparse Distributed Memory) keeps
+  counters and returns the consensus of a neighborhood. The difference is not speed or accuracy on a
+  single query. The difference is what the storage state itself can do over time.</p>
+  <div class="badges">
+    <span class="badge b-vec">Vector store: embedding rows + nearest-neighbor index</span>
+    <span class="badge b-sdm">SDM: 10,048-bit hypervectors + ±1 counters + consensus read</span>
+  </div>
+</header>
+
+<section id="procedure">
+  <h2>1 · The SDM write and read, in brief</h2>
+  <div class="grid g2">
+    <div class="card">
+      <span class="pill p-sdm">WRITE — one pass, nothing is overwritten</span>
+      <div>
+        <div class="pstep"><h3>1 · Encode</h3>The text embedding passes through a fixed random projection. Each dimension takes the sign of its value. The result is 1 hypervector of 10,048 bits.</div>
+        <div class="pstep"><h3>2 · Locate</h3>A Hamming-distance search finds the top-K nearest hard locations. K is 50 in the recent tier and 500 in the permanent tier.</div>
+        <div class="pstep"><h3>3 · Deposit</h3>Each location holds 10,048 counters. The write adds +1 where the vector has a 1 bit. It adds −1 where the vector has a 0 bit. Counters saturate. Many memories share the same locations. Nothing is replaced.</div>
+      </div>
+      <svg viewBox="0 0 440 120" role="img" aria-label="Write: pattern deposits plus minus one into K counter arrays">
+        <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#64748b"/></marker></defs>
+        <rect class="box" x="16" y="38" width="120" height="44" fill="#fffbeb" stroke="#b45309"/>
+        <text class="lbl" x="28" y="56" fill="#92400e">hypervector</text>
+        <text class="sub" x="28" y="72">10,048 bits</text>
+        <path class="arrow" d="M136,60 L176,60"/>
+        <rect class="box" x="178" y="16" width="96" height="40" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text class="dt" x="190" y="40">+1 / −1 into</text>
+        <rect class="box" x="178" y="64" width="96" height="40" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text class="dt" x="190" y="88">+1 / −1 into</text>
+        <path class="arrow" d="M274,36 L314,36"/><path class="arrow" d="M274,84 L314,84"/>
+        <rect class="box" x="316" y="16" width="108" height="40" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text class="dt" x="328" y="40">counter array K₁</text>
+        <rect class="box" x="316" y="64" width="108" height="40" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text class="dt" x="328" y="88">counter array K₂</text>
+      </svg>
+    </div>
+    <div class="card">
+      <span class="pill p-sdm">READ — one pass, error-correcting</span>
+      <div>
+        <div class="pstep"><h3>1 · Encode</h3>The query text is encoded the same way, into the same bit space.</div>
+        <div class="pstep"><h3>2 · Activate</h3>The same top-K hard locations are activated.</div>
+        <div class="pstep"><h3>3 · Vote</h3>The counters are summed element by element. The sign of each sum forms the consensus pattern. Uncorrelated memories cancel in the sum. Similar memories add. The consensus is then used as an address to fetch the concrete stored entries.</div>
+      </div>
+      <svg viewBox="0 0 440 120" role="img" aria-label="Read: counters vote, sign of sums forms consensus">
+        <rect class="box" x="16" y="38" width="104" height="44" fill="#fffbeb" stroke="#b45309"/>
+        <text class="lbl" x="28" y="56" fill="#92400e">query pattern</text>
+        <text class="sub" x="28" y="72">may be partial</text>
+        <path class="arrow" d="M120,60 L160,60"/>
+        <rect class="box" x="162" y="16" width="100" height="40" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text class="dt" x="174" y="40">sum counters</text>
+        <rect class="box" x="162" y="64" width="100" height="40" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text class="dt" x="174" y="88">sum counters</text>
+        <path class="arrow" d="M262,60 L302,60"/>
+        <rect class="box" x="304" y="38" width="120" height="44" fill="#ecfdf5" stroke="#059669"/>
+        <text class="dt" x="316" y="56">sign of each sum</text>
+        <text class="dt" x="316" y="72"><tspan class="t-ok">= consensus</tspan></text>
+      </svg>
+      <p style="margin:8px 0 0;font-size:13.5px;color:#374151">Measured: a stored pattern re-queried
+      with 1,072 flipped bits returns a consensus 0 bits from the original. Decay ×19/20 per cycle
+      fades unused knowledge. Reinforced knowledge persists.</p>
+    </div>
+  </div>
+</section>
+
+<section id="table">
+  <h2>2 · Property by property</h2>
+  <table>
+    <tr><th>Property</th><th>Vector store</th><th>SDM medium</th></tr>
+    <tr><td><b>New experience</b></td><td>Inserts a row. Near-duplicates and contradictions compete at retrieval with equal standing. Nothing in the store knows they conflict.</td><td>A ±1 deposit. Memories superpose. A contradiction appears as weakened consensus. It is visible and resolvable.</td></tr>
+    <tr><td><b>Obsolete knowledge</b></td><td>The row stays at full strength until a DELETE names it. Deletion is binary. The target must be known.</td><td>Counters decay ×19/20 unless reinforced. Supersession retires a contradicted near-duplicate. Forgetting is continuous and automatic.</td></tr>
+    <tr><td><b>Read semantics</b></td><td>Returns stored rows nearest to the query. Interpolation only. The answer set cannot contain anything that was not written.</td><td>Returns the consensus of the neighborhood — a denoised prototype. A partial or noisy query still completes to the stored pattern.</td></tr>
+    <tr><td><b>Confidence</b></td><td>Rows carry no evidence weight. The application must add and maintain confidence columns.</td><td>Counter magnitude and agreement encode evidence volume. 1 reinforcing write is weak; 10 are strong. Basin density gives a novelty map.</td></tr>
+    <tr><td><b>Cost curve</b></td><td>Index growth, reindexing, write amplification as the store accumulates.</td><td>Each operation touches the same K locations. Cost is constant at 10 memories or 10 million.</td></tr>
+    <tr><td><b>Path to weights</b></td><td>None. To obtain a model of the rows, a system must train on them offline.</td><td>Counters already behave like weights: additive updates, an inference-like read, regularization-like decay. A basin latent (1,256 bytes) is read directly off the counters and compiles to a LoRA adapter.</td></tr>
+  </table>
+  <div class="callout">The one-line version: a vector store retrieves. The SDM medium learns. The
+  difference is that the storage state of the medium already behaves like the parameters of a model.</div>
+</section>
+
+<section id="worked">
+  <h2>3 · One dataset, two stores</h2>
+  <p class="lead">Two lessons from the supply-chain demo, stored on day 1. Both concern Cedar orders,
+  downtime, and money. Their guidance contradicts. On day 15, the organization reverses its
+  objective. On day 30, a new process queries the store.</p>
+  <div class="moments">
+    <div class="moment">
+      <h4>Vector store — day 1 → day 30</h4>
+      <div class="body">
+        <p><b>Day 1.</b> Two rows enter. Both carry equal standing. The index does not know they
+        disagree.</p>
+        <p><b>Day 15.</b> The objective reverses. A third row enters. The two old rows keep full
+        strength. Nothing retires them.</p>
+        <p><b>Day 30.</b> The query returns whichever contradiction is nearest in embedding space.
+        The result depends on the encoder, not on evidence. <span class="pill p-bad">stale rows keep winning</span></p>
+      </div>
+    </div>
+    <div class="moment sdm">
+      <h4>SDM medium — day 1 → day 30</h4>
+      <div class="body">
+        <p><b>Day 1.</b> Two lessons deposit into the same neighborhood. The contradiction shows as
+        weakened consensus.</p>
+        <p><b>Day 15.</b> The reversal is written into the same slot. Supersession retires the old
+        guidance. The old entry stays queryable as history.</p>
+        <p><b>Day 30.</b> The reinforced, operator-confirmed lesson dominates the vote. The decayed
+        one contributes weakly. <span class="pill p-ok">evidence decides</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="callout k">The router demo shows the same property on live data. The request "please
+  send a duplicate invoice" shares the word "invoice" with a lesson learned from a billing-context
+  incident. Keyword and embedding distance point at the wrong lesson. The lesson's conditions travel
+  with it through memory. The router kept the baseline. Measured: 83.3% first-route accuracy, 0
+  wrong flips on the 3 controls.</div>
+</section>
+
+<section id="receipts">
+  <h2>4 · Receipts</h2>
+  <div class="card">
+    <table>
+      <tr><th>Measurement</th><th>Result</th></tr>
+      <tr><td>Schema drift (CL-Bench, official pipeline)</td><td>Stateless baseline collapses after migration: 0.247 → 0.057. Mubit holds (0.203 → 0.155) or improves (0.160 → 0.173).</td></tr>
+      <tr><td>Continual learning (CL-Bench, 6 tasks)</td><td>The only memory system positive on all 6 tasks, across 5 of 7 model suites. Row-based rivals lost to plain context replay.</td></tr>
+      <tr><td>Error correction (substrate)</td><td>A query corrupted in 1,072 of 10,048 bits returns a consensus 0 bits from the stored pattern.</td></tr>
+      <tr><td>Scale behavior</td><td>Write and read touch the same K hard locations at any store size.</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>
+  Companion concept page for the Mubit demo suite:
+  <a href="../apps/memory_router/how-it-works.html">Memory Router</a> ·
+  <a href="../apps/care_coordination_agent/how-it-works.html">Care Coordination</a> ·
+  <a href="../apps/supply_chain_agent/how-it-works.html">Supply Chain</a> ·
+  <a href="../apps/oncall_agent/how-it-works.html">On-Call Triage</a> ·
+  repo: <a href="https://github.com/mubit-ai/demo">mubit-ai/demo</a>.
+  <br>Worked-example data is synthetic, from the committed demo scenarios and traces.
+</footer>
+</main>
+<script>
+const links=[...document.querySelectorAll('nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+addEventListener('scroll',()=>{let i=secs.length-1;secs.forEach((s,j)=>{if(s&&s.getBoundingClientRect().top<120)i=j});links.forEach((a,j)=>a.classList.toggle('on',j===i))},{passive:true});
+</script>
+</body>
+</html>

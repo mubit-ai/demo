@@ -1,0 +1,12 @@
+{"event": "start", "backend": "Mubit", "experiment": "cr-184200", "phase": "review"}
+{"event": "review", "pr": "PR-1", "arm": "cold", "findings": [], "expected": ["missing rollback section"], "cited": []}
+{"event": "review", "pr": "PR-2", "arm": "cold", "findings": [], "expected": ["payments change without load-test tag (INC-1042)"], "cited": []}
+{"event": "review", "pr": "PR-3", "arm": "cold", "findings": ["PII in logs"], "expected": ["PII in logs"], "cited": []}
+{"event": "review", "pr": "PR-4", "arm": "cold", "findings": [], "expected": [], "cited": []}
+{"event": "review", "pr": "PR-5", "arm": "cold", "findings": [], "expected": [], "cited": []}
+{"event": "review", "pr": "PR-1", "arm": "with_memory", "findings": ["missing rollback section"], "expected": ["missing rollback section"], "cited": ["f32f480b"]}
+{"event": "review", "pr": "PR-2", "arm": "with_memory", "findings": ["payments change without load-test tag"], "expected": ["payments change without load-test tag (INC-1042)"], "cited": ["6f8ceb12"]}
+{"event": "review", "pr": "PR-3", "arm": "with_memory", "findings": ["PII in logs"], "expected": ["PII in logs"], "cited": ["200ce68c"]}
+{"event": "review", "pr": "PR-4", "arm": "with_memory", "findings": [], "expected": [], "cited": []}
+{"event": "review", "pr": "PR-5", "arm": "with_memory", "findings": [], "expected": [], "cited": []}
+{"event": "metrics", "cold": {"violations_caught": 1, "violations_total": 3, "findings_cited": 0, "false_blockers": 0}, "with_memory": {"violations_caught": 3, "violations_total": 3, "findings_cited": 3, "false_blockers": 0}}
