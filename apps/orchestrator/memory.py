@@ -121,27 +121,6 @@ class Memory:
         )
         return f"Checkpoint '{label}' created."
 
-    def _tool_set_goal(self, args: dict) -> str:
-        description = args.get("description", "")
-        priority = args.get("priority", "high")
-        result = self.client.add_goal({
-            "run_id": self.session_id,
-            "description": description,
-            "priority": priority,
-        })
-        goal_id = result.get("goal_id", result.get("id", "unknown"))
-        return f"Goal created (id: {goal_id}): {description}"
-
-    def _tool_update_goal(self, args: dict) -> str:
-        goal_id = args.get("goal_id", "")
-        status = args.get("status", "achieved")
-        self.client.update_goal({
-            "run_id": self.session_id,
-            "goal_id": goal_id,
-            "status": status,
-        })
-        return f"Goal {goal_id} updated to '{status}'."
-
     def _tool_reflect_on_session(self, args: dict) -> str:
         result = self.client.reflect(session_id=self.session_id)
         lessons = result.get("lessons", [])

@@ -30,7 +30,6 @@ SYSTEM_INSTRUCTION = (
     "- **recall_memory**: Search your memory for prior knowledge before starting research\n"
     "- **get_assembled_context**: Get a comprehensive context block from all your memories\n"
     "- **create_checkpoint**: Save your progress so it can be recovered\n"
-    "- **set_goal / update_goal**: Track what you're trying to achieve\n"
     "- **reflect_on_session**: Extract higher-order lessons from your research\n"
     "- **archive_artifact**: Store final deliverables as immutable artifacts\n"
     "- **check_memory_health**: Check your memory statistics\n"
