@@ -1,0 +1,15 @@
+{"event": "start", "backend": "Mubit", "experiment": "policy-164108", "phase": "setup"}
+{"event": "fact_stored", "customer": "acme", "key": "coverage_water", "valid_from": "2026-01-01", "valid_to": "2026-07-01", "index": 0}
+{"event": "fact_stored", "customer": "acme", "key": "coverage_water", "valid_from": "2026-07-01", "valid_to": null, "index": 1}
+{"event": "fact_stored", "customer": "acme", "key": "deductible", "valid_from": "2026-01-01", "valid_to": "2026-05-01", "index": 2}
+{"event": "fact_stored", "customer": "acme", "key": "deductible", "valid_from": "2026-05-01", "valid_to": null, "index": 3}
+{"event": "fact_stored", "customer": "blobfax", "key": "coverage_water", "valid_from": "2026-01-01", "valid_to": null, "index": 4}
+{"event": "fact_verified", "index": 0}
+{"event": "fact_verified", "index": 1}
+{"event": "fact_verified", "index": 2}
+{"event": "fact_verified", "index": 3}
+{"event": "fact_verified", "index": 4}
+{"event": "store_state", "customer": "acme", "key": "coverage_water", "valid_from": "2026-07-01", "is_stale": false, "superseded_by": "", "id": "89bf3018-aefb-43ea-830b-b08f72309ce0", "index": 1}
+{"event": "store_state", "customer": "acme", "key": "deductible", "valid_from": "2026-05-01", "is_stale": false, "superseded_by": "", "id": "f41567ae-89a9-4fd4-948f-b25c44702cc1", "index": 3}
+{"event": "store_state", "customer": "acme", "key": "deductible", "valid_from": "2026-01-01", "is_stale": false, "superseded_by": "", "id": "b822b01c-78c8-4614-ba70-14c3af410693", "index": 2}
+{"event": "store_state", "customer": "blobfax", "key": "coverage_water", "valid_from": "2026-01-01", "is_stale": false, "superseded_by": "", "id": "1d3ae5e4-3edd-4924-a971-8347ddff8502", "index": 4}
