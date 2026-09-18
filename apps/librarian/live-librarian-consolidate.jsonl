@@ -1,0 +1,3 @@
+{"event": "start", "backend": "Mubit", "experiment": "lib-173619", "phase": "consolidate"}
+{"event": "consolidated", "entries_before": 6, "entries_after": 10, "distilled": 4}
+{"event": "recall_quality", "hits": 5, "canonical_answer_survives": true, "distilled_samples": ["Nexon's tier-2 SLA credits 2% per late day.", "Nexon's account contact is Dana Reyes (dana@nexon.example).", "Nexon offers a 12% volume discount for orders exceeding 500 units."]}

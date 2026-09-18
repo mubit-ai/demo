@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Researcher — How it works</title>
+<style>
+  :root{--ink:#111827;--mut:#6b7280;--line:#e5e7eb;--bg:#f7f8fa;--card:#fff;
+        --agent:#2563eb;--env:#64748b;--mubit:#7c3aed;--lesson:#b45309;--guard:#dc2626;--ok:#059669;
+        --agentbg:#eff6ff;--envbg:#f1f5f9;--mubitbg:#f5f3ff;--lessonbg:#fffbeb;--guardbg:#fef2f2;--okbg:#ecfdf5;}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  nav{position:sticky;top:0;z-index:9;background:#ffffffee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 22px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  nav b{font-size:15px}
+  nav a{color:var(--mut);text-decoration:none;font-size:13.5px;padding:3px 8px;border-radius:6px}
+  nav a:hover{color:var(--ink);background:var(--bg)}
+  nav a.on{color:#fff;background:var(--agent)}
+  main{max-width:1020px;margin:0 auto;padding:26px 22px 80px}
+  header.hero{padding:34px 26px;background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid var(--line);border-radius:16px;margin-bottom:26px}
+  header.hero h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
+  header.hero p{margin:0 0 6px;color:#374151;max-width:70ch}
+  .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid}
+  .b-path{color:var(--agent);border-color:#bfdbfe;background:var(--agentbg)}
+  .b-mubit{color:var(--mubit);border-color:#ddd6fe;background:var(--mubitbg)}
+  .b-syn{color:var(--mut);border-color:var(--line);background:#fff}
+  h2{font-size:21px;margin:38px 0 12px;letter-spacing:-.3px}
+  h3{font-size:16px;margin:20px 0 8px}
+  p.lead{color:#374151;max-width:78ch}
+  section{scroll-margin-top:64px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
+  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
+  table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .p-env{background:var(--envbg);color:var(--env)}
+  .steps{counter-reset:st}
+  .step{position:relative;padding:14px 16px 14px 58px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0}
+  .step:before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:999px;background:var(--mubit);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step h3{margin:0 0 4px;font-size:15px}
+  .who{float:right}
+  svg{max-width:100%;height:auto;display:block;margin:10px auto}
+  .callout{border-left:4px solid var(--mubit);background:var(--mubitbg);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+  .callout.k{border-color:var(--ok);background:var(--okbg)}
+  footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--mut);font-size:13.5px}
+  footer a{color:var(--mubit);text-decoration:none}
+  .arrow{stroke:var(--mut);stroke-width:1.6;fill:none;marker-end:url(#ah)}
+  .box{stroke-width:1.4;rx:10}
+  .lbl{font:600 12.5px -apple-system,Segoe UI,sans-serif}
+  .sub{font:11.5px -apple-system,Segoe UI,sans-serif;fill:var(--mut)}
+
+</style>
+</head>
+<body>
+<nav><b>Researcher</b><a href="#loop">Loop</a><a href="#data">Example data</a><a href="#results">Results</a><a href="#run">Run</a></nav>
+<main>
+<header class="hero">
+  <h1>Researcher</h1>
+  <p>A researcher works three investigation stages. The harness wipes the context window at every stage boundary — a hard compaction. With checkpoints, the next stage recovers the clues from Mubit and the final answer assembles. Without checkpoints, the window only holds the latest clue and the answer is incomplete.</p>
+<p>Measured: checkpointed final answer K7-Q2-M9 (correct); wipe arm: incomplete.</p>
+  <div class="badges"><span class="badge b-mubit">checkpoint · get_context (budgeted) · guardrail rules</span><span class="badge b-syn">All stages and clues are fictional</span></div>
+</header>
+<section id="loop"><h2>1 · Loop</h2><div class="steps"><div class="step"><h3>Assemble context</h3>Each stage starts from one budgeted get_context block — not a transcript replay.</div><div class="step"><h3>Probe</h3>Each stage probe returns one clue fragment. A decoy probe yields nothing; when the detector sees it repeated, it writes a guardrail rule and later probes obey it.</div><div class="step"><h3>Compact</h3>At the stage boundary the window is wiped. The checkpointed arm wrote a checkpoint first; it recalls the snapshot from Mubit. The wipe arm keeps only the latest clue.</div><div class="step"><h3>Assemble</h3>Final answer = the three fragments joined. Deterministic scoring.</div></div></section><section id="data"><h2>2 · Example data</h2><div class="card"><b>Metrics (live trace)</b>:<pre class="mini">{"event": "metrics",
+ "final_checkpointed": "K7-Q2-M9", "final_wipe": "incomplete",
+ "correct_checkpointed": true, "correct_wipe": false}</pre></div></section><section id="results"><h2>3 · Results</h2><div class="card"><table><tr><th>Arm</th><th>Final answer</th><th>Correct</th></tr><tr><td><b>Checkpointed</b></td><td class="n"><b>K7-Q2-M9</b></td><td class="n">yes</td></tr><tr><td>Wipe without checkpoint</td><td class="n">incomplete</td><td class="n">no</td></tr></table></div></section><section id="run"><h2>4 · Run</h2><pre>make researcher                         # investigate, two arms
+.venv/bin/python -m unittest test_demo  # offline checks</pre></section>
+<footer>Part of the Mubit demo suite:
+  <a href="../care_coordination_agent/how-it-works.html">Care Coordination</a> ·
+  <a href="../supply_chain_agent/how-it-works.html">Supply Chain</a> ·
+  <a href="../memory_router/how-it-works.html">Memory Router</a> ·
+  <a href="../oncall_agent/how-it-works.html">On-Call Triage</a> ·
+  <a href="../policy_analyst/how-it-works.html">Policy Analyst</a> ·
+  <a href="../team_pipeline/how-it-works.html">Team Pipeline</a> ·
+  <a href="../self_tuner/how-it-works.html">Self-Tuner</a> ·
+  <a href="../librarian/how-it-works.html">Librarian</a> ·
+  <a href="../researcher/how-it-works.html">Researcher</a>..</footer>
+</main>
+<script>
+const links=[...document.querySelectorAll('nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+addEventListener('scroll',()=>{let i=secs.length-1;secs.forEach((s,j)=>{if(s&&s.getBoundingClientRect().top<120)i=j});links.forEach((a,j)=>a.classList.toggle('on',j===i))},{passive:true});
+</script>
+</body>
+</html>

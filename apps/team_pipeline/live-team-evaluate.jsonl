@@ -1,0 +1,10 @@
+{"event": "start", "backend": "Mubit", "experiment": "team-170504-b", "phase": "evaluate"}
+{"event": "resolution", "ticket": "H1", "arm": "no_team_memory", "decided": "manual_review", "expected": "refund_duplicate", "correct": false, "cited_lesson": null}
+{"event": "resolution", "ticket": "H2", "arm": "no_team_memory", "decided": "manual_review", "expected": "manual_review", "correct": true, "cited_lesson": null}
+{"event": "resolution", "ticket": "H3", "arm": "no_team_memory", "decided": "collect_diagnostics", "expected": "rollback_deploy", "correct": false, "cited_lesson": null}
+{"event": "resolution", "ticket": "H4", "arm": "no_team_memory", "decided": "collect_diagnostics", "expected": "reset_session", "correct": false, "cited_lesson": null}
+{"event": "resolution", "ticket": "H1", "arm": "with_team_memory", "decided": "refund_duplicate", "expected": "refund_duplicate", "correct": true, "cited_lesson": "ceafaf39-ffdd-473b-b5dd-a2dada22d4f5"}
+{"event": "resolution", "ticket": "H2", "arm": "with_team_memory", "decided": "manual_review", "expected": "manual_review", "correct": true, "cited_lesson": null}
+{"event": "resolution", "ticket": "H3", "arm": "with_team_memory", "decided": "rollback_deploy", "expected": "rollback_deploy", "correct": true, "cited_lesson": "443041ca-fee6-4598-84b1-0a5fa241126c"}
+{"event": "resolution", "ticket": "H4", "arm": "with_team_memory", "decided": "reset_session", "expected": "reset_session", "correct": true, "cited_lesson": "443041ca-fee6-4598-84b1-0a5fa241126c"}
+{"event": "metrics", "no_team_memory": {"correct": 1, "of": 4}, "with_team_memory": {"correct": 4, "of": 4}}

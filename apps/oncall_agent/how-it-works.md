@@ -108,5 +108,5 @@ make oncall-agent                                    # teach + evaluate, fresh e
 
 Part of the Mubit demo suite: [Care Coordination](../care_coordination_agent/how-it-works.md) ·
 [Supply Chain](../supply_chain_agent/how-it-works.md) · [Memory Router](../memory_router/how-it-works.md) ·
-[Policy Analyst](../policy_analyst/how-it-works.md) ·
+[Policy Analyst](../policy_analyst/how-it-works.md) · [Team Pipeline](../team_pipeline/how-it-works.md) · [Self-Tuner](../self_tuner/how-it-works.md) · [Librarian](../librarian/how-it-works.md) · [Researcher](../researcher/how-it-works.md) ·
 benchmark evidence: [mubit-cl-bench](https://github.com/mubit-ai/mubit-cl-bench).

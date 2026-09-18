@@ -1,0 +1,8 @@
+{"event": "start", "backend": "Mubit", "experiment": "tune-172308", "phase": "evaluate"}
+{"event": "active_prompt", "version": "pv-dda10c6a-4a5b-4067-abe5-a74b9b234426", "rules": 4, "avg_outcome_score": 0.0}
+{"event": "resolution", "email": "H1", "decided": "legal_review", "expected": "legal_review", "correct": true, "probes": 2}
+{"event": "resolution", "email": "H2", "decided": "incident", "expected": "incident", "correct": true, "probes": 1}
+{"event": "resolution", "email": "H3", "decided": "large_refund", "expected": "large_refund", "correct": true, "probes": 1}
+{"event": "resolution", "email": "H4", "decided": "password_support", "expected": "password_support", "correct": true, "probes": 1}
+{"event": "guardrail_recalled", "count": 1, "ids": ["c2d1310d-e4eb-42fe-821d-f95d0358fb4a"]}
+{"event": "metrics", "correct": 4, "of": 4, "max_probes": 2}

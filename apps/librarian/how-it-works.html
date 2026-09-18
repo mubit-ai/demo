@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Librarian — How it works</title>
+<style>
+  :root{--ink:#111827;--mut:#6b7280;--line:#e5e7eb;--bg:#f7f8fa;--card:#fff;
+        --agent:#2563eb;--env:#64748b;--mubit:#7c3aed;--lesson:#b45309;--guard:#dc2626;--ok:#059669;
+        --agentbg:#eff6ff;--envbg:#f1f5f9;--mubitbg:#f5f3ff;--lessonbg:#fffbeb;--guardbg:#fef2f2;--okbg:#ecfdf5;}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  nav{position:sticky;top:0;z-index:9;background:#ffffffee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 22px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  nav b{font-size:15px}
+  nav a{color:var(--mut);text-decoration:none;font-size:13.5px;padding:3px 8px;border-radius:6px}
+  nav a:hover{color:var(--ink);background:var(--bg)}
+  nav a.on{color:#fff;background:var(--agent)}
+  main{max-width:1020px;margin:0 auto;padding:26px 22px 80px}
+  header.hero{padding:34px 26px;background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid var(--line);border-radius:16px;margin-bottom:26px}
+  header.hero h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
+  header.hero p{margin:0 0 6px;color:#374151;max-width:70ch}
+  .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid}
+  .b-path{color:var(--agent);border-color:#bfdbfe;background:var(--agentbg)}
+  .b-mubit{color:var(--mubit);border-color:#ddd6fe;background:var(--mubitbg)}
+  .b-syn{color:var(--mut);border-color:var(--line);background:#fff}
+  h2{font-size:21px;margin:38px 0 12px;letter-spacing:-.3px}
+  h3{font-size:16px;margin:20px 0 8px}
+  p.lead{color:#374151;max-width:78ch}
+  section{scroll-margin-top:64px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
+  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
+  table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .p-env{background:var(--envbg);color:var(--env)}
+  .steps{counter-reset:st}
+  .step{position:relative;padding:14px 16px 14px 58px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0}
+  .step:before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:999px;background:var(--mubit);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step h3{margin:0 0 4px;font-size:15px}
+  .who{float:right}
+  svg{max-width:100%;height:auto;display:block;margin:10px auto}
+  .callout{border-left:4px solid var(--mubit);background:var(--mubitbg);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+  .callout.k{border-color:var(--ok);background:var(--okbg)}
+  footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--mut);font-size:13.5px}
+  footer a{color:var(--mubit);text-decoration:none}
+  .arrow{stroke:var(--mut);stroke-width:1.6;fill:none;marker-end:url(#ah)}
+  .box{stroke-width:1.4;rx:10}
+  .lbl{font:600 12.5px -apple-system,Segoe UI,sans-serif}
+  .sub{font:11.5px -apple-system,Segoe UI,sans-serif;fill:var(--mut)}
+
+</style>
+</head>
+<body>
+<nav><b>Librarian</b><a href="#loop">Loop</a><a href="#data">Example data</a><a href="#results">Results</a><a href="#run">Run</a></nav>
+<main>
+<header class="hero">
+  <h1>Librarian</h1>
+  <p>A fleet writes messy memory: six restatements of one guidance line and four scattered vendor facts. While the system is idle, sleep-time consolidation distills the scatter into consolidated observations — and the canonical answer survives. Cold artifacts archive out and come back by ID.</p>
+<p>Measured: 6 scattered entries in, 4 distilled observations out, recall quality intact, 2 of 2 artifacts recovered by dereference.</p>
+  <div class="badges"><span class="badge b-mubit">remember · memory_health · archive · dereference</span><span class="badge b-syn">Consolidation runs while the run is idle</span></div>
+</header>
+<section id="loop"><h2>1 · Loop</h2><div class="steps"><div class="step"><h3>Seed</h3>Write 6 near-duplicate guidance entries and 4 scattered vendor facts. Snapshot the counts.</div><div class="step"><h3>Idle</h3>The consolidation worker sweeps the idle run. It distills scattered facts into consolidated observations. Raw evidence is not deleted.</div><div class="step"><h3>Verify</h3>Recall the canonical answer after the sweep. It must survive.</div><div class="step"><h3>Archive + dereference</h3>Cold exports move to the archive tier. dereference brings each back by ID — forgetting here is reversible.</div></div></section><section id="data"><h2>2 · Example data</h2><div class="card"><b>Seed → consolidate (live trace)</b>:<pre class="mini">{"event": "seed_done", "lessons_before": 6}
+{"event": "consolidated", "entries_before": 6, "entries_after": 10, "distilled": 4}
+{"event": "recall_quality", "hits": 5, "canonical_answer_survives": true,
+ "distilled_samples": ["Nexon's tier-2 SLA credits 2% per late day.",
+   "Nexon's account contact is Dana Reyes (dana@nexon.example).",
+   "Nexon offers a 12% volume discount on purchases exceeding 500 units."]}</pre><b>Archive reversibility</b>:<pre class="mini">{"event": "archived", "kind": "export", "reference": "bed263a8-…"}
+{"event": "dereferenced", "reference": "bed263a8-…", "recovered": true}   // 2 of 2</pre></div></section><section id="results"><h2>3 · Results</h2><div class="card"><table><tr><th>Check</th><th>Result</th></tr><tr><td>Distilled observations created while idle</td><td class="n">4</td></tr><tr><td>Canonical answer recalls after consolidation</td><td class="n">yes</td></tr><tr><td>Archived artifacts recovered by dereference</td><td class="n">2 / 2</td></tr></table></div></section><section id="run"><h2>4 · Run</h2><p>Needs a server with fast consolidation: <code class="inline">MUBIT_CL_CONSOLIDATE_IDLE_SECS=5 MUBIT_CL_CONSOLIDATE_INTERVAL_SECS=5</code>. Then:</p><pre>make librarian                          # seed → consolidate → archive
+.venv/bin/python -m unittest test_demo  # offline checks</pre></section>
+<footer>Part of the Mubit demo suite:
+  <a href="../care_coordination_agent/how-it-works.html">Care Coordination</a> ·
+  <a href="../supply_chain_agent/how-it-works.html">Supply Chain</a> ·
+  <a href="../memory_router/how-it-works.html">Memory Router</a> ·
+  <a href="../oncall_agent/how-it-works.html">On-Call Triage</a> ·
+  <a href="../policy_analyst/how-it-works.html">Policy Analyst</a> ·
+  <a href="../team_pipeline/how-it-works.html">Team Pipeline</a> ·
+  <a href="../self_tuner/how-it-works.html">Self-Tuner</a> ·
+  <a href="../librarian/how-it-works.html">Librarian</a> ·
+  <a href="../researcher/how-it-works.html">Researcher</a>..</footer>
+</main>
+<script>
+const links=[...document.querySelectorAll('nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+addEventListener('scroll',()=>{let i=secs.length-1;secs.forEach((s,j)=>{if(s&&s.getBoundingClientRect().top<120)i=j});links.forEach((a,j)=>a.classList.toggle('on',j===i))},{passive:true});
+</script>
+</body>
+</html>

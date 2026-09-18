@@ -1,0 +1,20 @@
+{"event": "start", "backend": "Mubit", "experiment": "res-172641", "phase": "investigate"}
+{"event": "probe", "stage": 1, "probe": "query fragments ledger", "clue": "K7"}
+{"event": "probe", "stage": 1, "probe": "probe deprecated index", "clue": null}
+{"event": "probe_repeated", "stage": 1, "probe": "probe deprecated index"}
+{"event": "guardrail_written", "probe": "probe deprecated index"}
+{"event": "stage_done", "stage": 1, "checkpointed": false, "window_now": ["K7"], "repeated_probes": 1}
+{"event": "probe", "stage": 2, "probe": "query tokens vault", "clue": "Q2"}
+{"event": "stage_done", "stage": 2, "checkpointed": false, "window_now": ["Q2"], "repeated_probes": 1}
+{"event": "probe", "stage": 3, "probe": "query checksum oracle", "clue": "M9"}
+{"event": "stage_done", "stage": 3, "checkpointed": false, "window_now": ["M9"], "repeated_probes": 1}
+{"event": "probe", "stage": 1, "probe": "query fragments ledger", "clue": "K7"}
+{"event": "probe", "stage": 1, "probe": "probe deprecated index", "clue": null}
+{"event": "probe_repeated", "stage": 1, "probe": "probe deprecated index"}
+{"event": "guardrail_written", "probe": "probe deprecated index"}
+{"event": "stage_done", "stage": 1, "checkpointed": true, "window_now": ["K7"], "repeated_probes": 1}
+{"event": "probe", "stage": 2, "probe": "query tokens vault", "clue": "Q2"}
+{"event": "stage_done", "stage": 2, "checkpointed": true, "window_now": ["K7", "Q2"], "repeated_probes": 1}
+{"event": "probe", "stage": 3, "probe": "query checksum oracle", "clue": "M9"}
+{"event": "stage_done", "stage": 3, "checkpointed": true, "window_now": ["K7", "M9", "Q2"], "repeated_probes": 1}
+{"event": "metrics", "final_checkpointed": "K7-Q2-M9", "final_wipe": "incomplete", "correct_checkpointed": true, "correct_wipe": false, "repeated_probes_checkpointed": 1, "repeated_probes_wipe": 1}
