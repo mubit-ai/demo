@@ -1,14 +1,14 @@
-{"event": "start", "backend": "Mubit", "experiment": "soc-184017", "phase": "evaluate"}
+{"event": "start", "backend": "Mubit", "experiment": "soc-191446", "phase": "evaluate"}
 {"event": "triage", "alert": "A1", "arm": "cold", "action": "close_benign", "expected": "close_benign", "correct": true, "probes": 3, "cited_lesson": null}
 {"event": "triage", "alert": "A2", "arm": "cold", "action": "escalate", "expected": "escalate", "correct": true, "probes": 3, "cited_lesson": null}
 {"event": "triage", "alert": "A3", "arm": "cold", "action": "escalate", "expected": "escalate", "correct": true, "probes": 3, "cited_lesson": null}
 {"event": "triage", "alert": "A4", "arm": "cold", "action": "close_benign", "expected": "close_benign", "correct": true, "probes": 3, "cited_lesson": null}
 {"event": "triage", "alert": "A5", "arm": "cold", "action": "close_benign", "expected": "escalate", "correct": false, "probes": 3, "cited_lesson": null}
 {"event": "triage", "alert": "A6", "arm": "cold", "action": "close_benign", "expected": "close_benign", "correct": true, "probes": 3, "cited_lesson": null}
-{"event": "triage", "alert": "A1", "arm": "with_memory", "action": "close_benign", "expected": "close_benign", "correct": true, "probes": 1, "cited_lesson": "e443f0cc-2831-4acc-8437-2b3485326423"}
+{"event": "triage", "alert": "A1", "arm": "with_memory", "action": "close_benign", "expected": "close_benign", "correct": true, "probes": 1, "cited_lesson": "31b853a6-fd70-41e9-b3ca-792008e4378c"}
 {"event": "triage", "alert": "A2", "arm": "with_memory", "action": "escalate", "expected": "escalate", "correct": true, "probes": 3, "cited_lesson": null}
 {"event": "triage", "alert": "A3", "arm": "with_memory", "action": "escalate", "expected": "escalate", "correct": true, "probes": 3, "cited_lesson": null}
-{"event": "triage", "alert": "A4", "arm": "with_memory", "action": "close_benign", "expected": "close_benign", "correct": true, "probes": 1, "cited_lesson": "e443f0cc-2831-4acc-8437-2b3485326423"}
-{"event": "triage", "alert": "A5", "arm": "with_memory", "action": "escalate", "expected": "escalate", "correct": true, "probes": 2, "cited_lesson": "c71e4fe9-272e-445f-ac8b-5f036ac7e91f"}
+{"event": "triage", "alert": "A4", "arm": "with_memory", "action": "close_benign", "expected": "close_benign", "correct": true, "probes": 1, "cited_lesson": "31b853a6-fd70-41e9-b3ca-792008e4378c"}
+{"event": "triage", "alert": "A5", "arm": "with_memory", "action": "escalate", "expected": "escalate", "correct": true, "probes": 2, "cited_lesson": "acabd28c-aa9f-496a-a6a5-2b0148a0985f"}
 {"event": "triage", "alert": "A6", "arm": "with_memory", "action": "close_benign", "expected": "close_benign", "correct": true, "probes": 3, "cited_lesson": null}
 {"event": "metrics", "cold": {"correct": 5, "of": 6, "total_probes": 18, "false_closes": 1}, "with_memory": {"correct": 6, "of": 6, "total_probes": 13, "false_closes": 0}}

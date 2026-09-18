@@ -85,26 +85,33 @@ class Memory:
 
     def __init__(self, client, experiment):
         self.client = client
+        self.experiment = experiment
         self.run_id = f"{VERSION}-{experiment}"
 
-    def write_lesson(self, content):
+    def write_lesson(self, content, key):
         stored = self.client.remember(
-            content=f"{self.MARKER} {content}", intent="lesson", lesson_scope="global",
+            content=f"{self.MARKER} [experiment:{self.experiment}] {content}",
+            intent="lesson", lesson_scope="global",
             lesson_importance="high", agent_id="soc-analyst", session_id=self.run_id,
+            upsert_key=f"{VERSION}:{self.experiment}:{key}",
             wait=True, timeout_ms=60000,
             metadata=dict(conditions=["source IP and host must match the pattern"]))
         if stored.get("error") or stored.get("status") in ("failed", "error"):
             raise RuntimeError("lesson write failed")
 
     def recall_lessons(self, query):
-        r = self.client.recall(query=query, limit=8, evidence_only=True,
+        # lessons are global-scope, so the shared store also holds this demo's
+        # earlier experiments and other agents' lessons; filter by experiment
+        # marker after a wide recall instead of trusting a small window
+        r = self.client.recall(query=query, limit=32, evidence_only=True,
                                include_working_memory=False, include_linked_runs=False)
         if r.get("error"):
             raise RuntimeError("recall failed")
+        marker = f"{self.MARKER} [experiment:{self.experiment}]"
         out = []
         for e in (r.get("evidence") or []):
             content = e.get("content") or ""
-            if e.get("id") and not e.get("is_stale") and self.MARKER in content \
+            if e.get("id") and not e.get("is_stale") and content.startswith(marker) \
                     and e.get("entry_type") == "lesson":
                 out.append((e["id"], content))
         return out
@@ -120,7 +127,7 @@ class Memory:
 def run_teach(client, experiment):
     memory = Memory(client, experiment)
     for tid, alert in TRAIN.items():
-        memory.write_lesson(alert["lesson"])
+        memory.write_lesson(alert["lesson"], tid)
         emit("taught", alert=tid, verdict=alert["expected"])
     # drift lesson: recalled with a different query than the benign patterns
     # one recorded outcome on the stream: a later look-alike confirmed the lesson
