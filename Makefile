@@ -1,56 +1,59 @@
-.PHONY: install install-all preseed learn learn-notebook agents agents-notebook langgraph crewai langchain adk discovery crash-recovery orchestrator memory-router oncall-agent help
+.PHONY: help memory-router oncall-agent supply-chain supply-chain-check \
+        care-coordination care-coordination-compare \
+        test test-memory-router test-oncall-agent test-supply-chain test-care-coordination
+
+MEMORY_ROUTER    := apps/memory_router
+ONCALL_AGENT     := apps/oncall_agent
+SUPPLY_CHAIN     := apps/supply_chain_agent
+CARE_COORD       := apps/care_coordination_agent
+WITH_DEPS        := uv run --no-project --with-requirements
+PORT             ?= 7870
+
+# A .env at the repository root configures every demo. A .env inside a demo
+# folder also works when you run that demo from its folder; under make, the
+# root file takes precedence because its values are already in the environment.
+ifneq (,$(wildcard .env))
+include .env
+export
+endif
 
 help: ## Show available targets
-	@grep -E '^[a-zA-Z_-]+:.*##' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*##"}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*##' $(firstword $(MAKEFILE_LIST)) | awk 'BEGIN {FS = ":.*##"}; {printf "  %-28s %s\n", $$1, $$2}'
 
-install: ## Install dependencies with uv
-	uv sync
+# --- Live demos (need MUBIT_ENDPOINT, MUBIT_API_KEY and GEMINI_API_KEY) ---
 
-install-all: ## Install all dependencies including framework integrations
-	uv sync --all-extras
+memory-router: ## Memory router: teach, then compare memory off and on in a new process
+	PYTHONPATH=apps $(WITH_DEPS) $(MEMORY_ROUTER)/requirements.txt python -m memory_router
 
-# --- Live demos ---
+oncall-agent: ## On-call triage: observe + reflect, then apply + attribute, then evaluate
+	PYTHONPATH=apps $(WITH_DEPS) $(ONCALL_AGENT)/requirements.txt python -m oncall_agent
 
-preseed: ## Pre-warm Mubit (run before demos)
-	cd live && uv run python scripts/00_preseed.py
+supply-chain: ## Supply chain agent: web page on 127.0.0.1 (PORT, default 7870)
+	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python -m uvicorn app:app --host 127.0.0.1 --port $(PORT)
 
-learn: ## Run mubit.learn demo (auto-extraction, zero manual calls)
-	cd live && uv run python scripts/demo_learn.py
+supply-chain-check: ## Supply chain agent: teach, then compare in a new process, without the page
+	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python check_live.py
 
-agents: ## Run multi-agent demo (planner/developer/reviewer + Gemini)
-	cd live && uv run python scripts/run_all.py
+care-coordination: ## Care coordination agent: web page on 127.0.0.1 (PORT, default 7880)
+	cd $(CARE_COORD) && $(WITH_DEPS) requirements.txt python -m uvicorn app:app --host 127.0.0.1 --port $(PORT)
 
-learn-notebook: ## Launch mubit.learn Jupyter notebook
-	uv run jupyter notebook live/demo_learn.ipynb
+care-coordination-compare: ## Care coordination agent: 3-arm comparison on a fresh experiment
+	cd $(CARE_COORD) && $(WITH_DEPS) requirements.txt python compare.py --experiment cc-$(shell date +%Y%m%d%H%M%S)
 
-agents-notebook: ## Launch multi-agent Jupyter notebook
-	uv run jupyter notebook live/demo.ipynb
+# --- Offline tests (no keys; model and memory are test doubles) ---
 
-# --- Framework integration examples ---
+test: test-memory-router test-oncall-agent test-supply-chain test-care-coordination ## Run every offline suite
 
-langgraph: ## Run LangGraph code review pipeline example
-	cd integrations/langgraph && uv run python main.py
+test-memory-router: ## Offline tests for the memory router (incl. the tools-mode round-trip)
+	cd $(MEMORY_ROUTER) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
 
-crewai: ## Run CrewAI support ticket triage example
-	cd integrations/crewai && uv run python main.py
+test-oncall-agent: ## Offline tests for the on-call triage agent
+	cd $(ONCALL_AGENT) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
 
-langchain: ## Run LangChain research assistant example
-	cd integrations/langchain && uv run python main.py
+test-supply-chain: ## Offline tests for the supply chain agent (Python and Node.js)
+	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
+	cd $(SUPPLY_CHAIN) && node --test test_api.cjs
 
-adk: ## Run Google ADK travel planner example
-	cd integrations/adk && uv run python main.py
-
-discovery: ## Run software discovery app (multi-agent + web search + Mubit)
-	PYTHONPATH=apps uv run python -m discovery
-
-crash-recovery: ## Run crash recovery demo (due diligence pipeline with crash + resume)
-	PYTHONPATH=apps uv run python -m crash_recovery
-
-orchestrator: ## Run autonomous orchestrator agent (Mubit as tools, LLM-driven)
-	PYTHONPATH=apps uv run python -m orchestrator
-
-memory-router: ## Run routing demo (teach with Mubit, then compare Memory OFF vs ON)
-	PYTHONPATH=apps uv run --no-project --with-requirements apps/memory_router/requirements.txt python -m memory_router
-
-oncall-agent: ## Run on-call triage demo (attribution loop: outcomes, step outcomes, reflect)
-	PYTHONPATH=apps uv run --no-project --with-requirements apps/oncall_agent/requirements.txt python -m oncall_agent
+test-care-coordination: ## Offline tests for the care coordination agent (Python and Node.js)
+	cd $(CARE_COORD) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
+	cd $(CARE_COORD) && node --test test_api.cjs
