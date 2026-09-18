@@ -27,12 +27,11 @@ committed `live-*` trace from a real run.
 | [`soc_triage`](apps/soc_triage) | Triage security alerts | Benign-pattern lessons from analyst verdicts (`record_outcome`); a drift rule for look-alikes | Look-alike from a new host escalated with citation; investigation probes and false closes drop |
 | [`code_reviewer`](apps/code_reviewer) | Review PRs against team conventions | Convention lessons linked to incident IDs | Violations found and cited; no false blockers |
 
-Three earlier multi-agent pipelines stay in the repository as heavier examples
+Two earlier multi-agent pipelines stay in the repository as heavier examples
 of the same memory calls inside pipeline code:
 
 | App | What it shows |
 | --- | --- |
-| [`crash_recovery`](apps/crash_recovery) | A due-diligence pipeline crashes mid-run; Mubit detects the crash, restores state, and resumes |
 | [`discovery`](apps/discovery) | A software-research pipeline with live web search and shared agent memory |
 | [`orchestrator`](apps/orchestrator) | The LLM decides when to use memory: Mubit APIs exposed as function-calling tools |
 
@@ -128,8 +127,8 @@ one folder can be copied out of this repository and run alone.
 | `soc_triage` | `remember`, `recall`, `record_outcome` | `Memory` in [`apps/soc_triage/demo.py`](apps/soc_triage/demo.py) |
 | `code_reviewer` | `remember`, `recall` | `Memory` in [`apps/code_reviewer/demo.py`](apps/code_reviewer/demo.py) |
 
-The three pipelines call a wider surface through their shared `memory.py`
-(`register_agent`, `checkpoint`, `handoff`, `diagnose`, `memory_health`,
+The two pipelines call a wider surface through their shared `memory.py`
+(`register_agent`, `checkpoint`, `handoff`, `feedback`, `memory_health`,
 `surface_strategies`, `archive`/`dereference`).
 
 SDK reference: [docs.mubit.ai/sdk/sdk-methods](https://docs.mubit.ai/sdk/sdk-methods).
