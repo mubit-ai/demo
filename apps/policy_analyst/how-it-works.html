@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Policy Analyst — How it works</title>
+<style>
+  :root{--ink:#111827;--mut:#6b7280;--line:#e5e7eb;--bg:#f7f8fa;--card:#fff;
+        --agent:#2563eb;--env:#64748b;--mubit:#7c3aed;--lesson:#b45309;--guard:#dc2626;--ok:#059669;
+        --agentbg:#eff6ff;--envbg:#f1f5f9;--mubitbg:#f5f3ff;--lessonbg:#fffbeb;--guardbg:#fef2f2;--okbg:#ecfdf5;}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  nav{position:sticky;top:0;z-index:9;background:#ffffffee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 22px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  nav b{font-size:15px}
+  nav a{color:var(--mut);text-decoration:none;font-size:13.5px;padding:3px 8px;border-radius:6px}
+  nav a:hover{color:var(--ink);background:var(--bg)}
+  nav a.on{color:#fff;background:var(--agent)}
+  main{max-width:1020px;margin:0 auto;padding:26px 22px 80px}
+  header.hero{padding:34px 26px;background:linear-gradient(135deg,#fffbeb,#eff6ff);border:1px solid var(--line);border-radius:16px;margin-bottom:26px}
+  header.hero h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
+  header.hero p{margin:0 0 6px;color:#374151;max-width:72ch}
+  .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid}
+  .b-path{color:var(--agent);border-color:#bfdbfe;background:var(--agentbg)}
+  .b-mubit{color:var(--mubit);border-color:#ddd6fe;background:var(--mubitbg)}
+  .b-syn{color:var(--mut);border-color:var(--line);background:#fff}
+  h2{font-size:21px;margin:38px 0 12px;letter-spacing:-.3px}
+  h3{font-size:16px;margin:20px 0 8px}
+  p.lead{color:#374151;max-width:78ch}
+  section{scroll-margin-top:64px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
+  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
+  table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
+  td.n{font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .p-env{background:var(--envbg);color:var(--env)} .p-mubit{background:var(--mubitbg);color:var(--mubit)}
+  .p-ok{background:var(--okbg);color:var(--ok)} .p-bad{background:var(--guardbg);color:var(--guard)}
+  .steps{counter-reset:st}
+  .step{position:relative;padding:14px 16px 14px 58px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0}
+  .step:before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:999px;background:var(--mubit);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step h3{margin:0 0 4px;font-size:15px}
+  .who{float:right}
+  .callout{border-left:4px solid var(--mubit);background:var(--mubitbg);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+  .callout.k{border-color:var(--ok);background:var(--okbg)}
+  .flow{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin-top:8px}
+  .panel{flex:1 1 270px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .panel h4{margin:0;padding:7px 12px;font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:#fff}
+  .panel.in h4{background:var(--agent)} .panel.out h4{background:var(--env)} .panel.mem h4{background:var(--mubit)}
+  .kv{display:flex;gap:10px;padding:6px 12px;border-top:1px solid #eef1f5;font-size:13.5px;align-items:baseline}
+  .panel .kv:first-of-type{border-top:0}
+  .kv b{color:var(--mut);font-weight:600;min-width:110px;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+  .kv span{flex:1}
+  .v-ok{color:var(--ok);font-weight:700} .v-bad{color:var(--guard);font-weight:700}
+  .v-warn{color:var(--lesson);font-weight:700}
+  .v-code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#eef2f7;border-radius:4px;padding:0 5px}
+  footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--mut);font-size:13.5px}
+  footer a{color:var(--mubit);text-decoration:none}
+</style>
+</head>
+<body>
+<nav>
+  <b>Policy Analyst</b>
+  <a href="#scenario">Scenario</a><a href="#loop">Loop</a><a href="#data">Example data</a>
+  <a href="#results">Results</a><a href="#run">Run</a>
+</nav>
+<main>
+<header class="hero">
+  <h1>Policy Analyst</h1>
+  <p>An analyst answers two kinds of questions about synthetic insurance policies: what the terms
+  say <b>today</b>, and what they said <b>when the claim was filed</b>. The terms change mid-stream.
+  A current-state-only memory answers the first class correctly and the second class wrong, every
+  time. The bi-temporal read answers both exactly.</p>
+  <p>This demo needs no LLM. Every verdict is deterministic.</p>
+  <div class="badges">
+    <span class="badge b-path">Patterns: bi-temporal · write-time reconciliation · user partitioning</span>
+    <span class="badge b-mubit">Mubit: remember · recall · record_outcome</span>
+    <span class="badge b-syn">All policies, customers and claims are synthetic</span>
+  </div>
+</header>
+
+<section id="scenario">
+  <h2>1 · Scenario</h2>
+  <p class="lead">The terms for one policy key diverge. Acme's water terms genuinely change on
+  2026-07-01. Acme's deductible is refined on 2026-05-01. Blobfax holds different terms the whole
+  time:</p>
+  <table>
+    <tr><th>Customer</th><th>Key</th><th>Valid</th><th>Fact</th></tr>
+    <tr><td>Acme</td><td>coverage_water</td><td>2026-01-01 → 06-30</td><td>"Water damage is covered up to $50,000."</td></tr>
+    <tr><td>Acme</td><td>coverage_water</td><td>2026-07-01 → open</td><td>"Water damage is excluded; a separate flood rider is required."</td></tr>
+    <tr><td>Acme</td><td>deductible</td><td>2026-01-01 → 04-30</td><td>"The deductible is $500 per claim."</td></tr>
+    <tr><td>Acme</td><td>deductible</td><td>2026-05-01 → open</td><td>"…waived for preferred vendors."</td></tr>
+    <tr><td>Blobfax</td><td>coverage_water</td><td>2026-01-01 → open</td><td>"Water damage is covered up to $25,000."</td></tr>
+  </table>
+  <p class="lead">The held-out questions ask both classes. Q2 is the money question: "Acme filed a
+  water-damage claim on 2026-04-10. What did the policy say then?" The answer that was true on that
+  date is the one the store superseded 12 weeks ago.</p>
+</section>
+
+<section id="loop">
+  <h2>2 · The loop</h2>
+  <div class="steps">
+    <div class="step"><span class="who pill p-env">owned by: harness</span><h3>Setup — write facts with valid time</h3>Each fact is written with <code class="inline">occurrence_time</code> (when it became true, distinct from ingestion time), a validity window in metadata, the customer scope, and an upsert key per slot. The write-time reconciler supersedes or merges the old entry; the old entry stays queryable as history.</div>
+    <div class="step"><span class="who pill p-env">owned by: harness</span><h3>Verify — idempotent retry</h3>Setup recalls every fact and rewrites any that is not retrievable, with the same upsert key. The trace shows the retries.</div>
+    <div class="step"><span class="who pill p-mubit">owned by: Mubit</span><h3>Two reads, one store</h3>A plain query returns only live facts — the server hard-excludes superseded beliefs. A history-intent query ("What were the terms before the changes?") returns superseded facts as first-class evidence, marked <code class="inline">is_stale</code>. The read that matches the question is a server property, not prompt discipline.</div>
+    <div class="step"><span class="who pill p-agent">owned by: harness</span><h3>Adjudicate — close the loop</h3>Two historical claims with known verdicts. The analyst cites the fact valid at the filing date; <code class="inline">record_outcome</code> credits it, in the customer's scope, with an idempotency key.</div>
+    <div class="step"><span class="who pill p-env">owned by: harness</span><h3>Evaluate — two arms, no writes</h3>The bi-temporal arm picks the read that matches the question. The current-state-only arm always reads the current snapshot — exactly how an overwrite-in-place memory answers.</div>
+  </div>
+</section>
+
+<section id="data">
+  <h2>3 · Example data at each step</h2>
+  <div class="card"><b>Write</b> — Acme water, new terms:
+<pre class="mini">client.remember(
+  content="[fact:1] Water damage is excluded; a separate flood rider is required.",
+  intent="fact", session_id=run_acme, user_id="acme",
+  occurrence_time=ts("2026-07-01"),                    // when it became true
+  metadata={"policy_key": "coverage_water", "valid_from": "2026-07-01", "valid_to": None},
+  upsert_key="policy-analyst-v1:acme:coverage_water:2026-07-01", wait=True)
+// the store marks the 2026-01-01 entry stale: superseded_by → this entry</pre></div>
+
+  <div class="card"><b>Two reads of one store</b> — Q2, claim filed 2026-04-10:
+  <div class="flow">
+    <div class="panel in"><h4>Current read (plain recall)</h4>
+      <div class="kv"><b>returns</b><span>"Water damage is excluded; …" <span class="v-code">is_stale: false</span></span></div>
+      <div class="kv"><b>history</b><span class="v-bad">superseded fact excluded by the server</span></div>
+      <div class="kv"><b>as answer to Q2</b><span class="v-bad">wrong — that is today's terms</span></div>
+    </div>
+    <div class="panel mem"><h4>History read (history-intent query)</h4>
+      <div class="kv"><b>returns</b><span>"Water damage is covered up to $50,000." <span class="v-code">is_stale: true</span></span></div>
+      <div class="kv"><b>window filter</b><span>valid 2026-01-01 → 06-30 covers 04-10 <span class="v-ok">✓</span></span></div>
+      <div class="kv"><b>as answer to Q2</b><span class="v-ok">exact — the terms in force on the filing date</span></div>
+    </div>
+  </div></div>
+
+  <div class="card"><b>Attribute</b> — the adjudication credits the fact it used:
+<pre class="mini">client.record_outcome(reference_id=fact_id, entry_ids=[fact_id],
+  outcome="success", signal=1.0, user_id="acme", session_id=run_acme,
+  idempotency_key="policy-analyst-v1:claim CLM-1042 …",
+  rationale="claim CLM-1042 adjudicated covered under the terms valid on 2026-04-10")</pre></div>
+
+  <div class="callout k"><b>Isolation is proven negatively.</b> Blobfax's questions run in Blobfax's
+  run and user scope. Acme's exclusion never reaches a Blobfax answer — Q5 expects $25,000 coverage,
+  and both arms answer it correctly.</div>
+</section>
+
+<section id="results">
+  <h2>4 · Results (committed live traces)</h2>
+  <table>
+    <tr><th>Arm</th><th>Current class</th><th>As-of class</th><th>Total</th></tr>
+    <tr><td><b>Bi-temporal read</b></td><td class="n">3 / 3</td><td class="n"><b>3 / 3</b></td><td class="n"><b>6 / 6</b></td></tr>
+    <tr><td>Current-state-only memory</td><td class="n">3 / 3</td><td class="n">0 / 3</td><td class="n">3 / 6</td></tr>
+  </table>
+  <div class="callout"><b>One line tells the whole story.</b> Both arms answer every "today"
+  question correctly. Every "when the claim was filed" question separates them: the
+  current-state-only memory is wrong on all three — it answers from terms that did not exist when
+  the claim was filed. The bi-temporal read is exact on all three, reading the superseded entry the
+  store kept as history. Cross-customer leaks: 0.</div>
+</section>
+
+<section id="run">
+  <h2>5 · Run</h2>
+<pre>make policy-analyst                # setup → adjudicate → evaluate, fresh experiment
+.venv/bin/python demo.py evaluate --experiment &lt;id&gt;   # re-evaluate an experiment
+.venv/bin/python -m unittest test_demo                # offline checks (15/15)</pre>
+</section>
+
+<footer>
+  Part of the Mubit demo suite:
+  <a href="../care_coordination_agent/how-it-works.html">Care Coordination Agent</a> ·
+  <a href="../supply_chain_agent/how-it-works.html">Supply Chain Agent</a> ·
+  <a href="../memory_router/how-it-works.html">Memory Router</a> ·
+  <a href="../oncall_agent/how-it-works.html">On-Call Triage Agent</a> ·
+  <a href="../policy_analyst/how-it-works.html">Policy Analyst</a> ·
+  repo: <a href="https://github.com/mubit-ai/demo">mubit-ai/demo</a>.
+  <br>All policies, customers and claims are synthetic. No policy system is called.
+</footer>
+</main>
+<script>
+const links=[...document.querySelectorAll('nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+addEventListener('scroll',()=>{let i=secs.length-1;secs.forEach((s,j)=>{if(s&&s.getBoundingClientRect().top<120)i=j});links.forEach((a,j)=>a.classList.toggle('on',j===i))},{passive:true});
+</script>
+</body>
+</html>

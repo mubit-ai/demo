@@ -1,8 +1,9 @@
-.PHONY: help memory-router oncall-agent supply-chain supply-chain-check \
+.PHONY: help memory-router oncall-agent policy-analyst supply-chain supply-chain-check \
         care-coordination care-coordination-compare \
-        test test-memory-router test-oncall-agent test-supply-chain test-care-coordination
+        test test-memory-router test-oncall-agent test-policy-analyst test-supply-chain test-care-coordination
 
 MEMORY_ROUTER    := apps/memory_router
+POLICY_ANALYST   := apps/policy_analyst
 ONCALL_AGENT     := apps/oncall_agent
 SUPPLY_CHAIN     := apps/supply_chain_agent
 CARE_COORD       := apps/care_coordination_agent
@@ -28,6 +29,9 @@ memory-router: ## Memory router: teach, then compare memory off and on in a new 
 oncall-agent: ## On-call triage: observe + reflect, then apply + attribute, then evaluate
 	PYTHONPATH=apps $(WITH_DEPS) $(ONCALL_AGENT)/requirements.txt python -m oncall_agent
 
+policy-analyst: ## Policy analyst: bi-temporal setup + adjudication, then two-arm evaluation
+	PYTHONPATH=apps $(WITH_DEPS) $(POLICY_ANALYST)/requirements.txt python -m policy_analyst
+
 supply-chain: ## Supply chain agent: web page on 127.0.0.1 (PORT, default 7870)
 	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python -m uvicorn app:app --host 127.0.0.1 --port $(PORT)
 
@@ -42,13 +46,16 @@ care-coordination-compare: ## Care coordination agent: 3-arm comparison on a fre
 
 # --- Offline tests (no keys; model and memory are test doubles) ---
 
-test: test-memory-router test-oncall-agent test-supply-chain test-care-coordination ## Run every offline suite
+test: test-memory-router test-oncall-agent test-policy-analyst test-supply-chain test-care-coordination ## Run every offline suite
 
 test-memory-router: ## Offline tests for the memory router (incl. the tools-mode round-trip)
 	cd $(MEMORY_ROUTER) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
 
 test-oncall-agent: ## Offline tests for the on-call triage agent
 	cd $(ONCALL_AGENT) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
+
+test-policy-analyst: ## Offline tests for the policy analyst
+	cd $(POLICY_ANALYST) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
 
 test-supply-chain: ## Offline tests for the supply chain agent (Python and Node.js)
 	cd $(SUPPLY_CHAIN) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
