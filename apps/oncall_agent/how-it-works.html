@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>On-Call Triage Agent — How it works</title>
+<style>
+  :root{--ink:#111827;--mut:#6b7280;--line:#e5e7eb;--bg:#f7f8fa;--card:#fff;
+        --agent:#2563eb;--env:#64748b;--mubit:#7c3aed;--lesson:#b45309;--guard:#dc2626;--ok:#059669;
+        --agentbg:#eff6ff;--envbg:#f1f5f9;--mubitbg:#f5f3ff;--lessonbg:#fffbeb;--guardbg:#fef2f2;--okbg:#ecfdf5;}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  nav{position:sticky;top:0;z-index:9;background:#ffffffee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 22px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  nav b{font-size:15px}
+  nav a{color:var(--mut);text-decoration:none;font-size:13.5px;padding:3px 8px;border-radius:6px}
+  nav a:hover{color:var(--ink);background:var(--bg)}
+  nav a.on{color:#fff;background:var(--agent)}
+  main{max-width:1020px;margin:0 auto;padding:26px 22px 80px}
+  header.hero{padding:34px 26px;background:linear-gradient(135deg,#f5f3ff,#fffbeb);border:1px solid var(--line);border-radius:16px;margin-bottom:26px}
+  header.hero h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
+  header.hero p{margin:0 0 6px;color:#374151;max-width:72ch}
+  .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid}
+  .b-path{color:var(--mubit);border-color:#ddd6fe;background:var(--mubitbg)}
+  .b-mubit{color:var(--mubit);border-color:#ddd6fe;background:var(--mubitbg)}
+  .b-syn{color:var(--mut);border-color:var(--line);background:#fff}
+  h2{font-size:21px;margin:38px 0 12px;letter-spacing:-.3px}
+  h3{font-size:16px;margin:20px 0 8px}
+  p.lead{color:#374151;max-width:78ch}
+  section{scroll-margin-top:64px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;overflow:auto;font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre.mini{font-size:11.5px;padding:10px 12px;margin:8px 0 0}
+  code.inline{background:#eef2f7;border-radius:4px;padding:1px 5px;font:0.92em ui-monospace,Menlo,monospace}
+  table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f3f4f6;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .p-agent{background:var(--agentbg);color:var(--agent)} .p-env{background:var(--envbg);color:var(--env)}
+  .p-mubit{background:var(--mubitbg);color:var(--mubit)}
+  .p-guard{background:var(--guardbg);color:var(--guard)}
+  .steps{counter-reset:st}
+  .step{position:relative;padding:14px 16px 14px 58px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0}
+  .step:before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:999px;background:var(--mubit);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step h3{margin:0 0 4px;font-size:15px}
+  .who{float:right}
+  .callout{border-left:4px solid var(--mubit);background:var(--mubitbg);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+  .callout.k{border-color:var(--ok);background:var(--okbg)}
+  footer{border-top:1px solid var(--line);margin-top:50px;padding-top:18px;color:var(--mut);font-size:13.5px}
+  footer a{color:var(--mubit);text-decoration:none}
+</style>
+</head>
+<body>
+<nav>
+  <b>On-Call Triage Agent</b>
+  <a href="#scenario">Scenario</a><a href="#loop">The documented loop</a><a href="#data">Example data</a>
+  <a href="#teach">Teach twice</a><a href="#run">Run</a>
+</nav>
+<main>
+<header class="hero">
+  <h1>On-Call Triage Agent</h1>
+  <p>An on-call agent triages incidents for 4 fictional services. The agent runs at most 2 diagnostic
+  probes, then selects 1 fix. A hidden truth table makes the cold keyword baseline wrong on the 3
+  teaching classes and correct on the controls. Any lift must come from memory.</p>
+  <p>This app implements the complete documented loop: recall → capture entry IDs → act → objective
+  verdict → <code class="inline">record_outcome(entry_ids=…)</code> →
+  <code class="inline">record_step_outcome</code> per step →
+  <code class="inline">reflect(include_step_outcomes=True)</code>.</p>
+  <div class="badges">
+    <span class="badge b-path">Pathway: Mubit-decided lessons</span>
+    <span class="badge b-mubit">record_outcome · record_step_outcome · reflect · recall</span>
+    <span class="badge b-syn">All services and incidents are fictional</span>
+  </div>
+</header>
+
+<section id="scenario">
+  <h2>1 · Scenario</h2>
+  <p class="lead">Probes: <code class="inline">recent_deploys · dependency_health · infra_capacity</code>.
+  Fixes: <code class="inline">rollback · restart_dependency · scale_out</code>. The environment hides
+  the truth table from the agent. The cold baseline uses alphabetical probes and a keyword fix. The
+  baseline is wrong on T1–T3 and correct on C1–C3. H1–H3 are paraphrases of the taught classes.</p>
+  <table>
+    <tr><th>Class</th><th>Example</th><th>Baseline fix</th><th>Hidden truth</th></tr>
+    <tr><td>T1 / H1 · checkout, deploy-day errors</td><td>"Error rate spiked right after this morning's deploy"</td><td>rollback</td><td><b>restart_dependency</b> (informative probe: dependency_health)</td></tr>
+    <tr><td>T2 / H2 · search, latency</td><td>"Search is painfully slow after yesterday's rollout"</td><td>scale_out</td><td><b>rollback</b> (probe: recent_deploys)</td></tr>
+    <tr><td>T3 / H3 · payments, backlog</td><td>"Batches never drained overnight"</td><td>restart_dependency</td><td><b>scale_out</b> (probe: infra_capacity)</td></tr>
+    <tr><td>C1–C3 · controls</td><td>email latency · checkout timeouts · payments 5xx</td><td>correct</td><td>baseline already correct</td></tr>
+  </table>
+</section>
+
+<section id="loop">
+  <h2>2 · The documented loop</h2>
+  <div class="steps">
+    <div class="step"><span class="who pill p-agent">docs: capture</span><h3>Recall, and capture the entry IDs</h3>Lessons return with IDs. The triage plan must cite the IDs it used. Code enforces this rule.</div>
+    <div class="step"><span class="who pill p-agent">docs: act</span><h3>Act — probes, then 1 fix</h3>A probe is informative only when it is the correct probe for the hidden cause. The environment resolves the incident. The model does not grade its own plan.</div>
+    <div class="step"><span class="who pill p-env">docs: objective verdict</span><h3>Verdict</h3>The environment reports resolved or not resolved. The environment also reports which probes were informative.</div>
+    <div class="step"><span class="who pill p-mubit">docs: attribute</span><h3>Attribute to the entries used</h3><code class="inline">record_outcome(reference_id, entry_ids=cited, signal=±1.0, idempotency_key=…)</code>. The call credits every contributing entry. A retried call does not count twice. <code class="inline">verified_in_production=False</code> because this environment is synthetic.</div>
+    <div class="step"><span class="who pill p-mubit">docs: dense rewards</span><h3>Step-level outcomes</h3>One <code class="inline">record_step_outcome</code> per probe and 1 for the fix. Each call carries an observational <code class="inline">directive_hint</code>. The hint states what was observed. The hint never names the hidden answer.</div>
+    <div class="step"><span class="who pill p-guard">docs: distill</span><h3>Mubit decides the lessons</h3><code class="inline">advanced.reflect(include_step_outcomes=True)</code>. The app writes no lesson. The validation gate decides which lessons exist. A failing lesson returns marked <code class="inline">is_stale</code>. Recall filters it before the model sees it.</div>
+  </div>
+</section>
+
+<section id="data">
+  <h2>3 · Example data at each step</h2>
+  <div class="card"><b>Recall + cited plan</b>:
+<pre class="mini">in:  recall(query="On-call triage lessons for: Checkout failures jumped when we shipped …",
+            entry_types=["lesson"], evidence_only=True)
+out: [{"id": "f00d…", "content": "Checkout deploy-day error spikes are dependency flaps;
+        restart the dependency instead of rolling back", "conditions": []}]
+
+{"probes": ["dependency_health"], "fix": "restart_dependency",
+ "lesson_ids": ["f00d…"], "reason": "Lesson matches checkout deploy-day error spikes",
+ "baseline_fix": "rollback"}     // the override cites what it used — or the run fails</pre></div>
+
+  <div class="card"><b>Step outcomes</b> — informative probe, uninformative probe, failed fix:
+<pre class="mini">record_step_outcome(step_id="exec/T1/probe/0", step_name="dependency_health",
+  outcome="success", signal=1.0, directive_hint=None)
+record_step_outcome(step_id="exec/T1/probe/1", step_name="recent_deploys",
+  outcome="neutral", signal=0.0,
+  directive_hint="this probe was uninformative for this incident; prefer probes that
+                  were informative in past incidents of this kind")
+record_step_outcome(step_id="exec/T1/fix", step_name="rollback",
+  outcome="failure", signal=-1.0,
+  directive_hint="rollback did not resolve this incident; reconsider the fixes that
+                  past incidents of this service used")</pre></div>
+
+  <div class="card"><b>Attribution</b> — credit the entries used:
+<pre class="mini">record_outcome(reference_id="f00d…", outcome="success", signal=1.0,
+  entry_ids=["f00d…"],                          // multi-entry attribution
+  idempotency_key="oncall-agent-v1:exec/T1",    // retries never double-count
+  verified_in_production=False,                 // synthetic environment
+  rationale="Synthetic exec/T1: fix restart_dependency resolved the incident")</pre></div>
+
+  <div class="callout k">Every hint is observational. A hint describes what was observed. A hint
+  never names the hidden fix or the hidden probe. The truth table cannot leak into memory through
+  the feedback path.</div>
+</section>
+
+<section id="teach">
+  <h2>4 · Teaching runs the loop twice</h2>
+  <p class="lead"><b>Pass 1 — observe:</b> the teaching incidents run under the cold policy. The app
+  stores each attempt as raw evidence with <code class="inline">remember(intent="fact")</code>. The
+  app writes no fix preference. Each step records an outcome. Then <code class="inline">reflect()</code>
+  produces the lessons.</p>
+  <p class="lead"><b>Pass 2 — apply and attribute:</b> the same incidents run again in a fresh
+  execution. Recall now returns lessons. The plan cites them. The environment delivers the verdict.
+  <code class="inline">record_outcome</code> credits the cited entries.</p>
+  <p class="lead">Evaluation then compares OFF vs ON over 6 held-out incidents: 3 paraphrases and
+  3 controls. Resolution must improve, or the run fails explicitly.</p>
+</section>
+
+<section id="run">
+  <h2>5 · Run</h2>
+<pre>make oncall-agent                                        # teach + evaluate, fresh experiment
+.venv/bin/python demo.py teach --experiment oncall-x
+.venv/bin/python -m unittest test_demo                  # offline checks (6/6)</pre>
+</section>
+
+<footer>
+  Part of the Mubit demo suite:
+  <a href="../care_coordination_agent/how-it-works.html">Care Coordination Agent</a> ·
+  <a href="../supply_chain_agent/how-it-works.html">Supply Chain Agent</a> ·
+  <a href="../memory_router/how-it-works.html">Memory Router</a> ·
+  docs: <a href="https://docs.mubit.ai/patterns/outcome-attribution-loop">outcome attribution</a> ·
+  <a href="https://docs.mubit.ai/recipes/step-level-outcomes">step-level outcomes</a> ·
+  <a href="https://docs.mubit.ai/concepts/learning-loop">the learning loop</a>.
+  <br>All services, incidents and causes are fictional. Nothing pages a human or touches a production system.
+</footer>
+</main>
+<script>
+const links=[...document.querySelectorAll('nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+addEventListener('scroll',()=>{let i=secs.length-1;secs.forEach((s,j)=>{if(s&&s.getBoundingClientRect().top<120)i=j});links.forEach((a,j)=>a.classList.toggle('on',j===i))},{passive:true});
+</script>
+</body>
+</html>

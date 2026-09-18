@@ -16,8 +16,6 @@ cp .env.example .env
 .venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 7870
 ```
 
-From the repository root, `make supply-chain` starts the same server through `uv`; set `PORT` to use another port.
-
 Open [localhost:7870](http://localhost:7870). The page loads without credentials and identifies missing configuration. The default model is `gemini-3.6-flash`; set `GEMINI_MODEL` to another available Gemini model and restart to change it. Credentials remain server-side.
 
 1. **Run teaching incidents.** The agent makes two live decisions. A deterministic simulator reports consequences, then explicitly labeled scripted operator feedback explains the tradeoff. The agent stores the operator-confirmed applicability / guidance / exceptions verbatim in Mubit. There is no generative lesson-distillation call to invent additional thresholds. Correct initial choices receive confirming feedback.
@@ -80,17 +78,14 @@ Traces persist under `.demo/runs/`; they are local audit artifacts and are never
 
 ```sh
 # Offline simulator, agent-boundary, memory-isolation, API, and SSE checks
-.venv/bin/python -m unittest discover -s tests -t . -v
+.venv/bin/python -m unittest -v test_demo
 
 # Page API error handling (Node.js; no dependencies)
-node --test tests/test_api.cjs
+node --test test_api.cjs
 
 # Opt-in: real API calls, a new isolated experiment, and persistent Mubit writes
-.venv/bin/python -m tests.check_live
+.venv/bin/python check_live.py
 ```
-
-From the repository root, `make test-supply-chain` runs both offline checks and
-`make supply-chain-check` runs the live check.
 
 The live check teaches in one subprocess, exits it, then recalls both teaching incidents and compares in a second subprocess. It writes separate teaching/comparison traces under `.demo/`. It fails rather than fabricating evidence if credentials are absent or persisted lessons cannot be retrieved. It does not delete the created experiment.
 
@@ -100,7 +95,7 @@ Optional browser check (Chrome installed and local server running):
 
 ```sh
 .venv/bin/pip install playwright
-.venv/bin/python -m tests.check_browser
+.venv/bin/python check_browser.py
 ```
 
 It loads the real page and intercepts API requests with test-only responses so it cannot accidentally invoke paid providers or alter the selected experiment. API behavior is covered separately by the Python tests. It saves desktop/mobile screenshots in `.demo/`; no fake memory or run trace is written to the app. Playwright is a development-only check, not a runtime dependency.
@@ -110,7 +105,7 @@ It loads the real page and intercepts API requests with test-only responses so i
 - `scenarios.py`: synthetic snapshots, outcome arithmetic, and simulated feedback.
 - `agent.py`: Gemini decisions, explicit Mubit calls, teaching and frozen comparison loops.
 - `app.py` / `index.html`: local API, durable JSON traces, SSE, and a static web page.
-- `tests/`: offline checks (`test_demo.py`, `test_api.cjs`), the opt-in restart integration check (`check_live.py`), and the optional browser check (`check_browser.py`).
+- `test_demo.py` / `check_live.py`: offline checks and opt-in restart integration check.
 
 | Endpoint | Purpose |
 | --- | --- |

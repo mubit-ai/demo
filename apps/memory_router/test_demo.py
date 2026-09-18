@@ -13,7 +13,7 @@ from demo import Memory, TRAIN, HELD_OUT, handle, route, run_case
 
 class DemoTest(unittest.TestCase):
     def test_launcher_shares_experiment_and_stops_on_failure(self):
-        launch = runpy.run_path(str(Path(__file__).resolve().parents[1] / "__main__.py"))["main"]
+        launch = runpy.run_path(str(Path(__file__).with_name("__main__.py")))["main"]
         with patch("subprocess.run", return_value=SimpleNamespace(returncode=0)) as run:
             with contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(launch(), 0)
