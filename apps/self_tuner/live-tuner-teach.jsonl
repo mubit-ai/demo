@@ -1,0 +1,14 @@
+{"event": "start", "backend": "Mubit", "experiment": "tune-172308", "phase": "teach"}
+{"event": "champion_activated", "version": "pv-8d85bc53-5f83-4157-9fff-c0b6fd46e087", "rules": 3}
+{"event": "train_decision", "email": "E1", "decided": "legal_review", "expected": "legal_review", "correct": true, "probes": 2}
+{"event": "train_decision", "email": "E2", "decided": "incident", "expected": "incident", "correct": true, "probes": 1}
+{"event": "train_decision", "email": "E3", "decided": "password_support", "expected": "password_support", "correct": true, "probes": 1}
+{"event": "train_decision", "email": "E4", "decided": "inbox", "expected": "large_refund", "correct": false, "probes": 1}
+{"event": "train_decision", "email": "E5", "decided": "incident", "expected": "incident", "correct": true, "probes": 1}
+{"event": "train_decision", "email": "E6", "decided": "inbox", "expected": "large_refund", "correct": false, "probes": 2}
+{"event": "guardrail_written", "trigger": "duplicate_probes", "emails": ["E1", "E6"]}
+{"event": "reflection", "lessons_stored": 1, "degraded": false}
+{"event": "optimize", "keys": ["activated", "candidate", "confidence", "optimization_summary", "success"]}
+{"event": "challenger", "version": "pv-dda10c6a-4a5b-4067-abe5-a74b9b234426", "rules": 4}
+{"event": "ab_result", "champion_version": "pv-8d85bc53-5f83-4157-9fff-c0b6fd46e087", "champion_accuracy": 3, "challenger_version": "pv-dda10c6a-4a5b-4067-abe5-a74b9b234426", "challenger_accuracy": 4, "activated": "challenger"}
+{"event": "skill_created", "name": "escalate_large_refund", "project": "proj-e4b88ff"}

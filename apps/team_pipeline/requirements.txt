@@ -1,0 +1,2 @@
+mubit-sdk==0.13.2
+python-dotenv==1.2.3

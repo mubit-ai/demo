@@ -1,0 +1,10 @@
+{"event": "start", "backend": "Mubit", "experiment": "team-170504-b", "phase": "teach"}
+{"event": "handoff", "ticket": "T1", "handoff_id": "a78eb42c-3955-448f-82de-e7ac3ec6ea9d", "from_agent": "intake", "to_agent": "billing"}
+{"event": "specialist_decision", "ticket": "T1", "lane": "billing", "decision": "manual_review", "expected": "refund_duplicate", "correct": false, "cited_lesson": null}
+{"event": "review_correction", "ticket": "T1", "lane": "billing", "verdict": "request_changes", "team_lesson_written": true}
+{"event": "handoff", "ticket": "T2", "handoff_id": "c545de8c-87f8-4274-9f9f-f6454e06c0cd", "from_agent": "intake", "to_agent": "technical"}
+{"event": "specialist_decision", "ticket": "T2", "lane": "technical", "decision": "collect_diagnostics", "expected": "reset_session", "correct": false, "cited_lesson": null}
+{"event": "review_correction", "ticket": "T2", "lane": "technical", "verdict": "request_changes", "team_lesson_written": true}
+{"event": "handoff", "ticket": "T3", "handoff_id": "2c5ba2ce-2efb-42a3-b165-6063d265d6ef", "from_agent": "intake", "to_agent": "billing"}
+{"event": "specialist_decision", "ticket": "T3", "lane": "billing", "decision": "manual_review", "expected": "manual_review", "correct": true, "cited_lesson": "ceafaf39-ffdd-473b-b5dd-a2dada22d4f5"}
+{"event": "events_seen", "count": 1, "types": ["context.handoff_created"]}
