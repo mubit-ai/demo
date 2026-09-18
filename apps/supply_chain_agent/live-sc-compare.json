@@ -1,0 +1,3158 @@
+[
+  {
+    "type": "memory_frozen",
+    "phase": "compare",
+    "lessons_by_case": {
+      "E1": [
+        {
+          "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+          "source_case": "T2",
+          "applies_to": "firm",
+          "applicability": "Cedar firm customer orders only.",
+          "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+          "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+          "evidence": {
+            "decision": {
+              "lesson_ids": [],
+              "option_id": "expedite",
+              "rationale": "The order class is firm, so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply. Following the default conservative policy to minimize combined downtime first and then recovery spend, expedite is chosen. Arriving at 11:00 with 1 hour of inspection, it is ready at 12:00 before the 14:00 requirement, resulting in 0 hours of receiving and donor downtime."
+            },
+            "execution_id": "895656e0397448768e6d171dfe6b7858",
+            "operator_feedback": {
+              "confirmed_lesson": {
+                "applicability": "Cedar firm customer orders only.",
+                "applies_to": "firm",
+                "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+                "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders."
+              },
+              "judgment": {
+                "aligned": true,
+                "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+                "score": [
+                  0,
+                  1400,
+                  0
+                ],
+                "within_tolerance": true
+              },
+              "source": "Scripted simulated operator feedback",
+              "text": "expedite caused 0 hours of receiving downtime and 0 hours at the donor, at $1400. Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders. Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+              "verdict": "Confirmed"
+            },
+            "outcome": {
+              "donor_downtime_hours": 0,
+              "receiving_downtime_hours": 0,
+              "recovery_cost": 1400,
+              "total_downtime_hours": 0,
+              "usable_at": "2026-10-12T12:00:00"
+            },
+            "snapshot": {
+              "component": "Controller C-24",
+              "date": "2026-10-12",
+              "id": "T2",
+              "needed_at": "2026-10-12T14:00:00",
+              "options": [
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T15:00:00",
+                  "cost": 0,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "wait",
+                  "inspection_hours": 0,
+                  "kind": "wait"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T11:00:00",
+                  "cost": 1400,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "expedite",
+                  "inspection_hours": 1,
+                  "kind": "expedite"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T12:00:00",
+                  "cost": 350,
+                  "donor_rate_per_hour": 20,
+                  "donor_replenishment": "2026-10-12T20:00:00",
+                  "donor_stock": 200,
+                  "id": "transfer",
+                  "inspection_hours": 0,
+                  "kind": "transfer"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T12:00:00",
+                  "cost": 800,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "substitute",
+                  "inspection_hours": 4,
+                  "kind": "substitute"
+                }
+              ],
+              "order_class": "firm",
+              "plant": "Cedar assembly",
+              "receiving": {
+                "closes": 17,
+                "opens": 8
+              },
+              "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+              "shortage_quantity": 180
+            }
+          },
+          "confidence": null
+        },
+        {
+          "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+          "source_case": "T1",
+          "applies_to": "replenishment",
+          "applicability": "Cedar stock-replenishment orders only.",
+          "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+          "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+          "evidence": {
+            "decision": {
+              "lesson_ids": [],
+              "option_id": "substitute",
+              "rationale": "Without local precedents, the conservative default prioritizes minimizing combined downtime and then minimizing recovery spend. Both the expedite ($1,400) and substitute ($800) options achieve zero combined downtime, delivering ready components at 12:00 and 13:00 respectively (before the 14:00 requirement). In contrast, waiting results in 1.5 hours of receiving downtime, and transferring 120 units from the donor's initial 140 stock causes the donor to run out of stock after 1 hour (at 09:00), leading to 11 hours of donor downtime prior to replenishment at 20:00. Between the two zero-downtime options, substitute is selected because it has lower recovery spend ($800 vs. $1,400)."
+            },
+            "execution_id": "895656e0397448768e6d171dfe6b7858",
+            "operator_feedback": {
+              "confirmed_lesson": {
+                "applicability": "Cedar stock-replenishment orders only.",
+                "applies_to": "replenishment",
+                "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+                "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium."
+              },
+              "judgment": {
+                "aligned": false,
+                "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+                "score": [
+                  0,
+                  800,
+                  0
+                ],
+                "within_tolerance": true
+              },
+              "source": "Scripted simulated operator feedback",
+              "text": "substitute caused 0 hours of receiving downtime and 0 hours at the donor, at $800. Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium. Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+              "verdict": "Needs improvement"
+            },
+            "outcome": {
+              "donor_downtime_hours": 0,
+              "receiving_downtime_hours": 0,
+              "recovery_cost": 800,
+              "total_downtime_hours": 0,
+              "usable_at": "2026-10-05T13:00:00"
+            },
+            "snapshot": {
+              "component": "Controller C-24",
+              "date": "2026-10-05",
+              "id": "T1",
+              "needed_at": "2026-10-05T14:00:00",
+              "options": [
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T15:30:00",
+                  "cost": 0,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "wait",
+                  "inspection_hours": 0,
+                  "kind": "wait"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T11:00:00",
+                  "cost": 1400,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "expedite",
+                  "inspection_hours": 1,
+                  "kind": "expedite"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T12:00:00",
+                  "cost": 350,
+                  "donor_rate_per_hour": 20,
+                  "donor_replenishment": "2026-10-05T20:00:00",
+                  "donor_stock": 140,
+                  "id": "transfer",
+                  "inspection_hours": 0,
+                  "kind": "transfer"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T12:00:00",
+                  "cost": 800,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "substitute",
+                  "inspection_hours": 1,
+                  "kind": "substitute"
+                }
+              ],
+              "order_class": "replenishment",
+              "plant": "Cedar assembly",
+              "receiving": {
+                "closes": 17,
+                "opens": 8
+              },
+              "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+              "shortage_quantity": 120
+            }
+          },
+          "confidence": null
+        }
+      ],
+      "E2": [
+        {
+          "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+          "source_case": "T2",
+          "applies_to": "firm",
+          "applicability": "Cedar firm customer orders only.",
+          "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+          "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+          "evidence": {
+            "decision": {
+              "lesson_ids": [],
+              "option_id": "expedite",
+              "rationale": "The order class is firm, so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply. Following the default conservative policy to minimize combined downtime first and then recovery spend, expedite is chosen. Arriving at 11:00 with 1 hour of inspection, it is ready at 12:00 before the 14:00 requirement, resulting in 0 hours of receiving and donor downtime."
+            },
+            "execution_id": "895656e0397448768e6d171dfe6b7858",
+            "operator_feedback": {
+              "confirmed_lesson": {
+                "applicability": "Cedar firm customer orders only.",
+                "applies_to": "firm",
+                "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+                "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders."
+              },
+              "judgment": {
+                "aligned": true,
+                "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+                "score": [
+                  0,
+                  1400,
+                  0
+                ],
+                "within_tolerance": true
+              },
+              "source": "Scripted simulated operator feedback",
+              "text": "expedite caused 0 hours of receiving downtime and 0 hours at the donor, at $1400. Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders. Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+              "verdict": "Confirmed"
+            },
+            "outcome": {
+              "donor_downtime_hours": 0,
+              "receiving_downtime_hours": 0,
+              "recovery_cost": 1400,
+              "total_downtime_hours": 0,
+              "usable_at": "2026-10-12T12:00:00"
+            },
+            "snapshot": {
+              "component": "Controller C-24",
+              "date": "2026-10-12",
+              "id": "T2",
+              "needed_at": "2026-10-12T14:00:00",
+              "options": [
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T15:00:00",
+                  "cost": 0,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "wait",
+                  "inspection_hours": 0,
+                  "kind": "wait"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T11:00:00",
+                  "cost": 1400,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "expedite",
+                  "inspection_hours": 1,
+                  "kind": "expedite"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T12:00:00",
+                  "cost": 350,
+                  "donor_rate_per_hour": 20,
+                  "donor_replenishment": "2026-10-12T20:00:00",
+                  "donor_stock": 200,
+                  "id": "transfer",
+                  "inspection_hours": 0,
+                  "kind": "transfer"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T12:00:00",
+                  "cost": 800,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "substitute",
+                  "inspection_hours": 4,
+                  "kind": "substitute"
+                }
+              ],
+              "order_class": "firm",
+              "plant": "Cedar assembly",
+              "receiving": {
+                "closes": 17,
+                "opens": 8
+              },
+              "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+              "shortage_quantity": 180
+            }
+          },
+          "confidence": null
+        },
+        {
+          "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+          "source_case": "T1",
+          "applies_to": "replenishment",
+          "applicability": "Cedar stock-replenishment orders only.",
+          "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+          "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+          "evidence": {
+            "decision": {
+              "lesson_ids": [],
+              "option_id": "substitute",
+              "rationale": "Without local precedents, the conservative default prioritizes minimizing combined downtime and then minimizing recovery spend. Both the expedite ($1,400) and substitute ($800) options achieve zero combined downtime, delivering ready components at 12:00 and 13:00 respectively (before the 14:00 requirement). In contrast, waiting results in 1.5 hours of receiving downtime, and transferring 120 units from the donor's initial 140 stock causes the donor to run out of stock after 1 hour (at 09:00), leading to 11 hours of donor downtime prior to replenishment at 20:00. Between the two zero-downtime options, substitute is selected because it has lower recovery spend ($800 vs. $1,400)."
+            },
+            "execution_id": "895656e0397448768e6d171dfe6b7858",
+            "operator_feedback": {
+              "confirmed_lesson": {
+                "applicability": "Cedar stock-replenishment orders only.",
+                "applies_to": "replenishment",
+                "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+                "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium."
+              },
+              "judgment": {
+                "aligned": false,
+                "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+                "score": [
+                  0,
+                  800,
+                  0
+                ],
+                "within_tolerance": true
+              },
+              "source": "Scripted simulated operator feedback",
+              "text": "substitute caused 0 hours of receiving downtime and 0 hours at the donor, at $800. Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium. Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+              "verdict": "Needs improvement"
+            },
+            "outcome": {
+              "donor_downtime_hours": 0,
+              "receiving_downtime_hours": 0,
+              "recovery_cost": 800,
+              "total_downtime_hours": 0,
+              "usable_at": "2026-10-05T13:00:00"
+            },
+            "snapshot": {
+              "component": "Controller C-24",
+              "date": "2026-10-05",
+              "id": "T1",
+              "needed_at": "2026-10-05T14:00:00",
+              "options": [
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T15:30:00",
+                  "cost": 0,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "wait",
+                  "inspection_hours": 0,
+                  "kind": "wait"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T11:00:00",
+                  "cost": 1400,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "expedite",
+                  "inspection_hours": 1,
+                  "kind": "expedite"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T12:00:00",
+                  "cost": 350,
+                  "donor_rate_per_hour": 20,
+                  "donor_replenishment": "2026-10-05T20:00:00",
+                  "donor_stock": 140,
+                  "id": "transfer",
+                  "inspection_hours": 0,
+                  "kind": "transfer"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T12:00:00",
+                  "cost": 800,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "substitute",
+                  "inspection_hours": 1,
+                  "kind": "substitute"
+                }
+              ],
+              "order_class": "replenishment",
+              "plant": "Cedar assembly",
+              "receiving": {
+                "closes": 17,
+                "opens": 8
+              },
+              "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+              "shortage_quantity": 120
+            }
+          },
+          "confidence": null
+        }
+      ],
+      "E3": [
+        {
+          "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+          "source_case": "T2",
+          "applies_to": "firm",
+          "applicability": "Cedar firm customer orders only.",
+          "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+          "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+          "evidence": {
+            "decision": {
+              "lesson_ids": [],
+              "option_id": "expedite",
+              "rationale": "The order class is firm, so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply. Following the default conservative policy to minimize combined downtime first and then recovery spend, expedite is chosen. Arriving at 11:00 with 1 hour of inspection, it is ready at 12:00 before the 14:00 requirement, resulting in 0 hours of receiving and donor downtime."
+            },
+            "execution_id": "895656e0397448768e6d171dfe6b7858",
+            "operator_feedback": {
+              "confirmed_lesson": {
+                "applicability": "Cedar firm customer orders only.",
+                "applies_to": "firm",
+                "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+                "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders."
+              },
+              "judgment": {
+                "aligned": true,
+                "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+                "score": [
+                  0,
+                  1400,
+                  0
+                ],
+                "within_tolerance": true
+              },
+              "source": "Scripted simulated operator feedback",
+              "text": "expedite caused 0 hours of receiving downtime and 0 hours at the donor, at $1400. Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders. Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+              "verdict": "Confirmed"
+            },
+            "outcome": {
+              "donor_downtime_hours": 0,
+              "receiving_downtime_hours": 0,
+              "recovery_cost": 1400,
+              "total_downtime_hours": 0,
+              "usable_at": "2026-10-12T12:00:00"
+            },
+            "snapshot": {
+              "component": "Controller C-24",
+              "date": "2026-10-12",
+              "id": "T2",
+              "needed_at": "2026-10-12T14:00:00",
+              "options": [
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T15:00:00",
+                  "cost": 0,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "wait",
+                  "inspection_hours": 0,
+                  "kind": "wait"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T11:00:00",
+                  "cost": 1400,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "expedite",
+                  "inspection_hours": 1,
+                  "kind": "expedite"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T12:00:00",
+                  "cost": 350,
+                  "donor_rate_per_hour": 20,
+                  "donor_replenishment": "2026-10-12T20:00:00",
+                  "donor_stock": 200,
+                  "id": "transfer",
+                  "inspection_hours": 0,
+                  "kind": "transfer"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-12T12:00:00",
+                  "cost": 800,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "substitute",
+                  "inspection_hours": 4,
+                  "kind": "substitute"
+                }
+              ],
+              "order_class": "firm",
+              "plant": "Cedar assembly",
+              "receiving": {
+                "closes": 17,
+                "opens": 8
+              },
+              "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+              "shortage_quantity": 180
+            }
+          },
+          "confidence": null
+        },
+        {
+          "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+          "source_case": "T1",
+          "applies_to": "replenishment",
+          "applicability": "Cedar stock-replenishment orders only.",
+          "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+          "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+          "evidence": {
+            "decision": {
+              "lesson_ids": [],
+              "option_id": "substitute",
+              "rationale": "Without local precedents, the conservative default prioritizes minimizing combined downtime and then minimizing recovery spend. Both the expedite ($1,400) and substitute ($800) options achieve zero combined downtime, delivering ready components at 12:00 and 13:00 respectively (before the 14:00 requirement). In contrast, waiting results in 1.5 hours of receiving downtime, and transferring 120 units from the donor's initial 140 stock causes the donor to run out of stock after 1 hour (at 09:00), leading to 11 hours of donor downtime prior to replenishment at 20:00. Between the two zero-downtime options, substitute is selected because it has lower recovery spend ($800 vs. $1,400)."
+            },
+            "execution_id": "895656e0397448768e6d171dfe6b7858",
+            "operator_feedback": {
+              "confirmed_lesson": {
+                "applicability": "Cedar stock-replenishment orders only.",
+                "applies_to": "replenishment",
+                "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+                "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium."
+              },
+              "judgment": {
+                "aligned": false,
+                "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+                "score": [
+                  0,
+                  800,
+                  0
+                ],
+                "within_tolerance": true
+              },
+              "source": "Scripted simulated operator feedback",
+              "text": "substitute caused 0 hours of receiving downtime and 0 hours at the donor, at $800. Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium. Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+              "verdict": "Needs improvement"
+            },
+            "outcome": {
+              "donor_downtime_hours": 0,
+              "receiving_downtime_hours": 0,
+              "recovery_cost": 800,
+              "total_downtime_hours": 0,
+              "usable_at": "2026-10-05T13:00:00"
+            },
+            "snapshot": {
+              "component": "Controller C-24",
+              "date": "2026-10-05",
+              "id": "T1",
+              "needed_at": "2026-10-05T14:00:00",
+              "options": [
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T15:30:00",
+                  "cost": 0,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "wait",
+                  "inspection_hours": 0,
+                  "kind": "wait"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T11:00:00",
+                  "cost": 1400,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "expedite",
+                  "inspection_hours": 1,
+                  "kind": "expedite"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T12:00:00",
+                  "cost": 350,
+                  "donor_rate_per_hour": 20,
+                  "donor_replenishment": "2026-10-05T20:00:00",
+                  "donor_stock": 140,
+                  "id": "transfer",
+                  "inspection_hours": 0,
+                  "kind": "transfer"
+                },
+                {
+                  "approved": true,
+                  "arrival": "2026-10-05T12:00:00",
+                  "cost": 800,
+                  "donor_rate_per_hour": null,
+                  "donor_replenishment": null,
+                  "donor_stock": null,
+                  "id": "substitute",
+                  "inspection_hours": 1,
+                  "kind": "substitute"
+                }
+              ],
+              "order_class": "replenishment",
+              "plant": "Cedar assembly",
+              "receiving": {
+                "closes": 17,
+                "opens": 8
+              },
+              "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+              "shortage_quantity": 120
+            }
+          },
+          "confidence": null
+        }
+      ]
+    },
+    "sha256": "74da731bab4d9c33bfbb020e8e364889ad8c2108a96974b2138f9f204fe9dc9a"
+  },
+  {
+    "type": "case_started",
+    "phase": "compare",
+    "case": "E1",
+    "title": "A new replenishment shortage",
+    "snapshot": {
+      "id": "E1",
+      "plant": "Cedar assembly",
+      "component": "Controller C-24",
+      "date": "2026-11-03",
+      "shortage_quantity": 90,
+      "needed_at": "2026-11-03T14:00:00",
+      "receiving": {
+        "opens": 8,
+        "closes": 17
+      },
+      "options": [
+        {
+          "id": "wait",
+          "kind": "wait",
+          "arrival": "2026-11-03T15:00:00",
+          "cost": 0,
+          "inspection_hours": 0,
+          "donor_stock": null,
+          "donor_rate_per_hour": null,
+          "donor_replenishment": null,
+          "approved": true
+        },
+        {
+          "id": "expedite",
+          "kind": "expedite",
+          "arrival": "2026-11-03T11:00:00",
+          "cost": 1400,
+          "inspection_hours": 1,
+          "donor_stock": null,
+          "donor_rate_per_hour": null,
+          "donor_replenishment": null,
+          "approved": true
+        },
+        {
+          "id": "transfer",
+          "kind": "transfer",
+          "arrival": "2026-11-03T12:00:00",
+          "cost": 350,
+          "inspection_hours": 0,
+          "donor_stock": 110,
+          "donor_rate_per_hour": 10,
+          "donor_replenishment": "2026-11-03T20:00:00",
+          "approved": true
+        },
+        {
+          "id": "substitute",
+          "kind": "substitute",
+          "arrival": "2026-11-03T12:00:00",
+          "cost": 800,
+          "inspection_hours": 1,
+          "donor_stock": null,
+          "donor_rate_per_hour": null,
+          "donor_replenishment": null,
+          "approved": true
+        }
+      ],
+      "order_class": "replenishment",
+      "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+    }
+  },
+  {
+    "type": "decision",
+    "phase": "compare",
+    "case": "E1",
+    "arm": "baseline",
+    "decision": {
+      "option_id": "substitute",
+      "rationale": "Evaluating all options under the conservative default (minimizing total combined receiving and donor downtime first, then recovery spend): Substitute achieves 0 downtime (arrives at 12:00, inspected by 13:00, well before 14:00 requirement) at a cost of $800. Expedite also achieves 0 downtime (ready at 12:00) but costs $1,400. Wait incurs 1 hour of receiving downtime (ready at 15:00). Transfer causes 10 hours of donor downtime because removing 90 units leaves 20 units, depleting stock by 10:00 prior to 20:00 replenishment. Substitute is chosen as it eliminates downtime at the lowest cost.",
+      "lesson_ids": []
+    },
+    "usage": {
+      "model": "gemini-3.6-flash",
+      "calls": 1,
+      "elapsed_seconds": 9.801,
+      "prompt_tokens": 686,
+      "output_tokens": 192,
+      "thinking_tokens": 1575,
+      "total_tokens": 2453
+    },
+    "prompt": {
+      "snapshot": {
+        "id": "E1",
+        "plant": "Cedar assembly",
+        "component": "Controller C-24",
+        "date": "2026-11-03",
+        "shortage_quantity": 90,
+        "needed_at": "2026-11-03T14:00:00",
+        "receiving": {
+          "opens": 8,
+          "closes": 17
+        },
+        "options": [
+          {
+            "id": "wait",
+            "kind": "wait",
+            "arrival": "2026-11-03T15:00:00",
+            "cost": 0,
+            "inspection_hours": 0,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "expedite",
+            "kind": "expedite",
+            "arrival": "2026-11-03T11:00:00",
+            "cost": 1400,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "transfer",
+            "kind": "transfer",
+            "arrival": "2026-11-03T12:00:00",
+            "cost": 350,
+            "inspection_hours": 0,
+            "donor_stock": 110,
+            "donor_rate_per_hour": 10,
+            "donor_replenishment": "2026-11-03T20:00:00",
+            "approved": true
+          },
+          {
+            "id": "substitute",
+            "kind": "substitute",
+            "arrival": "2026-11-03T12:00:00",
+            "cost": 800,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          }
+        ],
+        "order_class": "replenishment",
+        "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+      },
+      "lessons": []
+    },
+    "lessons": [],
+    "lesson_characters": 2
+  },
+  {
+    "type": "outcome",
+    "phase": "compare",
+    "case": "E1",
+    "arm": "baseline",
+    "outcome": {
+      "usable_at": "2026-11-03T13:00:00",
+      "receiving_downtime_hours": 0,
+      "donor_downtime_hours": 0,
+      "total_downtime_hours": 0,
+      "recovery_cost": 800
+    },
+    "judgment": {
+      "aligned": false,
+      "within_tolerance": true,
+      "score": [
+        0,
+        800,
+        0
+      ],
+      "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+    }
+  },
+  {
+    "type": "decision",
+    "phase": "compare",
+    "case": "E1",
+    "arm": "memory",
+    "decision": {
+      "option_id": "wait",
+      "rationale": "For stock-replenishment orders, lesson b88996b7-4e43-4a9c-a512-cce317b0942c permits up to 2 hours of receiving-plant downtime provided there is zero donor downtime, prioritizing the lowest recovery spend. The wait option arrives at 15:00 with 0 inspection hours, resulting in 1 hour of receiving downtime (needed at 14:00) and zero donor downtime. Since 1 hour is within the acceptable 2-hour limit and incurs $0 cost, it is preferred over options with higher costs.",
+      "lesson_ids": [
+        "b88996b7-4e43-4a9c-a512-cce317b0942c"
+      ]
+    },
+    "usage": {
+      "model": "gemini-3.6-flash",
+      "calls": 1,
+      "elapsed_seconds": 7.931,
+      "prompt_tokens": 966,
+      "output_tokens": 206,
+      "thinking_tokens": 1193,
+      "total_tokens": 2365
+    },
+    "prompt": {
+      "snapshot": {
+        "id": "E1",
+        "plant": "Cedar assembly",
+        "component": "Controller C-24",
+        "date": "2026-11-03",
+        "shortage_quantity": 90,
+        "needed_at": "2026-11-03T14:00:00",
+        "receiving": {
+          "opens": 8,
+          "closes": 17
+        },
+        "options": [
+          {
+            "id": "wait",
+            "kind": "wait",
+            "arrival": "2026-11-03T15:00:00",
+            "cost": 0,
+            "inspection_hours": 0,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "expedite",
+            "kind": "expedite",
+            "arrival": "2026-11-03T11:00:00",
+            "cost": 1400,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "transfer",
+            "kind": "transfer",
+            "arrival": "2026-11-03T12:00:00",
+            "cost": 350,
+            "inspection_hours": 0,
+            "donor_stock": 110,
+            "donor_rate_per_hour": 10,
+            "donor_replenishment": "2026-11-03T20:00:00",
+            "approved": true
+          },
+          {
+            "id": "substitute",
+            "kind": "substitute",
+            "arrival": "2026-11-03T12:00:00",
+            "cost": 800,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          }
+        ],
+        "order_class": "replenishment",
+        "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+      },
+      "lessons": [
+        {
+          "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+          "source_case": "T2",
+          "applies_to": "firm",
+          "applicability": "Cedar firm customer orders only.",
+          "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+          "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend."
+        },
+        {
+          "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+          "source_case": "T1",
+          "applies_to": "replenishment",
+          "applicability": "Cedar stock-replenishment orders only.",
+          "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+          "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend."
+        }
+      ]
+    },
+    "lessons": [
+      {
+        "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+        "source_case": "T2",
+        "applies_to": "firm",
+        "applicability": "Cedar firm customer orders only.",
+        "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+        "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+        "evidence": {
+          "decision": {
+            "lesson_ids": [],
+            "option_id": "expedite",
+            "rationale": "The order class is firm, so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply. Following the default conservative policy to minimize combined downtime first and then recovery spend, expedite is chosen. Arriving at 11:00 with 1 hour of inspection, it is ready at 12:00 before the 14:00 requirement, resulting in 0 hours of receiving and donor downtime."
+          },
+          "execution_id": "895656e0397448768e6d171dfe6b7858",
+          "operator_feedback": {
+            "confirmed_lesson": {
+              "applicability": "Cedar firm customer orders only.",
+              "applies_to": "firm",
+              "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+              "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders."
+            },
+            "judgment": {
+              "aligned": true,
+              "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+              "score": [
+                0,
+                1400,
+                0
+              ],
+              "within_tolerance": true
+            },
+            "source": "Scripted simulated operator feedback",
+            "text": "expedite caused 0 hours of receiving downtime and 0 hours at the donor, at $1400. Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders. Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+            "verdict": "Confirmed"
+          },
+          "outcome": {
+            "donor_downtime_hours": 0,
+            "receiving_downtime_hours": 0,
+            "recovery_cost": 1400,
+            "total_downtime_hours": 0,
+            "usable_at": "2026-10-12T12:00:00"
+          },
+          "snapshot": {
+            "component": "Controller C-24",
+            "date": "2026-10-12",
+            "id": "T2",
+            "needed_at": "2026-10-12T14:00:00",
+            "options": [
+              {
+                "approved": true,
+                "arrival": "2026-10-12T15:00:00",
+                "cost": 0,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "wait",
+                "inspection_hours": 0,
+                "kind": "wait"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T11:00:00",
+                "cost": 1400,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "expedite",
+                "inspection_hours": 1,
+                "kind": "expedite"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 350,
+                "donor_rate_per_hour": 20,
+                "donor_replenishment": "2026-10-12T20:00:00",
+                "donor_stock": 200,
+                "id": "transfer",
+                "inspection_hours": 0,
+                "kind": "transfer"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 800,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "substitute",
+                "inspection_hours": 4,
+                "kind": "substitute"
+              }
+            ],
+            "order_class": "firm",
+            "plant": "Cedar assembly",
+            "receiving": {
+              "closes": 17,
+              "opens": 8
+            },
+            "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+            "shortage_quantity": 180
+          }
+        },
+        "confidence": null
+      },
+      {
+        "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+        "source_case": "T1",
+        "applies_to": "replenishment",
+        "applicability": "Cedar stock-replenishment orders only.",
+        "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+        "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+        "evidence": {
+          "decision": {
+            "lesson_ids": [],
+            "option_id": "substitute",
+            "rationale": "Without local precedents, the conservative default prioritizes minimizing combined downtime and then minimizing recovery spend. Both the expedite ($1,400) and substitute ($800) options achieve zero combined downtime, delivering ready components at 12:00 and 13:00 respectively (before the 14:00 requirement). In contrast, waiting results in 1.5 hours of receiving downtime, and transferring 120 units from the donor's initial 140 stock causes the donor to run out of stock after 1 hour (at 09:00), leading to 11 hours of donor downtime prior to replenishment at 20:00. Between the two zero-downtime options, substitute is selected because it has lower recovery spend ($800 vs. $1,400)."
+          },
+          "execution_id": "895656e0397448768e6d171dfe6b7858",
+          "operator_feedback": {
+            "confirmed_lesson": {
+              "applicability": "Cedar stock-replenishment orders only.",
+              "applies_to": "replenishment",
+              "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+              "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium."
+            },
+            "judgment": {
+              "aligned": false,
+              "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+              "score": [
+                0,
+                800,
+                0
+              ],
+              "within_tolerance": true
+            },
+            "source": "Scripted simulated operator feedback",
+            "text": "substitute caused 0 hours of receiving downtime and 0 hours at the donor, at $800. Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium. Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+            "verdict": "Needs improvement"
+          },
+          "outcome": {
+            "donor_downtime_hours": 0,
+            "receiving_downtime_hours": 0,
+            "recovery_cost": 800,
+            "total_downtime_hours": 0,
+            "usable_at": "2026-10-05T13:00:00"
+          },
+          "snapshot": {
+            "component": "Controller C-24",
+            "date": "2026-10-05",
+            "id": "T1",
+            "needed_at": "2026-10-05T14:00:00",
+            "options": [
+              {
+                "approved": true,
+                "arrival": "2026-10-05T15:30:00",
+                "cost": 0,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "wait",
+                "inspection_hours": 0,
+                "kind": "wait"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T11:00:00",
+                "cost": 1400,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "expedite",
+                "inspection_hours": 1,
+                "kind": "expedite"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T12:00:00",
+                "cost": 350,
+                "donor_rate_per_hour": 20,
+                "donor_replenishment": "2026-10-05T20:00:00",
+                "donor_stock": 140,
+                "id": "transfer",
+                "inspection_hours": 0,
+                "kind": "transfer"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T12:00:00",
+                "cost": 800,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "substitute",
+                "inspection_hours": 1,
+                "kind": "substitute"
+              }
+            ],
+            "order_class": "replenishment",
+            "plant": "Cedar assembly",
+            "receiving": {
+              "closes": 17,
+              "opens": 8
+            },
+            "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+            "shortage_quantity": 120
+          }
+        },
+        "confidence": null
+      }
+    ],
+    "lesson_characters": 1021
+  },
+  {
+    "type": "outcome",
+    "phase": "compare",
+    "case": "E1",
+    "arm": "memory",
+    "outcome": {
+      "usable_at": "2026-11-03T15:00:00",
+      "receiving_downtime_hours": 1.0,
+      "donor_downtime_hours": 0,
+      "total_downtime_hours": 1.0,
+      "recovery_cost": 0
+    },
+    "judgment": {
+      "aligned": true,
+      "within_tolerance": true,
+      "score": [
+        0,
+        0,
+        1.0
+      ],
+      "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+    }
+  },
+  {
+    "type": "decision",
+    "phase": "compare",
+    "case": "E1",
+    "arm": "ablated",
+    "decision": {
+      "option_id": "substitute",
+      "rationale": "For stock replenishment orders, the standard rule applies: minimize combined downtime first, then recovery spend. The substitute option arrives at 12:00 with 1 hour of inspection, becoming ready at 13:00 (before the 14:00 deadline), resulting in 0 receiving downtime and 0 donor downtime. Among options with 0 combined downtime (expedite and substitute), substitute has the lowest recovery spend ($800 vs $1,400).",
+      "lesson_ids": []
+    },
+    "usage": {
+      "model": "gemini-3.6-flash",
+      "calls": 1,
+      "elapsed_seconds": 10.445,
+      "prompt_tokens": 815,
+      "output_tokens": 118,
+      "thinking_tokens": 1667,
+      "total_tokens": 2600
+    },
+    "prompt": {
+      "snapshot": {
+        "id": "E1",
+        "plant": "Cedar assembly",
+        "component": "Controller C-24",
+        "date": "2026-11-03",
+        "shortage_quantity": 90,
+        "needed_at": "2026-11-03T14:00:00",
+        "receiving": {
+          "opens": 8,
+          "closes": 17
+        },
+        "options": [
+          {
+            "id": "wait",
+            "kind": "wait",
+            "arrival": "2026-11-03T15:00:00",
+            "cost": 0,
+            "inspection_hours": 0,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "expedite",
+            "kind": "expedite",
+            "arrival": "2026-11-03T11:00:00",
+            "cost": 1400,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "transfer",
+            "kind": "transfer",
+            "arrival": "2026-11-03T12:00:00",
+            "cost": 350,
+            "inspection_hours": 0,
+            "donor_stock": 110,
+            "donor_rate_per_hour": 10,
+            "donor_replenishment": "2026-11-03T20:00:00",
+            "approved": true
+          },
+          {
+            "id": "substitute",
+            "kind": "substitute",
+            "arrival": "2026-11-03T12:00:00",
+            "cost": 800,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          }
+        ],
+        "order_class": "replenishment",
+        "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+      },
+      "lessons": [
+        {
+          "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+          "source_case": "T2",
+          "applies_to": "firm",
+          "applicability": "Cedar firm customer orders only.",
+          "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+          "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend."
+        }
+      ]
+    },
+    "lessons": [
+      {
+        "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+        "source_case": "T2",
+        "applies_to": "firm",
+        "applicability": "Cedar firm customer orders only.",
+        "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+        "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+        "evidence": {
+          "decision": {
+            "lesson_ids": [],
+            "option_id": "expedite",
+            "rationale": "The order class is firm, so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply. Following the default conservative policy to minimize combined downtime first and then recovery spend, expedite is chosen. Arriving at 11:00 with 1 hour of inspection, it is ready at 12:00 before the 14:00 requirement, resulting in 0 hours of receiving and donor downtime."
+          },
+          "execution_id": "895656e0397448768e6d171dfe6b7858",
+          "operator_feedback": {
+            "confirmed_lesson": {
+              "applicability": "Cedar firm customer orders only.",
+              "applies_to": "firm",
+              "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+              "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders."
+            },
+            "judgment": {
+              "aligned": true,
+              "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+              "score": [
+                0,
+                1400,
+                0
+              ],
+              "within_tolerance": true
+            },
+            "source": "Scripted simulated operator feedback",
+            "text": "expedite caused 0 hours of receiving downtime and 0 hours at the donor, at $1400. Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders. Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+            "verdict": "Confirmed"
+          },
+          "outcome": {
+            "donor_downtime_hours": 0,
+            "receiving_downtime_hours": 0,
+            "recovery_cost": 1400,
+            "total_downtime_hours": 0,
+            "usable_at": "2026-10-12T12:00:00"
+          },
+          "snapshot": {
+            "component": "Controller C-24",
+            "date": "2026-10-12",
+            "id": "T2",
+            "needed_at": "2026-10-12T14:00:00",
+            "options": [
+              {
+                "approved": true,
+                "arrival": "2026-10-12T15:00:00",
+                "cost": 0,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "wait",
+                "inspection_hours": 0,
+                "kind": "wait"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T11:00:00",
+                "cost": 1400,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "expedite",
+                "inspection_hours": 1,
+                "kind": "expedite"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 350,
+                "donor_rate_per_hour": 20,
+                "donor_replenishment": "2026-10-12T20:00:00",
+                "donor_stock": 200,
+                "id": "transfer",
+                "inspection_hours": 0,
+                "kind": "transfer"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 800,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "substitute",
+                "inspection_hours": 4,
+                "kind": "substitute"
+              }
+            ],
+            "order_class": "firm",
+            "plant": "Cedar assembly",
+            "receiving": {
+              "closes": 17,
+              "opens": 8
+            },
+            "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+            "shortage_quantity": 180
+          }
+        },
+        "confidence": null
+      }
+    ],
+    "lesson_characters": 475
+  },
+  {
+    "type": "outcome",
+    "phase": "compare",
+    "case": "E1",
+    "arm": "ablated",
+    "outcome": {
+      "usable_at": "2026-11-03T13:00:00",
+      "receiving_downtime_hours": 0,
+      "donor_downtime_hours": 0,
+      "total_downtime_hours": 0,
+      "recovery_cost": 800
+    },
+    "judgment": {
+      "aligned": false,
+      "within_tolerance": true,
+      "score": [
+        0,
+        800,
+        0
+      ],
+      "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+    }
+  },
+  {
+    "type": "comparison",
+    "phase": "compare",
+    "case": "E1",
+    "verdict": "wins",
+    "results": {
+      "baseline": {
+        "decision": {
+          "option_id": "substitute",
+          "rationale": "Evaluating all options under the conservative default (minimizing total combined receiving and donor downtime first, then recovery spend): Substitute achieves 0 downtime (arrives at 12:00, inspected by 13:00, well before 14:00 requirement) at a cost of $800. Expedite also achieves 0 downtime (ready at 12:00) but costs $1,400. Wait incurs 1 hour of receiving downtime (ready at 15:00). Transfer causes 10 hours of donor downtime because removing 90 units leaves 20 units, depleting stock by 10:00 prior to 20:00 replenishment. Substitute is chosen as it eliminates downtime at the lowest cost.",
+          "lesson_ids": []
+        },
+        "outcome": {
+          "usable_at": "2026-11-03T13:00:00",
+          "receiving_downtime_hours": 0,
+          "donor_downtime_hours": 0,
+          "total_downtime_hours": 0,
+          "recovery_cost": 800
+        },
+        "judgment": {
+          "aligned": false,
+          "within_tolerance": true,
+          "score": [
+            0,
+            800,
+            0
+          ],
+          "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+        }
+      },
+      "memory": {
+        "decision": {
+          "option_id": "wait",
+          "rationale": "For stock-replenishment orders, lesson b88996b7-4e43-4a9c-a512-cce317b0942c permits up to 2 hours of receiving-plant downtime provided there is zero donor downtime, prioritizing the lowest recovery spend. The wait option arrives at 15:00 with 0 inspection hours, resulting in 1 hour of receiving downtime (needed at 14:00) and zero donor downtime. Since 1 hour is within the acceptable 2-hour limit and incurs $0 cost, it is preferred over options with higher costs.",
+          "lesson_ids": [
+            "b88996b7-4e43-4a9c-a512-cce317b0942c"
+          ]
+        },
+        "outcome": {
+          "usable_at": "2026-11-03T15:00:00",
+          "receiving_downtime_hours": 1.0,
+          "donor_downtime_hours": 0,
+          "total_downtime_hours": 1.0,
+          "recovery_cost": 0
+        },
+        "judgment": {
+          "aligned": true,
+          "within_tolerance": true,
+          "score": [
+            0,
+            0,
+            1.0
+          ],
+          "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+        }
+      },
+      "ablated": {
+        "decision": {
+          "option_id": "substitute",
+          "rationale": "For stock replenishment orders, the standard rule applies: minimize combined downtime first, then recovery spend. The substitute option arrives at 12:00 with 1 hour of inspection, becoming ready at 13:00 (before the 14:00 deadline), resulting in 0 receiving downtime and 0 donor downtime. Among options with 0 combined downtime (expedite and substitute), substitute has the lowest recovery spend ($800 vs $1,400).",
+          "lesson_ids": []
+        },
+        "outcome": {
+          "usable_at": "2026-11-03T13:00:00",
+          "receiving_downtime_hours": 0,
+          "donor_downtime_hours": 0,
+          "total_downtime_hours": 0,
+          "recovery_cost": 800
+        },
+        "judgment": {
+          "aligned": false,
+          "within_tolerance": true,
+          "score": [
+            0,
+            800,
+            0
+          ],
+          "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+        }
+      }
+    },
+    "ablation": {
+      "removed_lesson_ids": [
+        "b88996b7-4e43-4a9c-a512-cce317b0942c"
+      ],
+      "decision_changed": true,
+      "improved_with_lesson": true
+    },
+    "rubric": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+  },
+  {
+    "type": "case_started",
+    "phase": "compare",
+    "case": "E2",
+    "title": "Choose a recovery path for stock",
+    "snapshot": {
+      "id": "E2",
+      "plant": "Cedar assembly",
+      "component": "Controller C-24",
+      "date": "2026-11-09",
+      "shortage_quantity": 150,
+      "needed_at": "2026-11-09T14:00:00",
+      "receiving": {
+        "opens": 8,
+        "closes": 17
+      },
+      "options": [
+        {
+          "id": "wait",
+          "kind": "wait",
+          "arrival": "2026-11-09T16:00:00",
+          "cost": 0,
+          "inspection_hours": 3,
+          "donor_stock": null,
+          "donor_rate_per_hour": null,
+          "donor_replenishment": null,
+          "approved": true
+        },
+        {
+          "id": "expedite",
+          "kind": "expedite",
+          "arrival": "2026-11-09T11:00:00",
+          "cost": 1400,
+          "inspection_hours": 1,
+          "donor_stock": null,
+          "donor_rate_per_hour": null,
+          "donor_replenishment": null,
+          "approved": true
+        },
+        {
+          "id": "transfer",
+          "kind": "transfer",
+          "arrival": "2026-11-09T15:00:00",
+          "cost": 350,
+          "inspection_hours": 0,
+          "donor_stock": 500,
+          "donor_rate_per_hour": 15,
+          "donor_replenishment": "2026-11-09T20:00:00",
+          "approved": true
+        },
+        {
+          "id": "substitute",
+          "kind": "substitute",
+          "arrival": "2026-11-09T12:00:00",
+          "cost": 800,
+          "inspection_hours": 1,
+          "donor_stock": null,
+          "donor_rate_per_hour": null,
+          "donor_replenishment": null,
+          "approved": true
+        }
+      ],
+      "order_class": "replenishment",
+      "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+    }
+  },
+  {
+    "type": "decision",
+    "phase": "compare",
+    "case": "E2",
+    "arm": "memory",
+    "decision": {
+      "option_id": "transfer",
+      "rationale": "For stock-replenishment orders, lesson b88996b7-4e43-4a9c-a512-cce317b0942c permits up to 2 hours of receiving-plant downtime provided there is zero donor downtime, selecting the option with the lowest recovery spend among those meeting the threshold. The transfer option arrives at 15:00 with 0 inspection hours, causing 1 hour of receiving downtime (14:00 to 15:00). Removing 150 units leaves the donor plant with 350 units, which easily covers its 180-unit requirement until 20:00 replenishment, resulting in 0 donor downtime. At $350, transfer is the lowest-cost option within acceptable downtime limits.",
+      "lesson_ids": [
+        "b88996b7-4e43-4a9c-a512-cce317b0942c"
+      ]
+    },
+    "usage": {
+      "model": "gemini-3.6-flash",
+      "calls": 1,
+      "elapsed_seconds": 8.81,
+      "prompt_tokens": 967,
+      "output_tokens": 227,
+      "thinking_tokens": 1432,
+      "total_tokens": 2626
+    },
+    "prompt": {
+      "snapshot": {
+        "id": "E2",
+        "plant": "Cedar assembly",
+        "component": "Controller C-24",
+        "date": "2026-11-09",
+        "shortage_quantity": 150,
+        "needed_at": "2026-11-09T14:00:00",
+        "receiving": {
+          "opens": 8,
+          "closes": 17
+        },
+        "options": [
+          {
+            "id": "wait",
+            "kind": "wait",
+            "arrival": "2026-11-09T16:00:00",
+            "cost": 0,
+            "inspection_hours": 3,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "expedite",
+            "kind": "expedite",
+            "arrival": "2026-11-09T11:00:00",
+            "cost": 1400,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "transfer",
+            "kind": "transfer",
+            "arrival": "2026-11-09T15:00:00",
+            "cost": 350,
+            "inspection_hours": 0,
+            "donor_stock": 500,
+            "donor_rate_per_hour": 15,
+            "donor_replenishment": "2026-11-09T20:00:00",
+            "approved": true
+          },
+          {
+            "id": "substitute",
+            "kind": "substitute",
+            "arrival": "2026-11-09T12:00:00",
+            "cost": 800,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          }
+        ],
+        "order_class": "replenishment",
+        "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+      },
+      "lessons": [
+        {
+          "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+          "source_case": "T2",
+          "applies_to": "firm",
+          "applicability": "Cedar firm customer orders only.",
+          "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+          "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend."
+        },
+        {
+          "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+          "source_case": "T1",
+          "applies_to": "replenishment",
+          "applicability": "Cedar stock-replenishment orders only.",
+          "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+          "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend."
+        }
+      ]
+    },
+    "lessons": [
+      {
+        "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+        "source_case": "T2",
+        "applies_to": "firm",
+        "applicability": "Cedar firm customer orders only.",
+        "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+        "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+        "evidence": {
+          "decision": {
+            "lesson_ids": [],
+            "option_id": "expedite",
+            "rationale": "The order class is firm, so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply. Following the default conservative policy to minimize combined downtime first and then recovery spend, expedite is chosen. Arriving at 11:00 with 1 hour of inspection, it is ready at 12:00 before the 14:00 requirement, resulting in 0 hours of receiving and donor downtime."
+          },
+          "execution_id": "895656e0397448768e6d171dfe6b7858",
+          "operator_feedback": {
+            "confirmed_lesson": {
+              "applicability": "Cedar firm customer orders only.",
+              "applies_to": "firm",
+              "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+              "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders."
+            },
+            "judgment": {
+              "aligned": true,
+              "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+              "score": [
+                0,
+                1400,
+                0
+              ],
+              "within_tolerance": true
+            },
+            "source": "Scripted simulated operator feedback",
+            "text": "expedite caused 0 hours of receiving downtime and 0 hours at the donor, at $1400. Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders. Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+            "verdict": "Confirmed"
+          },
+          "outcome": {
+            "donor_downtime_hours": 0,
+            "receiving_downtime_hours": 0,
+            "recovery_cost": 1400,
+            "total_downtime_hours": 0,
+            "usable_at": "2026-10-12T12:00:00"
+          },
+          "snapshot": {
+            "component": "Controller C-24",
+            "date": "2026-10-12",
+            "id": "T2",
+            "needed_at": "2026-10-12T14:00:00",
+            "options": [
+              {
+                "approved": true,
+                "arrival": "2026-10-12T15:00:00",
+                "cost": 0,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "wait",
+                "inspection_hours": 0,
+                "kind": "wait"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T11:00:00",
+                "cost": 1400,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "expedite",
+                "inspection_hours": 1,
+                "kind": "expedite"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 350,
+                "donor_rate_per_hour": 20,
+                "donor_replenishment": "2026-10-12T20:00:00",
+                "donor_stock": 200,
+                "id": "transfer",
+                "inspection_hours": 0,
+                "kind": "transfer"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 800,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "substitute",
+                "inspection_hours": 4,
+                "kind": "substitute"
+              }
+            ],
+            "order_class": "firm",
+            "plant": "Cedar assembly",
+            "receiving": {
+              "closes": 17,
+              "opens": 8
+            },
+            "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+            "shortage_quantity": 180
+          }
+        },
+        "confidence": null
+      },
+      {
+        "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+        "source_case": "T1",
+        "applies_to": "replenishment",
+        "applicability": "Cedar stock-replenishment orders only.",
+        "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+        "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+        "evidence": {
+          "decision": {
+            "lesson_ids": [],
+            "option_id": "substitute",
+            "rationale": "Without local precedents, the conservative default prioritizes minimizing combined downtime and then minimizing recovery spend. Both the expedite ($1,400) and substitute ($800) options achieve zero combined downtime, delivering ready components at 12:00 and 13:00 respectively (before the 14:00 requirement). In contrast, waiting results in 1.5 hours of receiving downtime, and transferring 120 units from the donor's initial 140 stock causes the donor to run out of stock after 1 hour (at 09:00), leading to 11 hours of donor downtime prior to replenishment at 20:00. Between the two zero-downtime options, substitute is selected because it has lower recovery spend ($800 vs. $1,400)."
+          },
+          "execution_id": "895656e0397448768e6d171dfe6b7858",
+          "operator_feedback": {
+            "confirmed_lesson": {
+              "applicability": "Cedar stock-replenishment orders only.",
+              "applies_to": "replenishment",
+              "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+              "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium."
+            },
+            "judgment": {
+              "aligned": false,
+              "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+              "score": [
+                0,
+                800,
+                0
+              ],
+              "within_tolerance": true
+            },
+            "source": "Scripted simulated operator feedback",
+            "text": "substitute caused 0 hours of receiving downtime and 0 hours at the donor, at $800. Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium. Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+            "verdict": "Needs improvement"
+          },
+          "outcome": {
+            "donor_downtime_hours": 0,
+            "receiving_downtime_hours": 0,
+            "recovery_cost": 800,
+            "total_downtime_hours": 0,
+            "usable_at": "2026-10-05T13:00:00"
+          },
+          "snapshot": {
+            "component": "Controller C-24",
+            "date": "2026-10-05",
+            "id": "T1",
+            "needed_at": "2026-10-05T14:00:00",
+            "options": [
+              {
+                "approved": true,
+                "arrival": "2026-10-05T15:30:00",
+                "cost": 0,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "wait",
+                "inspection_hours": 0,
+                "kind": "wait"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T11:00:00",
+                "cost": 1400,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "expedite",
+                "inspection_hours": 1,
+                "kind": "expedite"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T12:00:00",
+                "cost": 350,
+                "donor_rate_per_hour": 20,
+                "donor_replenishment": "2026-10-05T20:00:00",
+                "donor_stock": 140,
+                "id": "transfer",
+                "inspection_hours": 0,
+                "kind": "transfer"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T12:00:00",
+                "cost": 800,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "substitute",
+                "inspection_hours": 1,
+                "kind": "substitute"
+              }
+            ],
+            "order_class": "replenishment",
+            "plant": "Cedar assembly",
+            "receiving": {
+              "closes": 17,
+              "opens": 8
+            },
+            "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+            "shortage_quantity": 120
+          }
+        },
+        "confidence": null
+      }
+    ],
+    "lesson_characters": 1021
+  },
+  {
+    "type": "outcome",
+    "phase": "compare",
+    "case": "E2",
+    "arm": "memory",
+    "outcome": {
+      "usable_at": "2026-11-09T15:00:00",
+      "receiving_downtime_hours": 1.0,
+      "donor_downtime_hours": 0,
+      "total_downtime_hours": 1.0,
+      "recovery_cost": 350
+    },
+    "judgment": {
+      "aligned": true,
+      "within_tolerance": true,
+      "score": [
+        0,
+        350,
+        1.0
+      ],
+      "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+    }
+  },
+  {
+    "type": "decision",
+    "phase": "compare",
+    "case": "E2",
+    "arm": "ablated",
+    "decision": {
+      "option_id": "substitute",
+      "rationale": "For stock replenishment orders, the standard rule applies: minimize combined downtime first, then recovery spend. The substitute option achieves zero receiving and donor downtime (available at 13:00, prior to the required 14:00) with a recovery spend of $800, which is lower than the expedite option ($1,400 with 0 downtime).",
+      "lesson_ids": []
+    },
+    "usage": {
+      "model": "gemini-3.6-flash",
+      "calls": 1,
+      "elapsed_seconds": 7.78,
+      "prompt_tokens": 816,
+      "output_tokens": 107,
+      "thinking_tokens": 1187,
+      "total_tokens": 2110
+    },
+    "prompt": {
+      "snapshot": {
+        "id": "E2",
+        "plant": "Cedar assembly",
+        "component": "Controller C-24",
+        "date": "2026-11-09",
+        "shortage_quantity": 150,
+        "needed_at": "2026-11-09T14:00:00",
+        "receiving": {
+          "opens": 8,
+          "closes": 17
+        },
+        "options": [
+          {
+            "id": "wait",
+            "kind": "wait",
+            "arrival": "2026-11-09T16:00:00",
+            "cost": 0,
+            "inspection_hours": 3,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "expedite",
+            "kind": "expedite",
+            "arrival": "2026-11-09T11:00:00",
+            "cost": 1400,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "transfer",
+            "kind": "transfer",
+            "arrival": "2026-11-09T15:00:00",
+            "cost": 350,
+            "inspection_hours": 0,
+            "donor_stock": 500,
+            "donor_rate_per_hour": 15,
+            "donor_replenishment": "2026-11-09T20:00:00",
+            "approved": true
+          },
+          {
+            "id": "substitute",
+            "kind": "substitute",
+            "arrival": "2026-11-09T12:00:00",
+            "cost": 800,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          }
+        ],
+        "order_class": "replenishment",
+        "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+      },
+      "lessons": [
+        {
+          "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+          "source_case": "T2",
+          "applies_to": "firm",
+          "applicability": "Cedar firm customer orders only.",
+          "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+          "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend."
+        }
+      ]
+    },
+    "lessons": [
+      {
+        "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+        "source_case": "T2",
+        "applies_to": "firm",
+        "applicability": "Cedar firm customer orders only.",
+        "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+        "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+        "evidence": {
+          "decision": {
+            "lesson_ids": [],
+            "option_id": "expedite",
+            "rationale": "The order class is firm, so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply. Following the default conservative policy to minimize combined downtime first and then recovery spend, expedite is chosen. Arriving at 11:00 with 1 hour of inspection, it is ready at 12:00 before the 14:00 requirement, resulting in 0 hours of receiving and donor downtime."
+          },
+          "execution_id": "895656e0397448768e6d171dfe6b7858",
+          "operator_feedback": {
+            "confirmed_lesson": {
+              "applicability": "Cedar firm customer orders only.",
+              "applies_to": "firm",
+              "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+              "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders."
+            },
+            "judgment": {
+              "aligned": true,
+              "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+              "score": [
+                0,
+                1400,
+                0
+              ],
+              "within_tolerance": true
+            },
+            "source": "Scripted simulated operator feedback",
+            "text": "expedite caused 0 hours of receiving downtime and 0 hours at the donor, at $1400. Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders. Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+            "verdict": "Confirmed"
+          },
+          "outcome": {
+            "donor_downtime_hours": 0,
+            "receiving_downtime_hours": 0,
+            "recovery_cost": 1400,
+            "total_downtime_hours": 0,
+            "usable_at": "2026-10-12T12:00:00"
+          },
+          "snapshot": {
+            "component": "Controller C-24",
+            "date": "2026-10-12",
+            "id": "T2",
+            "needed_at": "2026-10-12T14:00:00",
+            "options": [
+              {
+                "approved": true,
+                "arrival": "2026-10-12T15:00:00",
+                "cost": 0,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "wait",
+                "inspection_hours": 0,
+                "kind": "wait"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T11:00:00",
+                "cost": 1400,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "expedite",
+                "inspection_hours": 1,
+                "kind": "expedite"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 350,
+                "donor_rate_per_hour": 20,
+                "donor_replenishment": "2026-10-12T20:00:00",
+                "donor_stock": 200,
+                "id": "transfer",
+                "inspection_hours": 0,
+                "kind": "transfer"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 800,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "substitute",
+                "inspection_hours": 4,
+                "kind": "substitute"
+              }
+            ],
+            "order_class": "firm",
+            "plant": "Cedar assembly",
+            "receiving": {
+              "closes": 17,
+              "opens": 8
+            },
+            "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+            "shortage_quantity": 180
+          }
+        },
+        "confidence": null
+      }
+    ],
+    "lesson_characters": 475
+  },
+  {
+    "type": "outcome",
+    "phase": "compare",
+    "case": "E2",
+    "arm": "ablated",
+    "outcome": {
+      "usable_at": "2026-11-09T13:00:00",
+      "receiving_downtime_hours": 0,
+      "donor_downtime_hours": 0,
+      "total_downtime_hours": 0,
+      "recovery_cost": 800
+    },
+    "judgment": {
+      "aligned": false,
+      "within_tolerance": true,
+      "score": [
+        0,
+        800,
+        0
+      ],
+      "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+    }
+  },
+  {
+    "type": "decision",
+    "phase": "compare",
+    "case": "E2",
+    "arm": "baseline",
+    "decision": {
+      "option_id": "substitute",
+      "rationale": "Without a local precedent, the default policy minimizes combined downtime first, then recovery spend. The substitute option arrives at 12:00, completes 1 hour of inspection at 13:00, and is ready before the 14:00 requirement, resulting in 0 hours of receiving downtime and 0 donor downtime. Among options achieving 0 total downtime (substitute and expedite), substitute minimizes recovery spend ($800 vs $1,400).",
+      "lesson_ids": []
+    },
+    "usage": {
+      "model": "gemini-3.6-flash",
+      "calls": 1,
+      "elapsed_seconds": 7.987,
+      "prompt_tokens": 687,
+      "output_tokens": 129,
+      "thinking_tokens": 1454,
+      "total_tokens": 2270
+    },
+    "prompt": {
+      "snapshot": {
+        "id": "E2",
+        "plant": "Cedar assembly",
+        "component": "Controller C-24",
+        "date": "2026-11-09",
+        "shortage_quantity": 150,
+        "needed_at": "2026-11-09T14:00:00",
+        "receiving": {
+          "opens": 8,
+          "closes": 17
+        },
+        "options": [
+          {
+            "id": "wait",
+            "kind": "wait",
+            "arrival": "2026-11-09T16:00:00",
+            "cost": 0,
+            "inspection_hours": 3,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "expedite",
+            "kind": "expedite",
+            "arrival": "2026-11-09T11:00:00",
+            "cost": 1400,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "transfer",
+            "kind": "transfer",
+            "arrival": "2026-11-09T15:00:00",
+            "cost": 350,
+            "inspection_hours": 0,
+            "donor_stock": 500,
+            "donor_rate_per_hour": 15,
+            "donor_replenishment": "2026-11-09T20:00:00",
+            "approved": true
+          },
+          {
+            "id": "substitute",
+            "kind": "substitute",
+            "arrival": "2026-11-09T12:00:00",
+            "cost": 800,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          }
+        ],
+        "order_class": "replenishment",
+        "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+      },
+      "lessons": []
+    },
+    "lessons": [],
+    "lesson_characters": 2
+  },
+  {
+    "type": "outcome",
+    "phase": "compare",
+    "case": "E2",
+    "arm": "baseline",
+    "outcome": {
+      "usable_at": "2026-11-09T13:00:00",
+      "receiving_downtime_hours": 0,
+      "donor_downtime_hours": 0,
+      "total_downtime_hours": 0,
+      "recovery_cost": 800
+    },
+    "judgment": {
+      "aligned": false,
+      "within_tolerance": true,
+      "score": [
+        0,
+        800,
+        0
+      ],
+      "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+    }
+  },
+  {
+    "type": "comparison",
+    "phase": "compare",
+    "case": "E2",
+    "verdict": "wins",
+    "results": {
+      "memory": {
+        "decision": {
+          "option_id": "transfer",
+          "rationale": "For stock-replenishment orders, lesson b88996b7-4e43-4a9c-a512-cce317b0942c permits up to 2 hours of receiving-plant downtime provided there is zero donor downtime, selecting the option with the lowest recovery spend among those meeting the threshold. The transfer option arrives at 15:00 with 0 inspection hours, causing 1 hour of receiving downtime (14:00 to 15:00). Removing 150 units leaves the donor plant with 350 units, which easily covers its 180-unit requirement until 20:00 replenishment, resulting in 0 donor downtime. At $350, transfer is the lowest-cost option within acceptable downtime limits.",
+          "lesson_ids": [
+            "b88996b7-4e43-4a9c-a512-cce317b0942c"
+          ]
+        },
+        "outcome": {
+          "usable_at": "2026-11-09T15:00:00",
+          "receiving_downtime_hours": 1.0,
+          "donor_downtime_hours": 0,
+          "total_downtime_hours": 1.0,
+          "recovery_cost": 350
+        },
+        "judgment": {
+          "aligned": true,
+          "within_tolerance": true,
+          "score": [
+            0,
+            350,
+            1.0
+          ],
+          "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+        }
+      },
+      "ablated": {
+        "decision": {
+          "option_id": "substitute",
+          "rationale": "For stock replenishment orders, the standard rule applies: minimize combined downtime first, then recovery spend. The substitute option achieves zero receiving and donor downtime (available at 13:00, prior to the required 14:00) with a recovery spend of $800, which is lower than the expedite option ($1,400 with 0 downtime).",
+          "lesson_ids": []
+        },
+        "outcome": {
+          "usable_at": "2026-11-09T13:00:00",
+          "receiving_downtime_hours": 0,
+          "donor_downtime_hours": 0,
+          "total_downtime_hours": 0,
+          "recovery_cost": 800
+        },
+        "judgment": {
+          "aligned": false,
+          "within_tolerance": true,
+          "score": [
+            0,
+            800,
+            0
+          ],
+          "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+        }
+      },
+      "baseline": {
+        "decision": {
+          "option_id": "substitute",
+          "rationale": "Without a local precedent, the default policy minimizes combined downtime first, then recovery spend. The substitute option arrives at 12:00, completes 1 hour of inspection at 13:00, and is ready before the 14:00 requirement, resulting in 0 hours of receiving downtime and 0 donor downtime. Among options achieving 0 total downtime (substitute and expedite), substitute minimizes recovery spend ($800 vs $1,400).",
+          "lesson_ids": []
+        },
+        "outcome": {
+          "usable_at": "2026-11-09T13:00:00",
+          "receiving_downtime_hours": 0,
+          "donor_downtime_hours": 0,
+          "total_downtime_hours": 0,
+          "recovery_cost": 800
+        },
+        "judgment": {
+          "aligned": false,
+          "within_tolerance": true,
+          "score": [
+            0,
+            800,
+            0
+          ],
+          "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+        }
+      }
+    },
+    "ablation": {
+      "removed_lesson_ids": [
+        "b88996b7-4e43-4a9c-a512-cce317b0942c"
+      ],
+      "decision_changed": true,
+      "improved_with_lesson": true
+    },
+    "rubric": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+  },
+  {
+    "type": "case_started",
+    "phase": "compare",
+    "case": "E3",
+    "title": "Protect a confirmed shipment",
+    "snapshot": {
+      "id": "E3",
+      "plant": "Cedar assembly",
+      "component": "Controller C-24",
+      "date": "2026-11-16",
+      "shortage_quantity": 200,
+      "needed_at": "2026-11-16T14:00:00",
+      "receiving": {
+        "opens": 8,
+        "closes": 17
+      },
+      "options": [
+        {
+          "id": "wait",
+          "kind": "wait",
+          "arrival": "2026-11-16T15:00:00",
+          "cost": 0,
+          "inspection_hours": 0,
+          "donor_stock": null,
+          "donor_rate_per_hour": null,
+          "donor_replenishment": null,
+          "approved": true
+        },
+        {
+          "id": "expedite",
+          "kind": "expedite",
+          "arrival": "2026-11-16T11:00:00",
+          "cost": 1400,
+          "inspection_hours": 1,
+          "donor_stock": null,
+          "donor_rate_per_hour": null,
+          "donor_replenishment": null,
+          "approved": true
+        },
+        {
+          "id": "transfer",
+          "kind": "transfer",
+          "arrival": "2026-11-16T12:00:00",
+          "cost": 350,
+          "inspection_hours": 0,
+          "donor_stock": 220,
+          "donor_rate_per_hour": 20,
+          "donor_replenishment": "2026-11-16T20:00:00",
+          "approved": true
+        },
+        {
+          "id": "substitute",
+          "kind": "substitute",
+          "arrival": "2026-11-16T12:00:00",
+          "cost": 800,
+          "inspection_hours": 4,
+          "donor_stock": null,
+          "donor_rate_per_hour": null,
+          "donor_replenishment": null,
+          "approved": true
+        }
+      ],
+      "order_class": "firm",
+      "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+    }
+  },
+  {
+    "type": "decision",
+    "phase": "compare",
+    "case": "E3",
+    "arm": "ablated",
+    "decision": {
+      "option_id": "expedite",
+      "rationale": "The order class is 'firm', so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply as it is explicitly restricted to stock-replenishment orders. Following the conservative default rule to minimize combined downtime, then spend: Option 'expedite' arrives at 11:00, completes 1 hour of inspection at 12:00, well before the 14:00 deadline, resulting in 0 hours of receiving downtime and 0 hours of donor downtime (0 combined downtime hours) for a recovery spend of $1,400. Other options cause downtime ('wait' causes 1 hour of receiving downtime, 'substitute' causes 2 hours of receiving downtime, and 'transfer' causes 11 hours of donor downtime). Thus, 'expedite' is chosen.",
+      "lesson_ids": []
+    },
+    "usage": {
+      "model": "gemini-3.6-flash",
+      "calls": 1,
+      "elapsed_seconds": 12.493,
+      "prompt_tokens": 836,
+      "output_tokens": 214,
+      "thinking_tokens": 1888,
+      "total_tokens": 2938
+    },
+    "prompt": {
+      "snapshot": {
+        "id": "E3",
+        "plant": "Cedar assembly",
+        "component": "Controller C-24",
+        "date": "2026-11-16",
+        "shortage_quantity": 200,
+        "needed_at": "2026-11-16T14:00:00",
+        "receiving": {
+          "opens": 8,
+          "closes": 17
+        },
+        "options": [
+          {
+            "id": "wait",
+            "kind": "wait",
+            "arrival": "2026-11-16T15:00:00",
+            "cost": 0,
+            "inspection_hours": 0,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "expedite",
+            "kind": "expedite",
+            "arrival": "2026-11-16T11:00:00",
+            "cost": 1400,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "transfer",
+            "kind": "transfer",
+            "arrival": "2026-11-16T12:00:00",
+            "cost": 350,
+            "inspection_hours": 0,
+            "donor_stock": 220,
+            "donor_rate_per_hour": 20,
+            "donor_replenishment": "2026-11-16T20:00:00",
+            "approved": true
+          },
+          {
+            "id": "substitute",
+            "kind": "substitute",
+            "arrival": "2026-11-16T12:00:00",
+            "cost": 800,
+            "inspection_hours": 4,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          }
+        ],
+        "order_class": "firm",
+        "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+      },
+      "lessons": [
+        {
+          "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+          "source_case": "T1",
+          "applies_to": "replenishment",
+          "applicability": "Cedar stock-replenishment orders only.",
+          "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+          "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend."
+        }
+      ]
+    },
+    "lessons": [
+      {
+        "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+        "source_case": "T1",
+        "applies_to": "replenishment",
+        "applicability": "Cedar stock-replenishment orders only.",
+        "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+        "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+        "evidence": {
+          "decision": {
+            "lesson_ids": [],
+            "option_id": "substitute",
+            "rationale": "Without local precedents, the conservative default prioritizes minimizing combined downtime and then minimizing recovery spend. Both the expedite ($1,400) and substitute ($800) options achieve zero combined downtime, delivering ready components at 12:00 and 13:00 respectively (before the 14:00 requirement). In contrast, waiting results in 1.5 hours of receiving downtime, and transferring 120 units from the donor's initial 140 stock causes the donor to run out of stock after 1 hour (at 09:00), leading to 11 hours of donor downtime prior to replenishment at 20:00. Between the two zero-downtime options, substitute is selected because it has lower recovery spend ($800 vs. $1,400)."
+          },
+          "execution_id": "895656e0397448768e6d171dfe6b7858",
+          "operator_feedback": {
+            "confirmed_lesson": {
+              "applicability": "Cedar stock-replenishment orders only.",
+              "applies_to": "replenishment",
+              "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+              "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium."
+            },
+            "judgment": {
+              "aligned": false,
+              "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+              "score": [
+                0,
+                800,
+                0
+              ],
+              "within_tolerance": true
+            },
+            "source": "Scripted simulated operator feedback",
+            "text": "substitute caused 0 hours of receiving downtime and 0 hours at the donor, at $800. Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium. Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+            "verdict": "Needs improvement"
+          },
+          "outcome": {
+            "donor_downtime_hours": 0,
+            "receiving_downtime_hours": 0,
+            "recovery_cost": 800,
+            "total_downtime_hours": 0,
+            "usable_at": "2026-10-05T13:00:00"
+          },
+          "snapshot": {
+            "component": "Controller C-24",
+            "date": "2026-10-05",
+            "id": "T1",
+            "needed_at": "2026-10-05T14:00:00",
+            "options": [
+              {
+                "approved": true,
+                "arrival": "2026-10-05T15:30:00",
+                "cost": 0,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "wait",
+                "inspection_hours": 0,
+                "kind": "wait"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T11:00:00",
+                "cost": 1400,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "expedite",
+                "inspection_hours": 1,
+                "kind": "expedite"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T12:00:00",
+                "cost": 350,
+                "donor_rate_per_hour": 20,
+                "donor_replenishment": "2026-10-05T20:00:00",
+                "donor_stock": 140,
+                "id": "transfer",
+                "inspection_hours": 0,
+                "kind": "transfer"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T12:00:00",
+                "cost": 800,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "substitute",
+                "inspection_hours": 1,
+                "kind": "substitute"
+              }
+            ],
+            "order_class": "replenishment",
+            "plant": "Cedar assembly",
+            "receiving": {
+              "closes": 17,
+              "opens": 8
+            },
+            "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+            "shortage_quantity": 120
+          }
+        },
+        "confidence": null
+      }
+    ],
+    "lesson_characters": 546
+  },
+  {
+    "type": "outcome",
+    "phase": "compare",
+    "case": "E3",
+    "arm": "ablated",
+    "outcome": {
+      "usable_at": "2026-11-16T12:00:00",
+      "receiving_downtime_hours": 0,
+      "donor_downtime_hours": 0,
+      "total_downtime_hours": 0,
+      "recovery_cost": 1400
+    },
+    "judgment": {
+      "aligned": true,
+      "within_tolerance": true,
+      "score": [
+        0,
+        1400,
+        0
+      ],
+      "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+    }
+  },
+  {
+    "type": "decision",
+    "phase": "compare",
+    "case": "E3",
+    "arm": "baseline",
+    "decision": {
+      "option_id": "expedite",
+      "rationale": "In the absence of local precedent lessons, the conservative default rule applies: minimize combined receiving and donor downtime first, followed by recovery spend. Expediting the shipment delivers the components with 1 hour of inspection, making them available by 12:00, well ahead of the 14:00 requirement (0 hours receiving downtime and 0 hours donor downtime). In comparison, waiting causes 1 hour of downtime, substituting causes 2 hours of downtime due to 4 hours of inspection, and transferring causes 11 hours of donor plant downtime due to depleting donor stock at 09:00 prior to 20:00 replenishment. Thus, expedite is selected as it completely avoids downtime.",
+      "lesson_ids": []
+    },
+    "usage": {
+      "model": "gemini-3.6-flash",
+      "calls": 1,
+      "elapsed_seconds": 8.91,
+      "prompt_tokens": 685,
+      "output_tokens": 164,
+      "thinking_tokens": 1386,
+      "total_tokens": 2235
+    },
+    "prompt": {
+      "snapshot": {
+        "id": "E3",
+        "plant": "Cedar assembly",
+        "component": "Controller C-24",
+        "date": "2026-11-16",
+        "shortage_quantity": 200,
+        "needed_at": "2026-11-16T14:00:00",
+        "receiving": {
+          "opens": 8,
+          "closes": 17
+        },
+        "options": [
+          {
+            "id": "wait",
+            "kind": "wait",
+            "arrival": "2026-11-16T15:00:00",
+            "cost": 0,
+            "inspection_hours": 0,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "expedite",
+            "kind": "expedite",
+            "arrival": "2026-11-16T11:00:00",
+            "cost": 1400,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "transfer",
+            "kind": "transfer",
+            "arrival": "2026-11-16T12:00:00",
+            "cost": 350,
+            "inspection_hours": 0,
+            "donor_stock": 220,
+            "donor_rate_per_hour": 20,
+            "donor_replenishment": "2026-11-16T20:00:00",
+            "approved": true
+          },
+          {
+            "id": "substitute",
+            "kind": "substitute",
+            "arrival": "2026-11-16T12:00:00",
+            "cost": 800,
+            "inspection_hours": 4,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          }
+        ],
+        "order_class": "firm",
+        "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+      },
+      "lessons": []
+    },
+    "lessons": [],
+    "lesson_characters": 2
+  },
+  {
+    "type": "outcome",
+    "phase": "compare",
+    "case": "E3",
+    "arm": "baseline",
+    "outcome": {
+      "usable_at": "2026-11-16T12:00:00",
+      "receiving_downtime_hours": 0,
+      "donor_downtime_hours": 0,
+      "total_downtime_hours": 0,
+      "recovery_cost": 1400
+    },
+    "judgment": {
+      "aligned": true,
+      "within_tolerance": true,
+      "score": [
+        0,
+        1400,
+        0
+      ],
+      "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+    }
+  },
+  {
+    "type": "decision",
+    "phase": "compare",
+    "case": "E3",
+    "arm": "memory",
+    "decision": {
+      "option_id": "expedite",
+      "rationale": "For firm customer orders, lesson 9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e requires choosing an option that results in zero receiving and donor downtime, selecting the one with the lowest recovery spend among eligible options. Expedite arrives at 11:00 with 1 hour of inspection, completing by 12:00, which is well before the required time of 14:00 (0 hours downtime at both receiving and donor plants). Wait causes 1 hour of downtime, substitute causes 2 hours of downtime due to 4 hours of inspection, and transfer causes 11 hours of donor downtime as donor stock exhausts at 09:00 prior to 20:00 replenishment. Thus, expedite is the only option meeting the zero-downtime requirement.",
+      "lesson_ids": [
+        "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e"
+      ]
+    },
+    "usage": {
+      "model": "gemini-3.6-flash",
+      "calls": 1,
+      "elapsed_seconds": 6.383,
+      "prompt_tokens": 965,
+      "output_tokens": 233,
+      "thinking_tokens": 1199,
+      "total_tokens": 2397
+    },
+    "prompt": {
+      "snapshot": {
+        "id": "E3",
+        "plant": "Cedar assembly",
+        "component": "Controller C-24",
+        "date": "2026-11-16",
+        "shortage_quantity": 200,
+        "needed_at": "2026-11-16T14:00:00",
+        "receiving": {
+          "opens": 8,
+          "closes": 17
+        },
+        "options": [
+          {
+            "id": "wait",
+            "kind": "wait",
+            "arrival": "2026-11-16T15:00:00",
+            "cost": 0,
+            "inspection_hours": 0,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "expedite",
+            "kind": "expedite",
+            "arrival": "2026-11-16T11:00:00",
+            "cost": 1400,
+            "inspection_hours": 1,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          },
+          {
+            "id": "transfer",
+            "kind": "transfer",
+            "arrival": "2026-11-16T12:00:00",
+            "cost": 350,
+            "inspection_hours": 0,
+            "donor_stock": 220,
+            "donor_rate_per_hour": 20,
+            "donor_replenishment": "2026-11-16T20:00:00",
+            "approved": true
+          },
+          {
+            "id": "substitute",
+            "kind": "substitute",
+            "arrival": "2026-11-16T12:00:00",
+            "cost": 800,
+            "inspection_hours": 4,
+            "donor_stock": null,
+            "donor_rate_per_hour": null,
+            "donor_replenishment": null,
+            "approved": true
+          }
+        ],
+        "order_class": "firm",
+        "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD."
+      },
+      "lessons": [
+        {
+          "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+          "source_case": "T2",
+          "applies_to": "firm",
+          "applicability": "Cedar firm customer orders only.",
+          "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+          "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend."
+        },
+        {
+          "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+          "source_case": "T1",
+          "applies_to": "replenishment",
+          "applicability": "Cedar stock-replenishment orders only.",
+          "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+          "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend."
+        }
+      ]
+    },
+    "lessons": [
+      {
+        "id": "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e",
+        "source_case": "T2",
+        "applies_to": "firm",
+        "applicability": "Cedar firm customer orders only.",
+        "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders.",
+        "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+        "evidence": {
+          "decision": {
+            "lesson_ids": [],
+            "option_id": "expedite",
+            "rationale": "The order class is firm, so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply. Following the default conservative policy to minimize combined downtime first and then recovery spend, expedite is chosen. Arriving at 11:00 with 1 hour of inspection, it is ready at 12:00 before the 14:00 requirement, resulting in 0 hours of receiving and donor downtime."
+          },
+          "execution_id": "895656e0397448768e6d171dfe6b7858",
+          "operator_feedback": {
+            "confirmed_lesson": {
+              "applicability": "Cedar firm customer orders only.",
+              "applies_to": "firm",
+              "exceptions": "Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+              "guidance": "Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders."
+            },
+            "judgment": {
+              "aligned": true,
+              "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+              "score": [
+                0,
+                1400,
+                0
+              ],
+              "within_tolerance": true
+            },
+            "source": "Scripted simulated operator feedback",
+            "text": "expedite caused 0 hours of receiving downtime and 0 hours at the donor, at $1400. Allow zero receiving and donor downtime. Among options meeting those limits, choose the lowest recovery spend. A small delay is not acceptable for these orders. Do not extend this zero-delay preference to stock replenishment. If no option meets these limits, minimize combined downtime, then spend.",
+            "verdict": "Confirmed"
+          },
+          "outcome": {
+            "donor_downtime_hours": 0,
+            "receiving_downtime_hours": 0,
+            "recovery_cost": 1400,
+            "total_downtime_hours": 0,
+            "usable_at": "2026-10-12T12:00:00"
+          },
+          "snapshot": {
+            "component": "Controller C-24",
+            "date": "2026-10-12",
+            "id": "T2",
+            "needed_at": "2026-10-12T14:00:00",
+            "options": [
+              {
+                "approved": true,
+                "arrival": "2026-10-12T15:00:00",
+                "cost": 0,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "wait",
+                "inspection_hours": 0,
+                "kind": "wait"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T11:00:00",
+                "cost": 1400,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "expedite",
+                "inspection_hours": 1,
+                "kind": "expedite"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 350,
+                "donor_rate_per_hour": 20,
+                "donor_replenishment": "2026-10-12T20:00:00",
+                "donor_stock": 200,
+                "id": "transfer",
+                "inspection_hours": 0,
+                "kind": "transfer"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-12T12:00:00",
+                "cost": 800,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "substitute",
+                "inspection_hours": 4,
+                "kind": "substitute"
+              }
+            ],
+            "order_class": "firm",
+            "plant": "Cedar assembly",
+            "receiving": {
+              "closes": 17,
+              "opens": 8
+            },
+            "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+            "shortage_quantity": 180
+          }
+        },
+        "confidence": null
+      },
+      {
+        "id": "b88996b7-4e43-4a9c-a512-cce317b0942c",
+        "source_case": "T1",
+        "applies_to": "replenishment",
+        "applicability": "Cedar stock-replenishment orders only.",
+        "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium.",
+        "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+        "evidence": {
+          "decision": {
+            "lesson_ids": [],
+            "option_id": "substitute",
+            "rationale": "Without local precedents, the conservative default prioritizes minimizing combined downtime and then minimizing recovery spend. Both the expedite ($1,400) and substitute ($800) options achieve zero combined downtime, delivering ready components at 12:00 and 13:00 respectively (before the 14:00 requirement). In contrast, waiting results in 1.5 hours of receiving downtime, and transferring 120 units from the donor's initial 140 stock causes the donor to run out of stock after 1 hour (at 09:00), leading to 11 hours of donor downtime prior to replenishment at 20:00. Between the two zero-downtime options, substitute is selected because it has lower recovery spend ($800 vs. $1,400)."
+          },
+          "execution_id": "895656e0397448768e6d171dfe6b7858",
+          "operator_feedback": {
+            "confirmed_lesson": {
+              "applicability": "Cedar stock-replenishment orders only.",
+              "applies_to": "replenishment",
+              "exceptions": "Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+              "guidance": "Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium."
+            },
+            "judgment": {
+              "aligned": false,
+              "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback",
+              "score": [
+                0,
+                800,
+                0
+              ],
+              "within_tolerance": true
+            },
+            "source": "Scripted simulated operator feedback",
+            "text": "substitute caused 0 hours of receiving downtime and 0 hours at the donor, at $800. Accept up to 2 hours of receiving-plant downtime with zero donor downtime. Among options within these limits, choose the lowest recovery spend, then the least downtime. Eliminating an acceptable delay does not justify a premium. Do not apply this tolerance to firm customer orders. If no option meets these limits, minimize combined downtime, then spend.",
+            "verdict": "Needs improvement"
+          },
+          "outcome": {
+            "donor_downtime_hours": 0,
+            "receiving_downtime_hours": 0,
+            "recovery_cost": 800,
+            "total_downtime_hours": 0,
+            "usable_at": "2026-10-05T13:00:00"
+          },
+          "snapshot": {
+            "component": "Controller C-24",
+            "date": "2026-10-05",
+            "id": "T1",
+            "needed_at": "2026-10-05T14:00:00",
+            "options": [
+              {
+                "approved": true,
+                "arrival": "2026-10-05T15:30:00",
+                "cost": 0,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "wait",
+                "inspection_hours": 0,
+                "kind": "wait"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T11:00:00",
+                "cost": 1400,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "expedite",
+                "inspection_hours": 1,
+                "kind": "expedite"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T12:00:00",
+                "cost": 350,
+                "donor_rate_per_hour": 20,
+                "donor_replenishment": "2026-10-05T20:00:00",
+                "donor_stock": 140,
+                "id": "transfer",
+                "inspection_hours": 0,
+                "kind": "transfer"
+              },
+              {
+                "approved": true,
+                "arrival": "2026-10-05T12:00:00",
+                "cost": 800,
+                "donor_rate_per_hour": null,
+                "donor_replenishment": null,
+                "donor_stock": null,
+                "id": "substitute",
+                "inspection_hours": 1,
+                "kind": "substitute"
+              }
+            ],
+            "order_class": "replenishment",
+            "plant": "Cedar assembly",
+            "receiving": {
+              "closes": 17,
+              "opens": 8
+            },
+            "rules": "Both plants produce continuously. All times are local. Receiving admits trucks from opening through closing (inclusive); later arrivals wait until next opening. Inspection starts after admission and runs continuously. Each option supplies the full shortage quantity. Transfers remove that quantity from the donor at 08:00 on the case date; donor production consumes stock from 08:00 until its listed replenishment. Donor stock is otherwise sufficient until replenishment. Substitutes must be approved. Costs are incremental USD.",
+            "shortage_quantity": 120
+          }
+        },
+        "confidence": null
+      }
+    ],
+    "lesson_characters": 1021
+  },
+  {
+    "type": "outcome",
+    "phase": "compare",
+    "case": "E3",
+    "arm": "memory",
+    "outcome": {
+      "usable_at": "2026-11-16T12:00:00",
+      "receiving_downtime_hours": 0,
+      "donor_downtime_hours": 0,
+      "total_downtime_hours": 0,
+      "recovery_cost": 1400
+    },
+    "judgment": {
+      "aligned": true,
+      "within_tolerance": true,
+      "score": [
+        0,
+        1400,
+        0
+      ],
+      "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+    }
+  },
+  {
+    "type": "comparison",
+    "phase": "compare",
+    "case": "E3",
+    "verdict": "ties",
+    "results": {
+      "ablated": {
+        "decision": {
+          "option_id": "expedite",
+          "rationale": "The order class is 'firm', so lesson b88996b7-4e43-4a9c-a512-cce317b0942c does not apply as it is explicitly restricted to stock-replenishment orders. Following the conservative default rule to minimize combined downtime, then spend: Option 'expedite' arrives at 11:00, completes 1 hour of inspection at 12:00, well before the 14:00 deadline, resulting in 0 hours of receiving downtime and 0 hours of donor downtime (0 combined downtime hours) for a recovery spend of $1,400. Other options cause downtime ('wait' causes 1 hour of receiving downtime, 'substitute' causes 2 hours of receiving downtime, and 'transfer' causes 11 hours of donor downtime). Thus, 'expedite' is chosen.",
+          "lesson_ids": []
+        },
+        "outcome": {
+          "usable_at": "2026-11-16T12:00:00",
+          "receiving_downtime_hours": 0,
+          "donor_downtime_hours": 0,
+          "total_downtime_hours": 0,
+          "recovery_cost": 1400
+        },
+        "judgment": {
+          "aligned": true,
+          "within_tolerance": true,
+          "score": [
+            0,
+            1400,
+            0
+          ],
+          "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+        }
+      },
+      "baseline": {
+        "decision": {
+          "option_id": "expedite",
+          "rationale": "In the absence of local precedent lessons, the conservative default rule applies: minimize combined receiving and donor downtime first, followed by recovery spend. Expediting the shipment delivers the components with 1 hour of inspection, making them available by 12:00, well ahead of the 14:00 requirement (0 hours receiving downtime and 0 hours donor downtime). In comparison, waiting causes 1 hour of downtime, substituting causes 2 hours of downtime due to 4 hours of inspection, and transferring causes 11 hours of donor plant downtime due to depleting donor stock at 09:00 prior to 20:00 replenishment. Thus, expedite is selected as it completely avoids downtime.",
+          "lesson_ids": []
+        },
+        "outcome": {
+          "usable_at": "2026-11-16T12:00:00",
+          "receiving_downtime_hours": 0,
+          "donor_downtime_hours": 0,
+          "total_downtime_hours": 0,
+          "recovery_cost": 1400
+        },
+        "judgment": {
+          "aligned": true,
+          "within_tolerance": true,
+          "score": [
+            0,
+            1400,
+            0
+          ],
+          "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+        }
+      },
+      "memory": {
+        "decision": {
+          "option_id": "expedite",
+          "rationale": "For firm customer orders, lesson 9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e requires choosing an option that results in zero receiving and donor downtime, selecting the one with the lowest recovery spend among eligible options. Expedite arrives at 11:00 with 1 hour of inspection, completing by 12:00, which is well before the required time of 14:00 (0 hours downtime at both receiving and donor plants). Wait causes 1 hour of downtime, substitute causes 2 hours of downtime due to 4 hours of inspection, and transfer causes 11 hours of donor downtime as donor stock exhausts at 09:00 prior to 20:00 replenishment. Thus, expedite is the only option meeting the zero-downtime requirement.",
+          "lesson_ids": [
+            "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e"
+          ]
+        },
+        "outcome": {
+          "usable_at": "2026-11-16T12:00:00",
+          "receiving_downtime_hours": 0,
+          "donor_downtime_hours": 0,
+          "total_downtime_hours": 0,
+          "recovery_cost": 1400
+        },
+        "judgment": {
+          "aligned": true,
+          "within_tolerance": true,
+          "score": [
+            0,
+            1400,
+            0
+          ],
+          "basis": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+        }
+      }
+    },
+    "ablation": {
+      "removed_lesson_ids": [
+        "9cab8d74-dcc6-4a1d-8dac-1c3949e4e97e"
+      ],
+      "decision_changed": false,
+      "improved_with_lesson": false
+    },
+    "rubric": "Synthetic Cedar preference, revealed to the agent only through teaching feedback"
+  },
+  {
+    "type": "summary",
+    "phase": "compare",
+    "counts": {
+      "wins": 2,
+      "ties": 1,
+      "regressions": 0
+    },
+    "totals": {
+      "baseline": {
+        "total_downtime_hours": 0,
+        "recovery_cost": 3000,
+        "aligned_cases": 1,
+        "prompt_tokens": 2058,
+        "total_tokens": 6958,
+        "usage_complete": true
+      },
+      "memory": {
+        "total_downtime_hours": 2.0,
+        "recovery_cost": 1750,
+        "aligned_cases": 3,
+        "prompt_tokens": 2898,
+        "total_tokens": 7388,
+        "usage_complete": true
+      },
+      "ablated": {
+        "total_downtime_hours": 0,
+        "recovery_cost": 3000,
+        "aligned_cases": 1,
+        "prompt_tokens": 2467,
+        "total_tokens": 7648,
+        "usage_complete": true
+      }
+    },
+    "memory_sha256": "74da731bab4d9c33bfbb020e8e364889ad8c2108a96974b2138f9f204fe9dc9a",
+    "ablation_supported_cases": 2,
+    "note": "Scored against synthetic Cedar preferences, not minimum downtime alone. Ablation tests sensitivity to removing the applicable lesson; three cases and single model samples are evidence of behavior, not statistical proof or weight training."
+  }
+]

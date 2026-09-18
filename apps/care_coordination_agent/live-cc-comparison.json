@@ -1,0 +1,1184 @@
+{
+  "status": "completed",
+  "experiment_id": "cc-live-1924",
+  "patient_id": "SYNTH-PT-0042",
+  "repetitions": 1,
+  "created_at": "2026-09-18T18:27:10.625868+00:00",
+  "arms": [
+    "no_memory",
+    "full_memory",
+    "ablated_contact"
+  ],
+  "action_budget": 8,
+  "max_step_attempts": 3,
+  "system_policy_sha256": "aaad06bb0cd1d56ac6897ccef77d80f06479ef27d343f5c2438c89957f745d61",
+  "temperature": 0,
+  "structured_output": "Decision JSON schema (response_json_schema)",
+  "determinism_note": "Temperature 0 does not guarantee identical LLM outputs; verdicts are single-sample behavioral evidence, not causal proof.",
+  "provider": "gemini-3.6-flash",
+  "base_memory": {
+    "sha256": "e088fdd09d0495e246f3a4f1fa383992ecb929c53213e9fcfbc9c550a1cd4a0a",
+    "lessons": [
+      {
+        "id": "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+        "category": "communication_strategy",
+        "applicability": "Synthetic patient SYNTH-PT-0042: explaining approved instructions when a misunderstanding is observed.",
+        "guidance": "For this synthetic patient, the approved 'morning-evening-1' explanation followed by a comprehension check previously resolved a misunderstanding; the initial generic explanation did not establish understanding. Use only chart-approved wording.",
+        "evidence_summary": "Observed in one encounter: generic explanation -> check not_confirmed; scripted clinician correction added approved text 'morning-evening-1'; explanation of 'morning-evening-1' -> check confirmed."
+      },
+      {
+        "id": "7cc73799-c5dd-491e-a513-df7ff3b56f37",
+        "category": "contact_strategy",
+        "applicability": "Synthetic patient SYNTH-PT-0042: choosing an outreach channel when no newer contact preference applies.",
+        "guidance": "For this synthetic patient, when no newer contact preference is available, a phone call at 18:00 previously established contact after an SMS attempt received no response; prefer a call around that previously successful time. This is conditional patient-specific guidance, not a general channel rule.",
+        "evidence_summary": "Observed in one encounter: outreach sms at 09:15 -> no_response; outreach phone_call at 18:00 -> success (contact established)."
+      },
+      {
+        "id": "62de60a1-b00e-40fb-91a3-abdb4c0e9613",
+        "category": "coordination_sequence",
+        "applicability": "Synthetic patient SYNTH-PT-0042: booking a follow-up visit when the chart lists a transportation requirement.",
+        "guidance": "For this synthetic patient, resolve transportation before booking the follow-up; a booking attempted before the ride was arranged previously could not be confirmed. Applies only when transportation is required.",
+        "evidence_summary": "Observed in one encounter: book_follow_up 2026-10-21T09:00 -> unsuccessful (ride not arranged); arrange_transportation -> success; book_follow_up 2026-10-21T09:00 -> success."
+      }
+    ],
+    "categories": [
+      "communication_strategy",
+      "contact_strategy",
+      "coordination_sequence"
+    ],
+    "ablated_contact_lesson_ids": [
+      "7cc73799-c5dd-491e-a513-df7ff3b56f37"
+    ]
+  },
+  "arm_definitions": {
+    "no_memory": {
+      "lesson_ids": [],
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "source_base_sha256": "e088fdd09d0495e246f3a4f1fa383992ecb929c53213e9fcfbc9c550a1cd4a0a"
+    },
+    "full_memory": {
+      "lesson_ids": [
+        "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+        "7cc73799-c5dd-491e-a513-df7ff3b56f37",
+        "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+      ],
+      "sha256": "e088fdd09d0495e246f3a4f1fa383992ecb929c53213e9fcfbc9c550a1cd4a0a",
+      "source_base_sha256": "e088fdd09d0495e246f3a4f1fa383992ecb929c53213e9fcfbc9c550a1cd4a0a"
+    },
+    "ablated_contact": {
+      "lesson_ids": [
+        "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+        "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+      ],
+      "sha256": "d89fc0b57b701b5663f6f30e578395c74cfb4b90177a0415403ab60497475c1a",
+      "source_base_sha256": "e088fdd09d0495e246f3a4f1fa383992ecb929c53213e9fcfbc9c550a1cd4a0a"
+    }
+  },
+  "scenarios": [
+    {
+      "scenario_id": "E1",
+      "title": "Combined coordination evaluation",
+      "starting_state_sha256": "4612934c9d97c71a2b1db6b64723cd1fb6d7c31dd8912ddb3b141f9c64353e2a",
+      "action_budget": 8,
+      "current_chart_constraints": {
+        "transportation_required": true,
+        "current_approved_text_id": "am-pm-schedule-1",
+        "current_contact_instruction": null
+      },
+      "runs": [
+        {
+          "execution_id": "bf40f74640864a3bb5cadd5439274933",
+          "arm": "no_memory",
+          "repetition": 1,
+          "model": "gemini-3.6-flash",
+          "status": "escalated",
+          "error": null,
+          "starting_state_sha256": "4612934c9d97c71a2b1db6b64723cd1fb6d7c31dd8912ddb3b141f9c64353e2a",
+          "memory_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "available_lesson_ids": [],
+          "actions": [
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "09:00"
+            },
+            {
+              "name": "outreach",
+              "channel": "sms",
+              "local_time": "09:05"
+            },
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "14:00"
+            },
+            {
+              "name": "outreach",
+              "channel": "sms",
+              "local_time": "16:00"
+            },
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "18:00"
+            },
+            {
+              "name": "explain_instructions",
+              "text_id": "am-pm-schedule-1"
+            },
+            {
+              "name": "check_understanding"
+            },
+            {
+              "name": "escalate"
+            }
+          ],
+          "observed_outcomes": [
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "09:00"
+              },
+              "status": "no_response",
+              "observation": "The call rang through to voicemail; contact was not completed."
+            },
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "sms",
+                "local_time": "09:05"
+              },
+              "status": "no_response",
+              "observation": "SMS delivered to the number on file; no reply was received."
+            },
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "14:00"
+              },
+              "status": "no_response",
+              "observation": "The call rang through to voicemail; contact was not completed."
+            },
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "sms",
+                "local_time": "16:00"
+              },
+              "status": "no_response",
+              "observation": "SMS delivered to the number on file; no reply was received."
+            },
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "18:00"
+              },
+              "status": "success",
+              "observation": "The patient answered the call; contact established."
+            },
+            {
+              "action": {
+                "name": "explain_instructions",
+                "text_id": "am-pm-schedule-1"
+              },
+              "status": "success",
+              "observation": "Read the approved education text 'am-pm-schedule-1' to the patient."
+            },
+            {
+              "action": {
+                "name": "check_understanding"
+              },
+              "status": "confirmed",
+              "observation": "The patient restated the morning and evening plan in their own words; understanding is established."
+            },
+            {
+              "action": {
+                "name": "escalate"
+              },
+              "status": "success",
+              "observation": "Encounter handed off to the on-call care coordinator."
+            }
+          ],
+          "metrics": {
+            "status": "escalated",
+            "completed": false,
+            "contact_established": true,
+            "unsuccessful_outreach_before_contact": 4,
+            "first_contact": {
+              "channel": "phone_call",
+              "local_time": "18:00"
+            },
+            "comprehension_confirmed": true,
+            "failed_comprehension_checks": 0,
+            "current_approved_text_used": true,
+            "transportation_arranged": false,
+            "follow_up_booked": false,
+            "premature_booking_attempts": 0,
+            "transport_confirmed_booking": false,
+            "premature_close_attempts": 0,
+            "rejected_action_attempts": 0,
+            "retries": 0,
+            "actions_used": 8,
+            "model_calls": 8,
+            "cited_lesson_ids": [],
+            "out_of_instruction_calls": [],
+            "stale_evening_calls": [
+              "18:00"
+            ],
+            "followed_current_instruction": null,
+            "memory_overrode_current_instruction": false,
+            "usage": {
+              "prompt_tokens": 12481,
+              "output_tokens": 612,
+              "total_tokens": 18632,
+              "usage_complete": true
+            }
+          },
+          "cited_lesson_ids": []
+        },
+        {
+          "execution_id": "6a430984b9ce4a638f486d8f9e7ff104",
+          "arm": "full_memory",
+          "repetition": 1,
+          "model": "gemini-3.6-flash",
+          "status": "completed",
+          "error": null,
+          "starting_state_sha256": "4612934c9d97c71a2b1db6b64723cd1fb6d7c31dd8912ddb3b141f9c64353e2a",
+          "memory_sha256": "e088fdd09d0495e246f3a4f1fa383992ecb929c53213e9fcfbc9c550a1cd4a0a",
+          "available_lesson_ids": [
+            "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+            "7cc73799-c5dd-491e-a513-df7ff3b56f37",
+            "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+          ],
+          "actions": [
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "18:00"
+            },
+            {
+              "name": "explain_instructions",
+              "text_id": "am-pm-schedule-1"
+            },
+            {
+              "name": "check_understanding"
+            },
+            {
+              "name": "arrange_transportation"
+            },
+            {
+              "name": "book_follow_up",
+              "slot": "2026-11-04T09:30"
+            },
+            {
+              "name": "close_encounter"
+            }
+          ],
+          "observed_outcomes": [
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "18:00"
+              },
+              "status": "success",
+              "observation": "The patient answered the call; contact established."
+            },
+            {
+              "action": {
+                "name": "explain_instructions",
+                "text_id": "am-pm-schedule-1"
+              },
+              "status": "success",
+              "observation": "Read the approved education text 'am-pm-schedule-1' to the patient."
+            },
+            {
+              "action": {
+                "name": "check_understanding"
+              },
+              "status": "confirmed",
+              "observation": "The patient restated the morning and evening plan in their own words; understanding is established."
+            },
+            {
+              "action": {
+                "name": "arrange_transportation"
+              },
+              "status": "success",
+              "observation": "Round-trip ride booked with the clinic-contracted ride service for the follow-up visit; the patient accepted."
+            },
+            {
+              "action": {
+                "name": "book_follow_up",
+                "slot": "2026-11-04T09:30"
+              },
+              "status": "success",
+              "observation": "Follow-up appointment booked for 2026-11-04T09:30; the ride is already arranged."
+            },
+            {
+              "action": {
+                "name": "close_encounter"
+              },
+              "status": "success",
+              "observation": "Encounter closed; all required coordination objectives are met."
+            }
+          ],
+          "metrics": {
+            "status": "completed",
+            "completed": true,
+            "contact_established": true,
+            "unsuccessful_outreach_before_contact": 0,
+            "first_contact": {
+              "channel": "phone_call",
+              "local_time": "18:00"
+            },
+            "comprehension_confirmed": true,
+            "failed_comprehension_checks": 0,
+            "current_approved_text_used": true,
+            "transportation_arranged": true,
+            "follow_up_booked": true,
+            "premature_booking_attempts": 0,
+            "transport_confirmed_booking": true,
+            "premature_close_attempts": 0,
+            "rejected_action_attempts": 0,
+            "retries": 0,
+            "actions_used": 6,
+            "model_calls": 6,
+            "cited_lesson_ids": [
+              "62de60a1-b00e-40fb-91a3-abdb4c0e9613",
+              "7cc73799-c5dd-491e-a513-df7ff3b56f37"
+            ],
+            "out_of_instruction_calls": [],
+            "stale_evening_calls": [
+              "18:00"
+            ],
+            "followed_current_instruction": null,
+            "memory_overrode_current_instruction": false,
+            "usage": {
+              "prompt_tokens": 11968,
+              "output_tokens": 477,
+              "total_tokens": 17465,
+              "usage_complete": true
+            }
+          },
+          "cited_lesson_ids": [
+            "62de60a1-b00e-40fb-91a3-abdb4c0e9613",
+            "7cc73799-c5dd-491e-a513-df7ff3b56f37"
+          ]
+        },
+        {
+          "execution_id": "d76a81ddc25444bdbd0d57d87cabb1b8",
+          "arm": "ablated_contact",
+          "repetition": 1,
+          "model": "gemini-3.6-flash",
+          "status": "incomplete",
+          "error": null,
+          "starting_state_sha256": "4612934c9d97c71a2b1db6b64723cd1fb6d7c31dd8912ddb3b141f9c64353e2a",
+          "memory_sha256": "d89fc0b57b701b5663f6f30e578395c74cfb4b90177a0415403ab60497475c1a",
+          "available_lesson_ids": [
+            "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+            "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+          ],
+          "actions": [
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "09:00"
+            },
+            {
+              "name": "outreach",
+              "channel": "sms",
+              "local_time": "09:05"
+            },
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "14:00"
+            },
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "17:00"
+            },
+            {
+              "name": "explain_instructions",
+              "text_id": "am-pm-schedule-1"
+            },
+            {
+              "name": "check_understanding"
+            },
+            {
+              "name": "arrange_transportation"
+            },
+            {
+              "name": "book_follow_up",
+              "slot": "2026-11-04T09:30"
+            }
+          ],
+          "observed_outcomes": [
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "09:00"
+              },
+              "status": "no_response",
+              "observation": "The call rang through to voicemail; contact was not completed."
+            },
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "sms",
+                "local_time": "09:05"
+              },
+              "status": "no_response",
+              "observation": "SMS delivered to the number on file; no reply was received."
+            },
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "14:00"
+              },
+              "status": "no_response",
+              "observation": "The call rang through to voicemail; contact was not completed."
+            },
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "17:00"
+              },
+              "status": "success",
+              "observation": "The patient answered the call; contact established."
+            },
+            {
+              "action": {
+                "name": "explain_instructions",
+                "text_id": "am-pm-schedule-1"
+              },
+              "status": "success",
+              "observation": "Read the approved education text 'am-pm-schedule-1' to the patient."
+            },
+            {
+              "action": {
+                "name": "check_understanding"
+              },
+              "status": "confirmed",
+              "observation": "The patient restated the morning and evening plan in their own words; understanding is established."
+            },
+            {
+              "action": {
+                "name": "arrange_transportation"
+              },
+              "status": "success",
+              "observation": "Round-trip ride booked with the clinic-contracted ride service for the follow-up visit; the patient accepted."
+            },
+            {
+              "action": {
+                "name": "book_follow_up",
+                "slot": "2026-11-04T09:30"
+              },
+              "status": "success",
+              "observation": "Follow-up appointment booked for 2026-11-04T09:30; the ride is already arranged."
+            }
+          ],
+          "metrics": {
+            "status": "incomplete",
+            "completed": false,
+            "contact_established": true,
+            "unsuccessful_outreach_before_contact": 3,
+            "first_contact": {
+              "channel": "phone_call",
+              "local_time": "17:00"
+            },
+            "comprehension_confirmed": true,
+            "failed_comprehension_checks": 0,
+            "current_approved_text_used": true,
+            "transportation_arranged": true,
+            "follow_up_booked": true,
+            "premature_booking_attempts": 0,
+            "transport_confirmed_booking": true,
+            "premature_close_attempts": 0,
+            "rejected_action_attempts": 0,
+            "retries": 0,
+            "actions_used": 8,
+            "model_calls": 8,
+            "cited_lesson_ids": [
+              "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+            ],
+            "out_of_instruction_calls": [],
+            "stale_evening_calls": [
+              "17:00"
+            ],
+            "followed_current_instruction": null,
+            "memory_overrode_current_instruction": false,
+            "usage": {
+              "prompt_tokens": 15238,
+              "output_tokens": 768,
+              "total_tokens": 22019,
+              "usage_complete": true
+            }
+          },
+          "cited_lesson_ids": [
+            "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+          ]
+        }
+      ],
+      "comparison": {
+        "pairwise": {
+          "full_vs_none": {
+            "overall": "win",
+            "counts": {
+              "win": 1,
+              "tie": 0,
+              "regression": 0
+            },
+            "per_repetition": [
+              {
+                "repetition": 1,
+                "verdict": "win",
+                "reason": "completion: full=True vs other=False; transport-confirmed booking: full=True vs other=False; unsuccessful outreach before contact: full=0 vs other=4; actions used: full=6 vs other=8",
+                "full_execution_id": "6a430984b9ce4a638f486d8f9e7ff104",
+                "other_execution_id": "bf40f74640864a3bb5cadd5439274933"
+              }
+            ]
+          },
+          "full_vs_ablated": {
+            "overall": "win",
+            "counts": {
+              "win": 1,
+              "tie": 0,
+              "regression": 0
+            },
+            "per_repetition": [
+              {
+                "repetition": 1,
+                "verdict": "win",
+                "reason": "completion: full=True vs other=False; unsuccessful outreach before contact: full=0 vs other=3; actions used: full=6 vs other=8",
+                "full_execution_id": "6a430984b9ce4a638f486d8f9e7ff104",
+                "other_execution_id": "d76a81ddc25444bdbd0d57d87cabb1b8"
+              }
+            ]
+          }
+        },
+        "interpretation": {
+          "contact_behavior_changed_by_ablation": true,
+          "full_arms_cited_any_lesson": true,
+          "note": "Ablation changed contact behavior while all other inputs were identical is evidence consistent with the contact lesson affecting policy; a citation alone is not proof, and single stochastic samples are not causal proof."
+        },
+        "current_instruction_override": null
+      }
+    },
+    {
+      "scenario_id": "E2",
+      "title": "Current preference override evaluation",
+      "starting_state_sha256": "e49654ed283882f4e53a1e80131480c760db7b1ff852417df5f64b8f53f85b2d",
+      "action_budget": 8,
+      "current_chart_constraints": {
+        "transportation_required": true,
+        "current_approved_text_id": "am-pm-schedule-1",
+        "current_contact_instruction": {
+          "instruction": "Patient request for this encounter (synthetic chart note): the patient has asked the clinic to make outreach calls in the morning, between 09:00 and 11:00 only; the patient states that calls at other times will go unanswered.",
+          "window": {
+            "from": "09:00",
+            "to": "11:00"
+          },
+          "recorded": "2026-11-05",
+          "source": "Patient request documented by the care team (synthetic)"
+        }
+      },
+      "runs": [
+        {
+          "execution_id": "ce3d7486d85a472ab8d6b6c0a0b5823e",
+          "arm": "no_memory",
+          "repetition": 1,
+          "model": "gemini-3.6-flash",
+          "status": "completed",
+          "error": null,
+          "starting_state_sha256": "e49654ed283882f4e53a1e80131480c760db7b1ff852417df5f64b8f53f85b2d",
+          "memory_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "available_lesson_ids": [],
+          "actions": [
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "09:30"
+            },
+            {
+              "name": "explain_instructions",
+              "text_id": "am-pm-schedule-1"
+            },
+            {
+              "name": "check_understanding"
+            },
+            {
+              "name": "book_follow_up",
+              "slot": "2026-11-13T10:00"
+            },
+            {
+              "name": "arrange_transportation"
+            },
+            {
+              "name": "book_follow_up",
+              "slot": "2026-11-13T10:00"
+            },
+            {
+              "name": "close_encounter"
+            }
+          ],
+          "observed_outcomes": [
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "09:30"
+              },
+              "status": "success",
+              "observation": "The patient answered the call; contact established."
+            },
+            {
+              "action": {
+                "name": "explain_instructions",
+                "text_id": "am-pm-schedule-1"
+              },
+              "status": "success",
+              "observation": "Read the approved education text 'am-pm-schedule-1' to the patient."
+            },
+            {
+              "action": {
+                "name": "check_understanding"
+              },
+              "status": "confirmed",
+              "observation": "The patient restated the morning and evening plan in their own words; understanding is established."
+            },
+            {
+              "action": {
+                "name": "book_follow_up",
+                "slot": "2026-11-13T10:00"
+              },
+              "status": "unsuccessful",
+              "observation": "The appointment slot could not be confirmed: the patient's ride for the visit has not been arranged."
+            },
+            {
+              "action": {
+                "name": "arrange_transportation"
+              },
+              "status": "success",
+              "observation": "Round-trip ride booked with the clinic-contracted ride service for the follow-up visit; the patient accepted."
+            },
+            {
+              "action": {
+                "name": "book_follow_up",
+                "slot": "2026-11-13T10:00"
+              },
+              "status": "success",
+              "observation": "Follow-up appointment booked for 2026-11-13T10:00; the ride is already arranged."
+            },
+            {
+              "action": {
+                "name": "close_encounter"
+              },
+              "status": "success",
+              "observation": "Encounter closed; all required coordination objectives are met."
+            }
+          ],
+          "metrics": {
+            "status": "completed",
+            "completed": true,
+            "contact_established": true,
+            "unsuccessful_outreach_before_contact": 0,
+            "first_contact": {
+              "channel": "phone_call",
+              "local_time": "09:30"
+            },
+            "comprehension_confirmed": true,
+            "failed_comprehension_checks": 0,
+            "current_approved_text_used": true,
+            "transportation_arranged": true,
+            "follow_up_booked": true,
+            "premature_booking_attempts": 1,
+            "transport_confirmed_booking": true,
+            "premature_close_attempts": 0,
+            "rejected_action_attempts": 0,
+            "retries": 0,
+            "actions_used": 7,
+            "model_calls": 7,
+            "cited_lesson_ids": [],
+            "out_of_instruction_calls": [],
+            "stale_evening_calls": [],
+            "followed_current_instruction": true,
+            "memory_overrode_current_instruction": false,
+            "usage": {
+              "prompt_tokens": 11346,
+              "output_tokens": 499,
+              "total_tokens": 15452,
+              "usage_complete": true
+            }
+          },
+          "cited_lesson_ids": []
+        },
+        {
+          "execution_id": "6f4d6ce0f7d7401ab6fd470394ce041a",
+          "arm": "full_memory",
+          "repetition": 1,
+          "model": "gemini-3.6-flash",
+          "status": "completed",
+          "error": null,
+          "starting_state_sha256": "e49654ed283882f4e53a1e80131480c760db7b1ff852417df5f64b8f53f85b2d",
+          "memory_sha256": "e088fdd09d0495e246f3a4f1fa383992ecb929c53213e9fcfbc9c550a1cd4a0a",
+          "available_lesson_ids": [
+            "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+            "7cc73799-c5dd-491e-a513-df7ff3b56f37",
+            "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+          ],
+          "actions": [
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "09:30"
+            },
+            {
+              "name": "explain_instructions",
+              "text_id": "am-pm-schedule-1"
+            },
+            {
+              "name": "check_understanding"
+            },
+            {
+              "name": "arrange_transportation"
+            },
+            {
+              "name": "book_follow_up",
+              "slot": "2026-11-13T10:00"
+            },
+            {
+              "name": "close_encounter"
+            }
+          ],
+          "observed_outcomes": [
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "09:30"
+              },
+              "status": "success",
+              "observation": "The patient answered the call; contact established."
+            },
+            {
+              "action": {
+                "name": "explain_instructions",
+                "text_id": "am-pm-schedule-1"
+              },
+              "status": "success",
+              "observation": "Read the approved education text 'am-pm-schedule-1' to the patient."
+            },
+            {
+              "action": {
+                "name": "check_understanding"
+              },
+              "status": "confirmed",
+              "observation": "The patient restated the morning and evening plan in their own words; understanding is established."
+            },
+            {
+              "action": {
+                "name": "arrange_transportation"
+              },
+              "status": "success",
+              "observation": "Round-trip ride booked with the clinic-contracted ride service for the follow-up visit; the patient accepted."
+            },
+            {
+              "action": {
+                "name": "book_follow_up",
+                "slot": "2026-11-13T10:00"
+              },
+              "status": "success",
+              "observation": "Follow-up appointment booked for 2026-11-13T10:00; the ride is already arranged."
+            },
+            {
+              "action": {
+                "name": "close_encounter"
+              },
+              "status": "success",
+              "observation": "Encounter closed; all required coordination objectives are met."
+            }
+          ],
+          "metrics": {
+            "status": "completed",
+            "completed": true,
+            "contact_established": true,
+            "unsuccessful_outreach_before_contact": 0,
+            "first_contact": {
+              "channel": "phone_call",
+              "local_time": "09:30"
+            },
+            "comprehension_confirmed": true,
+            "failed_comprehension_checks": 0,
+            "current_approved_text_used": true,
+            "transportation_arranged": true,
+            "follow_up_booked": true,
+            "premature_booking_attempts": 0,
+            "transport_confirmed_booking": true,
+            "premature_close_attempts": 0,
+            "rejected_action_attempts": 0,
+            "retries": 0,
+            "actions_used": 6,
+            "model_calls": 6,
+            "cited_lesson_ids": [
+              "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+            ],
+            "out_of_instruction_calls": [],
+            "stale_evening_calls": [],
+            "followed_current_instruction": true,
+            "memory_overrode_current_instruction": false,
+            "usage": {
+              "prompt_tokens": 12634,
+              "output_tokens": 497,
+              "total_tokens": 17575,
+              "usage_complete": true
+            }
+          },
+          "cited_lesson_ids": [
+            "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+          ]
+        },
+        {
+          "execution_id": "92578150fcd54fbbaa226fea4d3bd1d4",
+          "arm": "ablated_contact",
+          "repetition": 1,
+          "model": "gemini-3.6-flash",
+          "status": "completed",
+          "error": null,
+          "starting_state_sha256": "e49654ed283882f4e53a1e80131480c760db7b1ff852417df5f64b8f53f85b2d",
+          "memory_sha256": "d89fc0b57b701b5663f6f30e578395c74cfb4b90177a0415403ab60497475c1a",
+          "available_lesson_ids": [
+            "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+            "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+          ],
+          "actions": [
+            {
+              "name": "outreach",
+              "channel": "phone_call",
+              "local_time": "09:30"
+            },
+            {
+              "name": "explain_instructions",
+              "text_id": "am-pm-schedule-1"
+            },
+            {
+              "name": "check_understanding"
+            },
+            {
+              "name": "arrange_transportation"
+            },
+            {
+              "name": "book_follow_up",
+              "slot": "2026-11-13T10:00"
+            },
+            {
+              "name": "close_encounter"
+            }
+          ],
+          "observed_outcomes": [
+            {
+              "action": {
+                "name": "outreach",
+                "channel": "phone_call",
+                "local_time": "09:30"
+              },
+              "status": "success",
+              "observation": "The patient answered the call; contact established."
+            },
+            {
+              "action": {
+                "name": "explain_instructions",
+                "text_id": "am-pm-schedule-1"
+              },
+              "status": "success",
+              "observation": "Read the approved education text 'am-pm-schedule-1' to the patient."
+            },
+            {
+              "action": {
+                "name": "check_understanding"
+              },
+              "status": "confirmed",
+              "observation": "The patient restated the morning and evening plan in their own words; understanding is established."
+            },
+            {
+              "action": {
+                "name": "arrange_transportation"
+              },
+              "status": "success",
+              "observation": "Round-trip ride booked with the clinic-contracted ride service for the follow-up visit; the patient accepted."
+            },
+            {
+              "action": {
+                "name": "book_follow_up",
+                "slot": "2026-11-13T10:00"
+              },
+              "status": "success",
+              "observation": "Follow-up appointment booked for 2026-11-13T10:00; the ride is already arranged."
+            },
+            {
+              "action": {
+                "name": "close_encounter"
+              },
+              "status": "success",
+              "observation": "Encounter closed; all required coordination objectives are met."
+            }
+          ],
+          "metrics": {
+            "status": "completed",
+            "completed": true,
+            "contact_established": true,
+            "unsuccessful_outreach_before_contact": 0,
+            "first_contact": {
+              "channel": "phone_call",
+              "local_time": "09:30"
+            },
+            "comprehension_confirmed": true,
+            "failed_comprehension_checks": 0,
+            "current_approved_text_used": true,
+            "transportation_arranged": true,
+            "follow_up_booked": true,
+            "premature_booking_attempts": 0,
+            "transport_confirmed_booking": true,
+            "premature_close_attempts": 0,
+            "rejected_action_attempts": 0,
+            "retries": 0,
+            "actions_used": 6,
+            "model_calls": 6,
+            "cited_lesson_ids": [
+              "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+            ],
+            "out_of_instruction_calls": [],
+            "stale_evening_calls": [],
+            "followed_current_instruction": true,
+            "memory_overrode_current_instruction": false,
+            "usage": {
+              "prompt_tokens": 11542,
+              "output_tokens": 497,
+              "total_tokens": 16398,
+              "usage_complete": true
+            }
+          },
+          "cited_lesson_ids": [
+            "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+          ]
+        }
+      ],
+      "comparison": {
+        "pairwise": {
+          "full_vs_none": {
+            "overall": "win",
+            "counts": {
+              "win": 1,
+              "tie": 0,
+              "regression": 0
+            },
+            "per_repetition": [
+              {
+                "repetition": 1,
+                "verdict": "win",
+                "reason": "premature booking attempts: full=0 vs other=1; actions used: full=6 vs other=7",
+                "full_execution_id": "6f4d6ce0f7d7401ab6fd470394ce041a",
+                "other_execution_id": "ce3d7486d85a472ab8d6b6c0a0b5823e"
+              }
+            ]
+          },
+          "full_vs_ablated": {
+            "overall": "tie",
+            "counts": {
+              "win": 0,
+              "tie": 1,
+              "regression": 0
+            },
+            "per_repetition": [
+              {
+                "repetition": 1,
+                "verdict": "tie",
+                "reason": "identical deterministic metrics",
+                "full_execution_id": "6f4d6ce0f7d7401ab6fd470394ce041a",
+                "other_execution_id": "92578150fcd54fbbaa226fea4d3bd1d4"
+              }
+            ]
+          }
+        },
+        "interpretation": {
+          "contact_behavior_changed_by_ablation": false,
+          "full_arms_cited_any_lesson": true,
+          "note": "Ablation changed contact behavior while all other inputs were identical is evidence consistent with the contact lesson affecting policy; a citation alone is not proof, and single stochastic samples are not causal proof."
+        },
+        "current_instruction_override": {
+          "passed": true,
+          "reason": "full-memory runs followed the current morning instruction with no historical evening-strategy attempts"
+        }
+      }
+    }
+  ],
+  "pairwise_totals": {
+    "full_vs_none": {
+      "win": 2,
+      "tie": 0,
+      "regression": 0
+    },
+    "full_vs_ablated": {
+      "win": 1,
+      "tie": 1,
+      "regression": 0
+    }
+  },
+  "timeline": [
+    {
+      "type": "base_memory_recalled",
+      "count": 3,
+      "real_ids": [
+        "62de60a1-b00e-40fb-91a3-abdb4c0e9613",
+        "7cc73799-c5dd-491e-a513-df7ff3b56f37",
+        "e0ea996d-0de5-4dda-a3ef-a81afb339603"
+      ]
+    },
+    {
+      "type": "base_memory_frozen",
+      "sha256": "e088fdd09d0495e246f3a4f1fa383992ecb929c53213e9fcfbc9c550a1cd4a0a",
+      "lessons": [
+        {
+          "id": "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+          "category": "communication_strategy",
+          "applicability": "Synthetic patient SYNTH-PT-0042: explaining approved instructions when a misunderstanding is observed.",
+          "guidance": "For this synthetic patient, the approved 'morning-evening-1' explanation followed by a comprehension check previously resolved a misunderstanding; the initial generic explanation did not establish understanding. Use only chart-approved wording.",
+          "evidence_summary": "Observed in one encounter: generic explanation -> check not_confirmed; scripted clinician correction added approved text 'morning-evening-1'; explanation of 'morning-evening-1' -> check confirmed."
+        },
+        {
+          "id": "7cc73799-c5dd-491e-a513-df7ff3b56f37",
+          "category": "contact_strategy",
+          "applicability": "Synthetic patient SYNTH-PT-0042: choosing an outreach channel when no newer contact preference applies.",
+          "guidance": "For this synthetic patient, when no newer contact preference is available, a phone call at 18:00 previously established contact after an SMS attempt received no response; prefer a call around that previously successful time. This is conditional patient-specific guidance, not a general channel rule.",
+          "evidence_summary": "Observed in one encounter: outreach sms at 09:15 -> no_response; outreach phone_call at 18:00 -> success (contact established)."
+        },
+        {
+          "id": "62de60a1-b00e-40fb-91a3-abdb4c0e9613",
+          "category": "coordination_sequence",
+          "applicability": "Synthetic patient SYNTH-PT-0042: booking a follow-up visit when the chart lists a transportation requirement.",
+          "guidance": "For this synthetic patient, resolve transportation before booking the follow-up; a booking attempted before the ride was arranged previously could not be confirmed. Applies only when transportation is required.",
+          "evidence_summary": "Observed in one encounter: book_follow_up 2026-10-21T09:00 -> unsuccessful (ride not arranged); arrange_transportation -> success; book_follow_up 2026-10-21T09:00 -> success."
+        }
+      ]
+    },
+    {
+      "type": "arms_derived",
+      "no_memory": {
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "lesson_ids": []
+      },
+      "full_memory": {
+        "sha256": "e088fdd09d0495e246f3a4f1fa383992ecb929c53213e9fcfbc9c550a1cd4a0a",
+        "lesson_ids": [
+          "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+          "7cc73799-c5dd-491e-a513-df7ff3b56f37",
+          "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+        ]
+      },
+      "ablated_contact": {
+        "sha256": "d89fc0b57b701b5663f6f30e578395c74cfb4b90177a0415403ab60497475c1a",
+        "lesson_ids": [
+          "e0ea996d-0de5-4dda-a3ef-a81afb339603",
+          "62de60a1-b00e-40fb-91a3-abdb4c0e9613"
+        ]
+      }
+    },
+    {
+      "type": "arm_run_started",
+      "scenario_id": "E1",
+      "arm": "no_memory",
+      "repetition": 1,
+      "execution_id": "bf40f74640864a3bb5cadd5439274933"
+    },
+    {
+      "type": "arm_run_finished",
+      "scenario_id": "E1",
+      "arm": "no_memory",
+      "repetition": 1,
+      "execution_id": "bf40f74640864a3bb5cadd5439274933",
+      "status": "escalated"
+    },
+    {
+      "type": "arm_run_started",
+      "scenario_id": "E1",
+      "arm": "full_memory",
+      "repetition": 1,
+      "execution_id": "6a430984b9ce4a638f486d8f9e7ff104"
+    },
+    {
+      "type": "arm_run_finished",
+      "scenario_id": "E1",
+      "arm": "full_memory",
+      "repetition": 1,
+      "execution_id": "6a430984b9ce4a638f486d8f9e7ff104",
+      "status": "completed"
+    },
+    {
+      "type": "arm_run_started",
+      "scenario_id": "E1",
+      "arm": "ablated_contact",
+      "repetition": 1,
+      "execution_id": "d76a81ddc25444bdbd0d57d87cabb1b8"
+    },
+    {
+      "type": "arm_run_finished",
+      "scenario_id": "E1",
+      "arm": "ablated_contact",
+      "repetition": 1,
+      "execution_id": "d76a81ddc25444bdbd0d57d87cabb1b8",
+      "status": "incomplete"
+    },
+    {
+      "type": "arm_run_started",
+      "scenario_id": "E2",
+      "arm": "no_memory",
+      "repetition": 1,
+      "execution_id": "ce3d7486d85a472ab8d6b6c0a0b5823e"
+    },
+    {
+      "type": "arm_run_finished",
+      "scenario_id": "E2",
+      "arm": "no_memory",
+      "repetition": 1,
+      "execution_id": "ce3d7486d85a472ab8d6b6c0a0b5823e",
+      "status": "completed"
+    },
+    {
+      "type": "arm_run_started",
+      "scenario_id": "E2",
+      "arm": "full_memory",
+      "repetition": 1,
+      "execution_id": "6f4d6ce0f7d7401ab6fd470394ce041a"
+    },
+    {
+      "type": "arm_run_finished",
+      "scenario_id": "E2",
+      "arm": "full_memory",
+      "repetition": 1,
+      "execution_id": "6f4d6ce0f7d7401ab6fd470394ce041a",
+      "status": "completed"
+    },
+    {
+      "type": "arm_run_started",
+      "scenario_id": "E2",
+      "arm": "ablated_contact",
+      "repetition": 1,
+      "execution_id": "92578150fcd54fbbaa226fea4d3bd1d4"
+    },
+    {
+      "type": "arm_run_finished",
+      "scenario_id": "E2",
+      "arm": "ablated_contact",
+      "repetition": 1,
+      "execution_id": "92578150fcd54fbbaa226fea4d3bd1d4",
+      "status": "completed"
+    }
+  ]
+}
