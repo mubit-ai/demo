@@ -101,11 +101,11 @@ class DemoTest(unittest.TestCase):
         memory = Memory(client, "test")
         call_turn = SimpleNamespace(candidates=[SimpleNamespace(content=SimpleNamespace(parts=[
             types.Part(function_call=types.FunctionCall(name="mubit_recall", args={"query": "api stopped after renewal"}))]))])
-        final_turn = SimpleNamespace(candidates=[SimpleNamespace(content=SimpleNamespace(parts=[]))],
-                                     text=json.dumps(dict(initial="billing_agent", lesson_ids=["lesson-7"],
+        no_call_turn = SimpleNamespace(candidates=[SimpleNamespace(content=SimpleNamespace(parts=[]))])
+        final_turn = SimpleNamespace(text=json.dumps(dict(initial="billing_agent", lesson_ids=["lesson-7"],
                                                           reason="lesson matches renewal loss")))
         model = Mock()
-        model.models.generate_content.side_effect = [call_turn, final_turn]
+        model.models.generate_content.side_effect = [call_turn, no_call_turn, final_turn]
         with contextlib.redirect_stdout(io.StringIO()):
             decision = route_tools(HELD_OUT[0][1], memory, model)
         self.assertEqual(decision["initial"], "billing_agent")
@@ -113,16 +113,19 @@ class DemoTest(unittest.TestCase):
         self.assertEqual(decision["tool_recalls"], [dict(query="api stopped after renewal", returned=1)])
         self.assertEqual(client.recall.call_args.kwargs["query"],
                          "Relevant first-specialist routing lessons for: api stopped after renewal")
-        self.assertEqual(model.models.generate_content.call_count, 2)
-        # The second call must carry the executed tool call and its response back to the model.
-        followup = model.models.generate_content.call_args_list[1].kwargs["contents"]
+        self.assertEqual(model.models.generate_content.call_count, 3)
+        # The constrained answer call must carry the executed tool call and its response back,
+        # and it must be JSON-constrained with tools removed.
+        answer_call = model.models.generate_content.call_args_list[2].kwargs
+        followup = answer_call["contents"]
         self.assertTrue(any(getattr(p, "function_call", None) for c in followup[1:]
                             for p in getattr(c, "parts", []) or []))
+        self.assertEqual(answer_call["config"].response_mime_type, "application/json")
+        self.assertIsNone(answer_call["config"].tools)
         # An override citing an ID the tool never returned is rejected, not trusted.
-        ungrounded = SimpleNamespace(candidates=[SimpleNamespace(content=SimpleNamespace(parts=[]))],
-                                     text=json.dumps(dict(initial="account_agent", lesson_ids=["invented"],
+        ungrounded = SimpleNamespace(text=json.dumps(dict(initial="account_agent", lesson_ids=["invented"],
                                                           reason="no")))
-        model.models.generate_content.side_effect = [call_turn, ungrounded]
+        model.models.generate_content.side_effect = [call_turn, no_call_turn, ungrounded]
         with contextlib.redirect_stdout(io.StringIO()), self.assertRaises(ValueError):
             route_tools(HELD_OUT[0][1], memory, model)
 

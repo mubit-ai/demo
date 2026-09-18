@@ -87,49 +87,61 @@ def route_tools(request, memory, model, max_recalls=2):
         "unless a lesson from mubit_recall clearly supports a better first specialist. Interpret "
         "lessons semantically, including paraphrases; respect every limiting condition and do not "
         "broaden a lesson to requests missing its distinguishing characteristics. Call mubit_recall "
-        "at most twice; skipping it is allowed. When done, respond with ONLY a JSON object with "
-        "keys initial (one specialist), lesson_ids (only IDs the tool returned and you actually "
-        "used; empty if you kept the baseline), and reason (brief rationale). Overriding the "
-        "baseline requires citing returned lesson IDs. Do not generate new lessons.")
+        "at most twice; skipping it is allowed. Do not generate new lessons.")
+    answer_schema = {"type": "object", "properties": {
+        "initial": {"type": "string", "enum": list(AGENTS)},
+        "lesson_ids": {"type": "array", "items": {"type": "string"}},
+        "reason": {"type": "string"}},
+        "required": ["initial", "lesson_ids", "reason"], "additionalProperties": False}
     contents = [json.dumps(dict(request=request, baseline=baseline))]
     recalled, calls = {}, []
-    for _ in range(max_recalls + 2):  # tool turns + a final answer retry
+    # Tool phase: execute recalls while the model asks for them and budget remains.
+    for _ in range(max_recalls):
         result = model.models.generate_content(
             model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"), contents=contents,
             config=types.GenerateContentConfig(
                 system_instruction=system, temperature=0,
                 automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
                 tools=[recall_tool]))
-        calls_made = [p.function_call for p in (getattr(getattr(result.candidates[0], "content", None), "parts", None) or [])
+        call_parts = [p for p in (getattr(getattr(result.candidates[0], "content", None), "parts", None) or [])
                       if getattr(p, "function_call", None)] if result.candidates else []
-        if calls_made and len(calls) < max_recalls:
-            call = calls_made[0]
-            if call.name != "mubit_recall" or not isinstance(call.args, dict):
-                raise ValueError("Router invoked an unexpected tool")
-            query = str(call.args.get("query", "")).strip()[:400] or request
-            lessons = memory.recall(query)
-            recalled.update({lesson["id"]: lesson for lesson in lessons})
-            calls.append(dict(query=query, returned=len(lessons)))
-            emit("tool_call", tool="mubit_recall", query=query, returned=len(lessons))
-            contents = [*contents,
-                        types.Content(role="model", parts=[types.Part(function_call=call)]),
-                        types.Content(role="user", parts=[types.Part(
-                            function_response=types.FunctionResponse(name="mubit_recall", response={
-                                "lessons": [{"id": l["id"], "content": l["content"],
-                                             "conditions": l["conditions"]} for l in lessons]}))])]
-            continue
-        try:
-            decision = json.loads(result.text or "")
-        except ValueError:
-            raise ValueError("Router returned no parseable decision") from None
-        if (decision.get("initial") not in AGENTS
-                or not isinstance(decision.get("lesson_ids"), list)
-                or not set(decision["lesson_ids"]) <= set(recalled)
-                or (decision["initial"] != baseline and not decision["lesson_ids"])):
-            raise ValueError("Router chose an invalid specialist or an ungrounded override")
-        return dict(**decision, baseline=baseline, tool_recalls=calls,
-                    lessons=[recalled[i] for i in decision["lesson_ids"]])
-    raise ValueError("Router kept calling mubit_recall instead of deciding")
+        if not call_parts:
+            break
+        call_part = call_parts[0]  # pass the original part back: it carries the thought signature
+        call = call_part.function_call
+        if call.name != "mubit_recall" or not isinstance(call.args, dict):
+            raise ValueError("Router invoked an unexpected tool")
+        query = str(call.args.get("query", "")).strip()[:400] or request
+        lessons = memory.recall(query)
+        recalled.update({lesson["id"]: lesson for lesson in lessons})
+        calls.append(dict(query=query, returned=len(lessons)))
+        emit("tool_call", tool="mubit_recall", query=query, returned=len(lessons))
+        contents = [*contents,
+                    types.Content(role="model", parts=[call_part]),
+                    types.Content(role="user", parts=[types.Part(
+                        function_response=types.FunctionResponse(name="mubit_recall", response={
+                            "lessons": [{"id": l["id"], "content": l["content"],
+                                         "conditions": l["conditions"]} for l in lessons]}))])]
+    # Answer phase: tools off, JSON-constrained — the same schema the preloaded mode uses.
+    result = model.models.generate_content(
+        model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"), contents=contents,
+        config=types.GenerateContentConfig(
+            system_instruction=system + " The tool budget is used. Respond with ONLY the JSON object: "
+                                        "initial (one specialist), lesson_ids (only tool-returned IDs "
+                                        "you actually used; empty if you kept the baseline), reason.",
+            temperature=0, automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+            response_mime_type="application/json", response_json_schema=answer_schema))
+    try:
+        decision = json.loads(result.text or "")
+    except ValueError:
+        raise ValueError("Router returned no parseable decision") from None
+    if (decision.get("initial") not in AGENTS
+            or not isinstance(decision.get("lesson_ids"), list)
+            or not set(decision["lesson_ids"]) <= set(recalled)
+            or (decision["initial"] != baseline and not decision["lesson_ids"])):
+        raise ValueError("Router chose an invalid specialist or an ungrounded override")
+    return dict(**decision, baseline=baseline, tool_recalls=calls,
+                lessons=[recalled[i] for i in decision["lesson_ids"]])
 
 
 def specialist(agent, resolver):
