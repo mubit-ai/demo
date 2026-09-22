@@ -78,6 +78,7 @@ make supply-chain                # web page on http://127.0.0.1:7870 (set PORT t
 make supply-chain-check          # teach, then compare in a new process, without the page
 make care-coordination           # web page on http://127.0.0.1:7880 (set PORT to change)
 make care-coordination-compare   # 3-arm comparison on a fresh experiment
+make abcd-tickets                # ABCD check: fetch the dataset (MIT) and rebuild the pinned fifty-ticket file
 make test                        # offline tests for all thirteen demos; no keys needed
 ```
 

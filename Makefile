@@ -1,12 +1,13 @@
 .PHONY: help memory-router oncall-agent policy-analyst team-pipeline self-tuner librarian researcher data-analyst helpdesk soc-triage code-reviewer supply-chain supply-chain-check \
-        care-coordination care-coordination-compare \
-        test test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination
+        care-coordination care-coordination-compare abcd-tickets abcd-tickets-check \
+        test test-abcd-check test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination
 
 MEMORY_ROUTER    := apps/memory_router
 POLICY_ANALYST   := apps/policy_analyst
 ONCALL_AGENT     := apps/oncall_agent
 SUPPLY_CHAIN     := apps/supply_chain_agent
 CARE_COORD       := apps/care_coordination_agent
+ABCD_CHECK       := apps/abcd_check
 WITH_DEPS        := uv run --no-project --with-requirements
 PORT             ?= 7870
 
@@ -68,9 +69,17 @@ care-coordination: ## Care coordination agent: web page on 127.0.0.1 (PORT, defa
 care-coordination-compare: ## Care coordination agent: 3-arm comparison on a fresh experiment
 	cd $(CARE_COORD) && $(WITH_DEPS) requirements.txt python compare.py --experiment cc-$(shell date +%Y%m%d%H%M%S)
 
+# --- ABCD check (typed decisions on real support tickets; no keys for the ticket set) ---
+
+abcd-tickets: ## ABCD check: fetch the ABCD dataset (MIT) into apps/abcd_check/data/abcd and rebuild the pinned fifty-ticket file
+	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt python tickets.py
+
+abcd-tickets-check: ## ABCD check: confirm the committed ticket file is reproduced byte for byte from the raw data
+	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt python tickets.py --check
+
 # --- Offline tests (no keys; model and memory are test doubles) ---
 
-test: test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination ## Run every offline suite
+test: test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination test-abcd-check ## Run every offline suite
 
 test-memory-router: ## Offline tests for the memory router (incl. the tools-mode round-trip)
 	cd $(MEMORY_ROUTER) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
@@ -112,3 +121,6 @@ test-supply-chain: ## Offline tests for the supply chain agent (Python and Node.
 test-care-coordination: ## Offline tests for the care coordination agent (Python and Node.js)
 	cd $(CARE_COORD) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
 	cd $(CARE_COORD) && node --test test_api.cjs
+
+test-abcd-check: ## Offline tests for the ABCD check (ticket extraction, ground truth, seeded selection)
+	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v

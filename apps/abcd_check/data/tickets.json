@@ -1,0 +1,931 @@
+{
+  "count": 50,
+  "options": [
+    "accept",
+    "ask_for_receipt"
+  ],
+  "question": "return_path",
+  "reference_date": "2020-04-01",
+  "rules": {
+    "bronze": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+    "gold": "Gold members: > Gold members get unlimited returns",
+    "guest": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+    "silver": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging"
+  },
+  "seed": 7,
+  "source": {
+    "dataset": "Action-Based Conversations Dataset v1.1 (asappresearch/abcd)",
+    "dataset_sha256": "2bdf53ac359543dcdc38d55bc6513e78df120363f8f44870716e909f4606de15",
+    "dataset_url": "https://raw.githubusercontent.com/asappresearch/abcd/master/data/abcd_v1.1.json.gz",
+    "guidelines_sha256": "9264557941df24fe075138a632a2345172971573124a354ccb2ceee2a12e4c2a",
+    "guidelines_url": "https://raw.githubusercontent.com/asappresearch/abcd/master/data/guidelines.json",
+    "license": "MIT (Copyright (c) 2021 ASAPP Research)"
+  },
+  "subflows": [
+    "return_color",
+    "return_size",
+    "return_stain"
+  ],
+  "tickets": [
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": true
+      },
+      "convo_id": 318,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-08-22",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "albertsanders813",
+        "order": "5110435718"
+      },
+      "text": "I ordered a shirt and the description said it was apple green, but after receiving it, it looks more sage.I'd like to return it.",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 365,
+      "expected": "ask_for_receipt",
+      "packaging": true,
+      "purchase_date": "2019-07-11",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "alberts5",
+        "order": "5822212930"
+      },
+      "text": "Hello\nI want to return the item because it was delivered in wrong color.\ncan you help me with that ?",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": false
+      },
+      "convo_id": 389,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-07-15",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "chloez08",
+        "order": "9466083290"
+      },
+      "text": "providing  a wrong color to me\ni asked pink but i have received brown\\\npaint",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": false
+      },
+      "convo_id": 560,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-09-21",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "chloez00",
+        "order": "6928252899"
+      },
+      "text": "Hi there, I need to return an item.\nThey are the wrong color. I needed solid black for a costume party but these have red and white stripes on them.",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "gold",
+        "return_processed": true
+      },
+      "convo_id": 1121,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2019-07-27",
+      "rule": "Gold members: > Gold members get unlimited returns",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "jb639883",
+        "order": "7882655762"
+      },
+      "text": "i would like to return an item since it is the wrong size",
+      "tier": "gold"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 1412,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2019-12-17",
+      "rule": "Gold members: > Gold members get unlimited returns",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "aphoenix872",
+        "order": "4024067912"
+      },
+      "text": "I'd like to return something",
+      "tier": "gold"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": true
+      },
+      "convo_id": 1504,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2019-09-02",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "rd526508",
+        "order": "1010984155"
+      },
+      "text": "Hi there, I was hoping to return an item that I purchased. It's not the same colour as I initially expected.",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": false
+      },
+      "convo_id": 2071,
+      "expected": "ask_for_receipt",
+      "packaging": true,
+      "purchase_date": "2020-02-21",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "rodriguezdomingo112",
+        "order": "7781383984"
+      },
+      "text": "Hello, I need to return an item I purchased as it is the wrong color",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": true
+      },
+      "convo_id": 2089,
+      "expected": "ask_for_receipt",
+      "packaging": true,
+      "purchase_date": "2019-12-20",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "josephb6",
+        "order": "8950055868"
+      },
+      "text": "Hi I bought a shirt as a gift but it turned out it was the wrong size. How can I exchange it?",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 2194,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2020-03-18",
+      "rule": "Gold members: > Gold members get unlimited returns",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "aphoenix513",
+        "order": "4867555603"
+      },
+      "text": "Hi, I need to return these boots.  They looked much darker in the picture",
+      "tier": "gold"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 2238,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-12-24",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "as389878",
+        "order": "4646792389"
+      },
+      "text": "Hi I have a question about an order I made. It was a birthday gift but it turned out to be too big. How do I return it or exchange it?",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": true
+      },
+      "convo_id": 2310,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-02-04",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "cm144162",
+        "order": "1141735767"
+      },
+      "text": "Hi\nSo I have a kind upsetting issue\nI bought this jacket from Guess",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": false
+      },
+      "convo_id": 2708,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-09-15",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "joycew91",
+        "order": "0158212295"
+      },
+      "text": "Hello, I need to return an item I purchased as it is the wrong color",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": true
+      },
+      "convo_id": 2804,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-09-09",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "chloezhang782",
+        "order": "3978200954"
+      },
+      "text": "I want to return the boots I ordered. The color is much different from what I expected.",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": true
+      },
+      "convo_id": 2903,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2020-03-03",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "dw766252",
+        "order": "2234302362"
+      },
+      "text": "hi! I bought a  pair of jeans for my boyfriend's birthday, but accidently bought the wrong size and I want to return them.",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": true
+      },
+      "convo_id": 2960,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2019-10-17",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "jw746605",
+        "order": "0893600332"
+      },
+      "text": "I ordered some jeans and they came with a stain on them. I'd like to return them.",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": true
+      },
+      "convo_id": 3088,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2020-03-03",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "rodriguezd214",
+        "order": "9844391353"
+      },
+      "text": "I need to return an item I ordered, I got the wrong color by mistake.",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": true
+      },
+      "convo_id": 3342,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2019-10-30",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "nb244266",
+        "order": "7214916269"
+      },
+      "text": "I would like to return an item because it is the wrong size",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 3592,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2019-11-06",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "cminh730",
+        "order": "3348917502"
+      },
+      "text": "Hi! I need to return an item, can you help me with that?",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": false
+      },
+      "convo_id": 3731,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-12-03",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "cz498831",
+        "order": "4257228992"
+      },
+      "text": "Hello, I would like to return an item because it has a stain on it",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 3764,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2019-09-03",
+      "rule": "Gold members: > Gold members get unlimited returns",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "crystalm691",
+        "order": "5599268230"
+      },
+      "text": "Hi\nI made a mistake with my order\ncan you fix it",
+      "tier": "gold"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 4528,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2019-09-06",
+      "rule": "Gold members: > Gold members get unlimited returns",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "cz623343",
+        "order": "8653516007"
+      },
+      "text": "Hi!\ni need to retunr an item because it has a stain",
+      "tier": "gold"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": false
+      },
+      "convo_id": 5073,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-09-29",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "sa634047",
+        "order": "2808482265"
+      },
+      "text": "So I really thought this would fit, but it doesn't\nhow do i handle a return",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 5454,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2020-01-12",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "josephbanter371",
+        "order": "1691913253"
+      },
+      "text": "Hi I'd like to return Tommy Hilfiger boots below because it is the wrong color",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "gold",
+        "return_processed": true
+      },
+      "convo_id": 5736,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2020-03-10",
+      "rule": "Gold members: > Gold members get unlimited returns",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "ap020256",
+        "order": "1098147804"
+      },
+      "text": "Hello, I need to return an item I purchased as it is the wrong color",
+      "tier": "gold"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "bronze",
+        "return_processed": false
+      },
+      "convo_id": 5842,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-01-21",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "rdomingo781",
+        "order": "6313133820"
+      },
+      "text": "I received wrong color and I’m not happy",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "gold",
+        "return_processed": true
+      },
+      "convo_id": 6807,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2019-11-07",
+      "rule": "Gold members: > Gold members get unlimited returns",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "jb950104",
+        "order": "1134267595"
+      },
+      "text": "Hi I have a question about an order I made.",
+      "tier": "gold"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": true
+      },
+      "convo_id": 7123,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-03-19",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "chloez30",
+        "order": "0656529062"
+      },
+      "text": "Hi I need to return an item please",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 7187,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2020-03-19",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "safzal48",
+        "order": "5968556965"
+      },
+      "text": "I have an item that I want to return. It was sent to me in the wrong color",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "bronze",
+        "return_processed": true
+      },
+      "convo_id": 7196,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-02-29",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "josephbanter120",
+        "order": "7751691550"
+      },
+      "text": "hi\nI would like to have an item returned",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": false
+      },
+      "convo_id": 7631,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-10-26",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "jw401460",
+        "order": "8377404170"
+      },
+      "text": "i need to return something\ni bought the wrong color",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "bronze",
+        "return_processed": false
+      },
+      "convo_id": 7671,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-10-03",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "cminh821",
+        "order": "9795588437"
+      },
+      "text": "Hey, I received a shirt I ordered but it is the wrong size. Can I return it?",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 7708,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-02-11",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "chloezhang174",
+        "order": "2203932735"
+      },
+      "text": "Can i return and item...\ni ordered the wrong size\ncan you help me",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": true
+      },
+      "convo_id": 7725,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-03-16",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "dw862139",
+        "order": "7251724554"
+      },
+      "text": "Yes i would like to return an item because it had a stain on it when i got it",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": true
+      },
+      "convo_id": 8257,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-03-16",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "rodriguezdomingo826",
+        "order": "0461792853"
+      },
+      "text": "hi there\nThey shipped me the wrogn color for my shirt\nwrong soryr",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": false
+      },
+      "convo_id": 8468,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-09-23",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "safzal16",
+        "order": "5852467773"
+      },
+      "text": "I ordered a pair of boots and they are the wrong size and I would like to see about returning them.",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": true
+      },
+      "convo_id": 8538,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-09-25",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "rodriguezdomingo754",
+        "order": "2716172569"
+      },
+      "text": "Hello, I want to return a product. It has a stain on it.",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "silver",
+        "return_processed": true
+      },
+      "convo_id": 8626,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-01-07",
+      "rule": "Silver members: > Ask for the purchase date, return possible within the last 6 months <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "josephb3",
+        "order": "6541105140"
+      },
+      "text": "Yes it arrived with a stain.",
+      "tier": "silver"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "bronze",
+        "return_processed": true
+      },
+      "convo_id": 8728,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-09-18",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "aphoenix542",
+        "order": "7870582043"
+      },
+      "text": "Hi there! I was hoping to return an item I purchased for my husband because it is the wrong size.",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": true
+      },
+      "convo_id": 8795,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-03-11",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "josephbanter401",
+        "order": "0963210098"
+      },
+      "text": "Hello.\nI would actually like to return a product due to a stain.\nHow would I go about doing this?",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": true
+      },
+      "convo_id": 8841,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2020-03-08",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "rd909123",
+        "order": "0308768187"
+      },
+      "text": "hello good day\ni would love to return an item\nyes it is the wrong color",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "bronze",
+        "return_processed": false
+      },
+      "convo_id": 8917,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-11-04",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "cm816526",
+        "order": "3587792555"
+      },
+      "text": "Hello. I need to return these boot. They are brown and I wanted blue boots. These don't go with anything in my closet. Can you process this return for me?\nGreat!",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": true
+      },
+      "convo_id": 8950,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2020-03-14",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "rdomingo023",
+        "order": "7967235974"
+      },
+      "text": "hey I need to make a return b/c you sent me the wrong size\nis a michael kors jacket 2 sizes too small",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "gold",
+        "return_processed": true
+      },
+      "convo_id": 9005,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2020-02-21",
+      "rule": "Gold members: > Gold members get unlimited returns",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "ap411546",
+        "order": "0657116520"
+      },
+      "text": "Hola! I received a pair of jeans that had a stain on them when I got them. Can I make a return?",
+      "tier": "gold"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "bronze",
+        "return_processed": true
+      },
+      "convo_id": 9340,
+      "expected": "accept",
+      "packaging": true,
+      "purchase_date": "2019-12-06",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "sanyaa23",
+        "order": "8328555099"
+      },
+      "text": "I bought some boots but they are the wrong colour.\nCan I please return them? i dont like them",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "bronze",
+        "return_processed": true
+      },
+      "convo_id": 10017,
+      "expected": "accept",
+      "packaging": false,
+      "purchase_date": "2020-01-19",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "asanders659",
+        "order": "3895828377"
+      },
+      "text": "I want to return this item because it's too small.",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 10035,
+      "expected": "ask_for_receipt",
+      "packaging": true,
+      "purchase_date": "2020-01-24",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "joycewu6",
+        "order": "1885509470"
+      },
+      "text": "I bought the wrong size and need to return an item",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "guest",
+        "return_processed": true
+      },
+      "convo_id": 10176,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2020-02-29",
+      "rule": "Guest members: > Ask for the purchase date, return possible within the last 30 days <or> Ask if they have a receipt, get to return if user has receipt",
+      "subflow": "return_color",
+      "subject": {
+        "customer": "cm275867",
+        "order": "5160926919"
+      },
+      "text": "I want to return an item as it is the wrong color\na tommy hilfiger shirt",
+      "tier": "guest"
+    },
+    {
+      "agent_action": {
+        "membership_entered": null,
+        "return_processed": true
+      },
+      "convo_id": 10322,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-12-16",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_stain",
+      "subject": {
+        "customer": "jw634473",
+        "order": "9241611703"
+      },
+      "text": "I want to return an item as it has a stain.",
+      "tier": "bronze"
+    },
+    {
+      "agent_action": {
+        "membership_entered": "bronze",
+        "return_processed": true
+      },
+      "convo_id": 10498,
+      "expected": "ask_for_receipt",
+      "packaging": false,
+      "purchase_date": "2019-12-30",
+      "rule": "Bronze members: > Ask for the purchase date, return possible within the last 90 days <or> Ask if they have a receipt, get to return if user has receipt <or> Ask if in original packaging, get to return if in original packaging",
+      "subflow": "return_size",
+      "subject": {
+        "customer": "aphoenix413",
+        "order": "2284756365"
+      },
+      "text": "Hey what's shaking? I need to return a jacket, I got the wrong size.;",
+      "tier": "bronze"
+    }
+  ]
+}
