@@ -1,14 +1,19 @@
 .PHONY: help memory-router oncall-agent policy-analyst team-pipeline self-tuner librarian researcher data-analyst helpdesk soc-triage code-reviewer supply-chain supply-chain-check \
-        care-coordination care-coordination-compare \
-        test test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination
+        care-coordination care-coordination-compare abcd-tickets abcd-tickets-check abcd-check \
+        test test-abcd-check test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination
 
 MEMORY_ROUTER    := apps/memory_router
 POLICY_ANALYST   := apps/policy_analyst
 ONCALL_AGENT     := apps/oncall_agent
 SUPPLY_CHAIN     := apps/supply_chain_agent
 CARE_COORD       := apps/care_coordination_agent
+ABCD_CHECK       := apps/abcd_check
 WITH_DEPS        := uv run --no-project --with-requirements
 PORT             ?= 7870
+# The ABCD check needs the mubit-sdk release that carries decide(). Until it ships, point
+# MUBIT_SDK at a checkout of sdk/python/mubit-sdk and it is installed over the pinned one.
+MUBIT_SDK        ?=
+ABCD_SDK         := $(if $(MUBIT_SDK),--with $(MUBIT_SDK),)
 
 # A .env at the repository root configures every demo. A .env inside a demo
 # folder also works when you run that demo from its folder; under make, the
@@ -68,9 +73,20 @@ care-coordination: ## Care coordination agent: web page on 127.0.0.1 (PORT, defa
 care-coordination-compare: ## Care coordination agent: 3-arm comparison on a fresh experiment
 	cd $(CARE_COORD) && $(WITH_DEPS) requirements.txt python compare.py --experiment cc-$(shell date +%Y%m%d%H%M%S)
 
+# --- ABCD check (typed decisions on real support tickets; no keys for the ticket set, Mubit and Cloudflare keys for the two arms) ---
+
+abcd-tickets: ## ABCD check: fetch the ABCD dataset (MIT) into apps/abcd_check/data/abcd and rebuild the pinned fifty-ticket file
+	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt python tickets.py
+
+abcd-tickets-check: ## ABCD check: confirm the committed ticket file is reproduced byte for byte from the raw data
+	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt python tickets.py --check
+
+abcd-check: ## ABCD check: seed the run, decide every ticket in both arms (bare text, Mubit state) and write live-abcd-check.json/.md with the verdict
+	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt $(ABCD_SDK) python check.py
+
 # --- Offline tests (no keys; model and memory are test doubles) ---
 
-test: test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination ## Run every offline suite
+test: test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination test-abcd-check ## Run every offline suite
 
 test-memory-router: ## Offline tests for the memory router (incl. the tools-mode round-trip)
 	cd $(MEMORY_ROUTER) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
@@ -112,3 +128,6 @@ test-supply-chain: ## Offline tests for the supply chain agent (Python and Node.
 test-care-coordination: ## Offline tests for the care coordination agent (Python and Node.js)
 	cd $(CARE_COORD) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
 	cd $(CARE_COORD) && node --test test_api.cjs
+
+test-abcd-check: ## Offline tests for the ABCD check (ticket set; the two-arm check runs only with an SDK that has decide())
+	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt $(ABCD_SDK) python -m unittest test_demo test_check -v
