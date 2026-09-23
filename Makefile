@@ -1,5 +1,5 @@
 .PHONY: help memory-router oncall-agent policy-analyst team-pipeline self-tuner librarian researcher data-analyst helpdesk soc-triage code-reviewer supply-chain supply-chain-check \
-        care-coordination care-coordination-compare abcd-tickets abcd-tickets-check \
+        care-coordination care-coordination-compare abcd-tickets abcd-tickets-check abcd-check \
         test test-abcd-check test-memory-router test-oncall-agent test-policy-analyst test-team-pipeline test-self-tuner test-librarian test-researcher test-data-analyst test-helpdesk test-soc-triage test-code-reviewer test-supply-chain test-care-coordination
 
 MEMORY_ROUTER    := apps/memory_router
@@ -10,6 +10,10 @@ CARE_COORD       := apps/care_coordination_agent
 ABCD_CHECK       := apps/abcd_check
 WITH_DEPS        := uv run --no-project --with-requirements
 PORT             ?= 7870
+# The ABCD check needs the mubit-sdk release that carries decide(). Until it ships, point
+# MUBIT_SDK at a checkout of sdk/python/mubit-sdk and it is installed over the pinned one.
+MUBIT_SDK        ?=
+ABCD_SDK         := $(if $(MUBIT_SDK),--with $(MUBIT_SDK),)
 
 # A .env at the repository root configures every demo. A .env inside a demo
 # folder also works when you run that demo from its folder; under make, the
@@ -69,13 +73,16 @@ care-coordination: ## Care coordination agent: web page on 127.0.0.1 (PORT, defa
 care-coordination-compare: ## Care coordination agent: 3-arm comparison on a fresh experiment
 	cd $(CARE_COORD) && $(WITH_DEPS) requirements.txt python compare.py --experiment cc-$(shell date +%Y%m%d%H%M%S)
 
-# --- ABCD check (typed decisions on real support tickets; no keys for the ticket set) ---
+# --- ABCD check (typed decisions on real support tickets; no keys for the ticket set, Mubit and Cloudflare keys for the two arms) ---
 
 abcd-tickets: ## ABCD check: fetch the ABCD dataset (MIT) into apps/abcd_check/data/abcd and rebuild the pinned fifty-ticket file
 	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt python tickets.py
 
 abcd-tickets-check: ## ABCD check: confirm the committed ticket file is reproduced byte for byte from the raw data
 	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt python tickets.py --check
+
+abcd-check: ## ABCD check: seed the run, decide every ticket in both arms (bare text, Mubit state) and write live-abcd-check.json/.md with the verdict
+	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt $(ABCD_SDK) python check.py
 
 # --- Offline tests (no keys; model and memory are test doubles) ---
 
@@ -122,5 +129,5 @@ test-care-coordination: ## Offline tests for the care coordination agent (Python
 	cd $(CARE_COORD) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
 	cd $(CARE_COORD) && node --test test_api.cjs
 
-test-abcd-check: ## Offline tests for the ABCD check (ticket extraction, ground truth, seeded selection)
-	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt python -m unittest test_demo -v
+test-abcd-check: ## Offline tests for the ABCD check (ticket set; the two-arm check runs only with an SDK that has decide())
+	cd $(ABCD_CHECK) && $(WITH_DEPS) requirements.txt $(ABCD_SDK) python -m unittest test_demo test_check -v

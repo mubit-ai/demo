@@ -1,1 +1,4 @@
-# The ticket builder is standard library only. The two-arm check (issue 07) adds the Mubit SDK here.
+# decide() ships in the next mubit-sdk release. Until then point MUBIT_SDK at a checkout of
+# sdk/python/mubit-sdk (branch feat/jev-external); make adds it with --with and it overrides the pin.
+mubit-sdk==0.13.2
+python-dotenv==1.2.3

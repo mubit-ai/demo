@@ -26,6 +26,7 @@ committed `live-*` trace from a real run.
 | [`helpdesk`](apps/helpdesk) | Resolve internal IT requests | Per-user facts in the user's own run; runbook and admin guardrail in the main run | Requests resolved in fewer turns; the admin guardrail blocks an unapproved escalation the cold arm grants |
 | [`soc_triage`](apps/soc_triage) | Triage security alerts | Benign-pattern lessons from analyst verdicts (`record_outcome`); a drift rule for look-alikes | Look-alike from a new host escalated with citation; investigation probes and false closes drop |
 | [`code_reviewer`](apps/code_reviewer) | Review PRs against team conventions | Convention lessons linked to incident IDs | Violations found and cited; no false blockers |
+| [`abcd_check`](apps/abcd_check) | Decide the return path for a real support ticket, a typed decision through the SDK's `decide()` | The return policy as rules and each customer's tier, purchase date and packaging as facts, in one run; every decision as a record | Fifty ABCD tickets in two arms, bare text and Mubit-built state: correct, automated share at the act threshold, latency, cost, and whether the state held the tier fact and the rule |
 
 Two earlier multi-agent pipelines stay in the repository as heavier examples
 of the same memory calls inside pipeline code:
@@ -79,12 +80,16 @@ make supply-chain-check          # teach, then compare in a new process, without
 make care-coordination           # web page on http://127.0.0.1:7880 (set PORT to change)
 make care-coordination-compare   # 3-arm comparison on a fresh experiment
 make abcd-tickets                # ABCD check: fetch the dataset (MIT) and rebuild the pinned fifty-ticket file
+make abcd-check                  # ABCD check: seed the run, decide fifty tickets in both arms (Mubit and Cloudflare keys), write the report
 make test                        # offline tests for all thirteen demos; no keys needed
 ```
 
 Every `make` demo uses a new experiment identifier on each run, so memory from
 an earlier run does not change the result. The web pages keep their identifier
 in the demo's `.demo/state.json` until you select **New experiment**.
+The ABCD check is the exception: it seeds one fixed run, `abcd-check`, so its report
+is reproducible; on an instance that already holds the run, pass `--skip-seed` or a
+fresh `--run` (see its README).
 
 ## Live traces
 
@@ -127,6 +132,7 @@ one folder can be copied out of this repository and run alone.
 | `helpdesk` | `remember`, `recall` (two scopes) | `Memory` in [`apps/helpdesk/demo.py`](apps/helpdesk/demo.py) |
 | `soc_triage` | `remember`, `recall`, `record_outcome` | `Memory` in [`apps/soc_triage/demo.py`](apps/soc_triage/demo.py) |
 | `code_reviewer` | `remember`, `recall` | `Memory` in [`apps/code_reviewer/demo.py`](apps/code_reviewer/demo.py) |
+| `abcd_check` | `remember` (facts and rules under the subject convention), `decide` | [`apps/abcd_check/check.py`](apps/abcd_check/check.py) |
 
 The two pipelines call a wider surface through their shared `memory.py`
 (`register_agent`, `checkpoint`, `handoff`, `feedback`, `memory_health`,
